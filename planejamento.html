@@ -204,6 +204,11 @@
     .modal-form-footer { padding: 0 24px 24px; }
     .btn-criar-plano { width: 100%; background: #f26522; color: #fff; border: none; border-radius: 10px; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; }
     .btn-criar-plano:hover { background: #e05010; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .duracao-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .duracao-btn { border: 1.5px solid #e0e0e0; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; display: flex; align-items: center; gap: 5px; background: #fff; transition: border-color 0.15s, color 0.15s; }
+    .duracao-btn:hover { border-color: #f26522; color: #f26522; }
+    .duracao-btn.selected { border-color: #f26522; color: #f26522; background: #fff5f0; }
 
     /* filter active state */
     .filter-disc.active { border-color: #f26522; }
@@ -517,6 +522,113 @@
   </div>
 </div>
 
+<!-- MODAL: Criar Plano de Aula INDIVIDUAL -->
+<div class="modal-overlay hidden" id="modalFormPlanoInd" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-form">
+    <div class="modal-form-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="modal-form-title">Criar plano de aula</div>
+        </div>
+        <button onclick="document.getElementById('modalFormPlanoInd').classList.add('hidden')" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;margin-top:-4px;">×</button>
+      </div>
+    </div>
+    <div class="modal-form-body">
+      <!-- Título -->
+      <div>
+        <label class="form-label">Título</label>
+        <input class="form-input" type="text" placeholder="Qual será o título do plano de aula?" />
+      </div>
+      <!-- Nível + Série -->
+      <div class="form-row">
+        <div>
+          <label class="form-label">Nível de ensino</label>
+          <select class="form-select" id="nivelEnsino" onchange="atualizarSeries()">
+            <option value="">Selecione uma opção</option>
+            <option value="ei">Educação Infantil</option>
+            <option value="ef1">Ensino Fundamental I</option>
+            <option value="ef2">Ensino Fundamental II</option>
+            <option value="em">Ensino Médio</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Série ou ano</label>
+          <select class="form-select" id="serieAno">
+            <option value="">Selecione uma opção</option>
+          </select>
+        </div>
+      </div>
+      <!-- Disciplina -->
+      <div>
+        <label class="form-label">Disciplina</label>
+        <select class="form-select">
+          <option value="">Selecione uma opção</option>
+          <option>Matemática</option>
+          <option>Língua Portuguesa</option>
+          <option>Ciências</option>
+          <option>História</option>
+          <option>Geografia</option>
+          <option>Arte</option>
+          <option>Educação Física</option>
+          <option>Inglês</option>
+        </select>
+      </div>
+      <!-- Assunto ou tema -->
+      <div>
+        <label class="form-label">Assunto ou tema</label>
+        <input class="form-input" type="text" placeholder="Qual será o tema central da aula?" />
+      </div>
+      <!-- Metodologia -->
+      <div>
+        <label class="form-label">Metodologia de ensino</label>
+        <select class="form-select">
+          <option value="">Selecione uma opção</option>
+          <option>Ativa</option>
+          <option>Expositiva</option>
+          <option>Modelo 5E</option>
+          <option>Socioemocional</option>
+          <option>Técnica</option>
+        </select>
+      </div>
+      <!-- Duração -->
+      <div>
+        <label class="form-label">Duração da aula</label>
+        <div class="duracao-group">
+          <div class="duracao-btn" onclick="selectDuracao(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>50 min</div>
+          <div class="duracao-btn" onclick="selectDuracao(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>100 min</div>
+          <div class="duracao-btn" onclick="selectDuracao(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>150 min</div>
+          <div class="duracao-btn" onclick="selectDuracao(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>200 min</div>
+          <div class="duracao-btn" onclick="selectDuracao(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>250 min</div>
+          <div class="duracao-btn" onclick="selectDuracao(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>300 min</div>
+        </div>
+      </div>
+      <!-- Acervo -->
+      <div>
+        <label class="form-label">Deseja compartilhar no Acervo Digital?</label>
+        <div class="visib-group">
+          <div class="visib-btn" id="acervoPublico" onclick="selectAcervo('publico')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Tornar público
+          </div>
+          <div class="visib-btn" id="acervoPrivado" onclick="selectAcervo('privado')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            Manter privado
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-form-footer">
+      <button class="btn-criar-plano" onclick="document.getElementById('modalFormPlanoInd').classList.add('hidden')">
+        Criar plano de aula
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="help-btn">?</div>
 
 <script>
@@ -798,8 +910,28 @@ let _diaAtual = null;
 
 function abrirFormPlanoIndividual() {
   document.getElementById('modalCriar').classList.add('hidden');
-  document.getElementById('formPlanoData').textContent = 'Plano Individual';
-  document.getElementById('modalFormPlano').classList.remove('hidden');
+  document.getElementById('modalFormPlanoInd').classList.remove('hidden');
+}
+
+const SERIES = {
+  ei:  ['Berçário','Maternal I','Maternal II','Pré I (CN III)','Pré II (CN IV)'],
+  ef1: ['1° ano','2° ano','3° ano','4° ano','5° ano'],
+  ef2: ['6° ano','7° ano','8° ano','9° ano'],
+  em:  ['1° ano','2° ano','3° ano'],
+};
+function atualizarSeries() {
+  const nivel = document.getElementById('nivelEnsino').value;
+  const sel = document.getElementById('serieAno');
+  sel.innerHTML = '<option value="">Selecione uma opção</option>' +
+    (SERIES[nivel] || []).map(s => `<option>${s}</option>`).join('');
+}
+function selectDuracao(el) {
+  document.querySelectorAll('.duracao-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectAcervo(v) {
+  document.getElementById('acervoPublico').classList.toggle('selected', v === 'publico');
+  document.getElementById('acervoPrivado').classList.toggle('selected', v === 'privado');
 }
 
 function abrirAdicionarPlano(label, num, mes) {

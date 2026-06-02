@@ -94,6 +94,35 @@
     .plano-empty-sub { font-size: 13px; color: #ccc; }
     .btn-primary { background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 10px 24px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
     .btn-primary:hover { background: #e05010; }
+
+    /* MODAL VINCULAR PLANO */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 200; }
+    .modal-overlay.hidden { display: none; }
+    .modal-vincular { background: #fff; border-radius: 16px; width: 580px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .mv-header { padding: 20px 24px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
+    .mv-title { font-size: 16px; font-weight: 700; color: #222; }
+    .mv-sub { font-size: 12px; color: #aaa; margin-top: 3px; }
+    .mv-filter-tag { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; background: #fff0e8; color: #f26522; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+    .mv-filter-tag.blue { background: #eef2fb; color: #1e4db7; }
+    .mv-list { overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .mv-plan-card { border: 1px solid #eee; border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+    .mv-plan-card:hover { border-color: #f26522; box-shadow: 0 2px 10px rgba(242,101,34,0.1); }
+    .mv-plan-card.blue:hover { border-color: #1e4db7; box-shadow: 0 2px 10px rgba(30,77,183,0.1); }
+    .mv-plan-icon { width: 44px; height: 44px; border-radius: 10px; background: #f3f4f8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .mv-plan-icon svg { width: 22px; height: 22px; color: #aaa; }
+    .mv-plan-info { flex: 1; }
+    .mv-plan-title { font-size: 13px; font-weight: 700; color: #222; }
+    .mv-plan-meta { font-size: 11px; color: #aaa; margin-top: 3px; }
+    .mv-plan-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .mv-tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+    .mv-tag-orange { background: #fff0e8; color: #f26522; }
+    .mv-tag-blue { background: #eef2fb; color: #1e4db7; }
+    .mv-btn-vincular { background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .mv-btn-vincular:hover { background: #e05010; }
+    .mv-btn-vincular.blue { background: #1e4db7; }
+    .mv-btn-vincular.blue:hover { background: #1840a0; }
+    .mv-empty { text-align: center; padding: 40px 20px; color: #bbb; font-size: 13px; }
+    .mv-empty svg { width: 40px; height: 40px; color: #ddd; display: block; margin: 0 auto 12px; }
   </style>
 </head>
 <body>
@@ -136,6 +165,21 @@
 
 <!-- CONTENT -->
 <div id="aulaContent"></div>
+
+<!-- MODAL: Vincular plano de aula -->
+<div class="modal-overlay hidden" id="modalVincular" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-vincular">
+    <div class="mv-header">
+      <div>
+        <div class="mv-title">Vincular plano de aula</div>
+        <div class="mv-sub">Planos compatíveis com esta aula</div>
+        <div id="mvFilterTag"></div>
+      </div>
+      <button onclick="document.getElementById('modalVincular').classList.add('hidden')" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="mv-list" id="mvList"></div>
+  </div>
+</div>
 
 <script>
 // ---------- PARSE URL PARAMS ----------
@@ -209,12 +253,18 @@ function renderContent() {
     el.innerHTML = `
       <div class="cards-row">
         <!-- Plano de aula -->
-        <div class="aula-card">
+        <div class="aula-card" style="${planoVinculado ? 'border-color:#f26522;' : ''}">
           <div class="aula-card-body">
-            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
-            <span class="card-empty-label">Sem plano de aula<br>vinculado</span>
+            ${planoVinculado ? `
+              <div class="card-icon" style="opacity:1"><svg viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+              <span class="card-empty-label" style="color:#222;font-weight:700;">${planoVinculado.titulo}</span>
+              <span style="font-size:11px;color:#aaa;">${planoVinculado.data}</span>
+            ` : `
+              <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+              <span class="card-empty-label">Sem plano de aula<br>vinculado</span>
+            `}
           </div>
-          <div class="card-action" onclick="switchTab('plano')">Adicionar +</div>
+          <div class="card-action" onclick="abrirVincularPlano()">${planoVinculado ? 'Trocar plano ↺' : 'Adicionar +'}</div>
         </div>
         <!-- Avaliação -->
         <div class="aula-card">
@@ -282,13 +332,35 @@ function renderContent() {
   }
 
   else if (currentTab === 'plano') {
-    el.innerHTML = `
+    el.innerHTML = planoVinculado ? `
+      <div class="plano-wrap">
+        <div style="background:#fff;border-radius:12px;border:1px solid #eee;padding:24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:44px;height:44px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+              </div>
+              <div>
+                <div style="font-size:15px;font-weight:700;color:#222;">${planoVinculado.titulo}</div>
+                <div style="font-size:12px;color:#aaa;margin-top:2px;">${planoVinculado.data} · ${planoVinculado.serie}</div>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="abrirVincularPlano()" style="font-size:12px;padding:8px 16px;">Trocar plano ↺</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${planoVinculado.campos.length
+              ? planoVinculado.campos.map(c=>`<span style="background:#eef2fb;color:#1e4db7;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;">${c}</span>`).join('')
+              : `<span style="background:#fff0e8;color:#f26522;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;">${planoVinculado.disc}</span>`}
+          </div>
+          <p style="font-size:13px;color:#888;margin-top:14px;line-height:1.6;">${planoVinculado.desc}</p>
+        </div>
+      </div>` : `
       <div class="plano-wrap">
         <div class="plano-empty">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
           <div class="plano-empty-title">Nenhum plano de aula vinculado</div>
-          <div class="plano-empty-sub">Vincule ou crie um plano de aula para esta aula</div>
-          <button class="btn-primary">+ Adicionar plano de aula</button>
+          <div class="plano-empty-sub">Vincule um plano compatível com esta aula</div>
+          <button class="btn-primary" onclick="abrirVincularPlano()">+ Vincular plano de aula</button>
         </div>
       </div>`;
   }
@@ -350,6 +422,70 @@ function svg(name) {
     edit:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
   };
   return map[name] || '';
+}
+
+// ---------- PLANOS DATA (espelhado do planejamento) ----------
+const TODOS_PLANOS = [
+  // Individuais — Ensino Regular
+  { id:1, titulo:'Introdução às formas geométricas',            desc:'Explorando figuras geométricas e suas propriedades...', disc:'Matemática',        serie:'Fundamental I – 2° ano', data:'25 de maio de 2026', tipo:'individual', campos:[] },
+  { id:2, titulo:'Contação de histórias – Folclore brasileiro', desc:'Narrativas populares e o folclore brasileiro na...',    disc:'Língua Portuguesa',  serie:'Fundamental I – 3° ano', data:'27 de maio de 2026', tipo:'individual', campos:[] },
+  { id:3, titulo:'Experimentos de física – Densidade',          desc:'Experimentos práticos sobre densidade dos materiais...',disc:'Ciências',            serie:'Fundamental I – 2° ano', data:'29 de maio de 2026', tipo:'individual', campos:[] },
+  // Semanais — Ed. Infantil
+  { id:4, titulo:'Explorando texturas',   desc:'Atividades sensoriais com diferentes texturas e materiais...', disc:'CN III', serie:'Ed. Infantil – CN III', data:'25 de maio de 2026', tipo:'semanal', campos:['Corpo, gestos e movimentos','Traços, sons, cores e formas'] },
+  { id:5, titulo:'Histórias e fantasias', desc:'Narrativas imaginárias e contação de histórias em grupo...',   disc:'CN III', serie:'Ed. Infantil – CN III', data:'26 de maio de 2026', tipo:'semanal', campos:['Escuta, fala, pensamentos e imaginação','O eu, o outro e o nós'] },
+  { id:6, titulo:'Brincando com o corpo', desc:'Movimentos, ritmo e consciência corporal através de jogos...', disc:'CN III', serie:'Ed. Infantil – CN III', data:'27 de maio de 2026', tipo:'semanal', campos:['Corpo, gestos e movimentos','O eu, o outro e o nós'] },
+  { id:7, titulo:'Descobrindo cores',     desc:'Experimentação com tintas, pigmentos e misturas de cores...', disc:'CN III', serie:'Ed. Infantil – CN III', data:'28 de maio de 2026', tipo:'semanal', campos:['Traços, sons, cores e formas','Escuta, fala, pensamentos e imaginação'] },
+  { id:8, titulo:'Música e movimento',    desc:'Ritmo, dança e expressão musical com instrumentos simples...',disc:'CN III', serie:'Ed. Infantil – CN III', data:'29 de maio de 2026', tipo:'semanal', campos:['Corpo, gestos e movimentos','Traços, sons, cores e formas'] },
+];
+
+let planoVinculado = null;
+
+function abrirVincularPlano() {
+  const isInfantil = tipo === 'infantil';
+  const isBlueModal = isInfantil;
+
+  // filtra planos compatíveis
+  const planos = TODOS_PLANOS.filter(p => {
+    if (isInfantil) return p.campos.some(c => c.toLowerCase().includes(disc.toLowerCase()) || disc.toLowerCase().includes(c.toLowerCase()));
+    else return p.disc.toLowerCase() === disc.toLowerCase();
+  });
+
+  // tag de filtro
+  const tagEl = document.getElementById('mvFilterTag');
+  tagEl.innerHTML = `<span class="mv-filter-tag ${isBlueModal?'blue':''}">${isInfantil ? '🎨 ' + disc : '📚 ' + disc}</span>`;
+
+  // lista de planos
+  const listEl = document.getElementById('mvList');
+  if (planos.length === 0) {
+    listEl.innerHTML = `
+      <div class="mv-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Nenhum plano criado com ${isInfantil ? 'este campo de experiência' : 'esta disciplina'}.<br>Crie um plano no Planejamento primeiro.
+      </div>`;
+  } else {
+    listEl.innerHTML = planos.map(p => `
+      <div class="mv-plan-card ${isBlueModal?'blue':''}" onclick="vincularPlano(${p.id})">
+        <div class="mv-plan-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="mv-plan-info">
+          <div class="mv-plan-title">${p.titulo}</div>
+          <div class="mv-plan-meta">${p.data} · ${p.serie}</div>
+          <div class="mv-plan-tags">
+            ${p.campos.length ? p.campos.map(c=>`<span class="mv-tag mv-tag-blue">${c}</span>`).join('') : `<span class="mv-tag mv-tag-orange">${p.disc}</span>`}
+          </div>
+        </div>
+        <button class="mv-btn-vincular ${isBlueModal?'blue':''}" onclick="event.stopPropagation();vincularPlano(${p.id})">Vincular</button>
+      </div>`).join('');
+  }
+
+  document.getElementById('modalVincular').classList.remove('hidden');
+}
+
+function vincularPlano(id) {
+  planoVinculado = TODOS_PLANOS.find(p => p.id === id);
+  document.getElementById('modalVincular').classList.add('hidden');
+  renderContent(); // atualiza cards
 }
 
 // ---------- INIT ----------
