@@ -220,6 +220,16 @@
     .ficha-save { flex: 1; padding: 11px; background: #1e4db7; color: #fff; border: none; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
     .ficha-save:hover { background: #1640a0; }
     .ficha-cancel { padding: 11px 20px; background: #f5f5f5; color: #555; border: none; border-radius: 20px; font-size: 13px; cursor: pointer; }
+
+    /* RELATÓRIO PANEL */
+    .rel-unid-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+    .rel-unid-tab { padding: 6px 16px; border-radius: 20px; border: 1.5px solid #ddd; font-size: 12px; font-weight: 500; color: #666; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .rel-unid-tab:hover { border-color: #1e4db7; color: #1e4db7; }
+    .rel-unid-tab.active { background: #1e4db7; border-color: #1e4db7; color: #fff; font-weight: 600; }
+    .rel-unid-titulo { font-size: 13px; font-weight: 700; color: #222; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .rel-textarea { width: 100%; min-height: 340px; padding: 14px; border: 1.5px solid #ddd; border-radius: 10px; font-size: 13px; color: #333; font-family: 'Segoe UI', Arial, sans-serif; resize: vertical; line-height: 1.6; outline: none; transition: border-color 0.15s; }
+    .rel-textarea:focus { border-color: #1e4db7; }
+    .rel-char-count { font-size: 11px; color: #aaa; text-align: right; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -320,6 +330,23 @@
 </div>
 
 <div class="help-btn">?</div>
+
+<!-- RELATÓRIO PANEL -->
+<div class="ficha-overlay" id="relOverlay" onclick="closeRelPanel()"></div>
+<div class="ficha-panel" id="relPanel">
+  <div class="ficha-ph">
+    <div class="ficha-ph-info">
+      <div class="ficha-ph-ttl">Relatório do aluno</div>
+      <div class="ficha-ph-sub" id="relPanelSub"></div>
+    </div>
+    <button class="modal-close" onclick="closeRelPanel()">×</button>
+  </div>
+  <div class="ficha-pb" id="relPanelBody"></div>
+  <div class="ficha-pf">
+    <button class="ficha-save" onclick="saveRel()">Salvar relatório</button>
+    <button class="ficha-cancel" onclick="closeRelPanel()">Cancelar</button>
+  </div>
+</div>
 
 <!-- FICHA PANEL -->
 <div class="ficha-overlay" id="fichaOverlay" onclick="closeFichaPanel()"></div>
@@ -824,11 +851,13 @@ function renderDetalheAluno() {
           </div>
         </div>
         <div class="acoes-col">
-          ${isInfantil && getFichaParaTurma(t.tag) ? `
-          <div class="acao-card" onclick="openFichaPanel()">
+          ${(() => {
+            const ano12 = !isInfantil && (t.nome.startsWith('1°') || t.nome.startsWith('2°'));
+            const fichaCard = (clickable) => `
+          <div class="acao-card" ${clickable ? 'onclick="openFichaPanel()"' : 'style="cursor:default;opacity:0.7;"'}>
             <div class="acao-info">
               <div class="acao-ttl">Fichas de avaliação <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-              <div class="acao-desc">Preencha e edite as fichas de avaliação — Perfil de Desenvolvimento · Grupo I</div>
+              <div class="acao-desc">${clickable ? 'Preencha e edite as fichas de avaliação — Perfil de Desenvolvimento · ' + (getFichaParaTurma(t.tag) === FICHA_GRUPO2 ? 'Grupo II' : getFichaParaTurma(t.tag) === FICHA_GRUPO3 ? 'Grupo III' : 'Grupo I') : 'Fichas de avaliação disponíveis para este aluno'}</div>
             </div>
             <div class="acao-img-wrap">
               <svg viewBox="0 0 60 60" width="52" height="52">
@@ -845,11 +874,12 @@ function renderDetalheAluno() {
                 <path d="M48 29 L52 33 L54 27 Z" fill="#b71c1c"/>
               </svg>
             </div>
-          </div>` : ''}
-          <div class="acao-card">
+          </div>`;
+            const relCard = (clickable) => `
+          <div class="acao-card" ${clickable ? 'onclick="openRelPanel()"' : 'style="cursor:default;opacity:0.7;"'}>
             <div class="acao-info">
               <div class="acao-ttl">Relatórios do aluno <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-              <div class="acao-desc">Preencha e edite os relatórios dos alunos dos anos iniciais do Ensino Fundamental I</div>
+              <div class="acao-desc">${clickable ? 'Preencha e edite os relatórios dos alunos da Educação Infantil' : 'Relatórios disponíveis para este aluno'}</div>
             </div>
             <div class="acao-img-wrap">
               <svg viewBox="0 0 60 60" width="52" height="52">
@@ -863,7 +893,11 @@ function renderDetalheAluno() {
                 <path d="M49 29 L53 33 L55 27 Z" fill="#f9a825"/>
               </svg>
             </div>
-          </div>
+          </div>`;
+            if (isInfantil) return (getFichaParaTurma(t.tag) ? fichaCard(true) : '') + relCard(true);
+            if (ano12) return fichaCard(false) + relCard(false);
+            return '';
+          })()}
         </div>
       </div>
     </div>`;
@@ -938,6 +972,69 @@ function toggleFichaOpt(key, opt, el, optIdx) {
 
 function saveFicha() {
   closeFichaPanel();
+}
+
+// ============ RELATÓRIO PANEL ============
+let relUnidadeAtual = 1;
+let relTextos = {}; // key: "alunoIdx-unidade"
+
+const UNIDADES = ['1ª Unidade', '2ª Unidade', '3ª Unidade', '4ª Unidade'];
+
+function openRelPanel() {
+  relUnidadeAtual = 1;
+  document.getElementById('relOverlay').classList.add('open');
+  document.getElementById('relPanel').classList.add('open');
+  renderRelPanel();
+}
+
+function closeRelPanel() {
+  // Salva o texto atual antes de fechar
+  salvarTextoAtual();
+  document.getElementById('relOverlay').classList.remove('open');
+  document.getElementById('relPanel').classList.remove('open');
+}
+
+function salvarTextoAtual() {
+  const ta = document.getElementById('relTextarea');
+  if (ta && currentAluno) {
+    relTextos[`${currentAluno.idx}-${relUnidadeAtual}`] = ta.value;
+  }
+}
+
+function renderRelPanel() {
+  const a = currentAluno;
+  document.getElementById('relPanelSub').textContent = a ? a.nome : '';
+
+  const textoAtual = relTextos[`${a ? a.idx : 0}-${relUnidadeAtual}`] || '';
+  const ordinal = UNIDADES[relUnidadeAtual - 1];
+
+  document.getElementById('relPanelBody').innerHTML = `
+    <div class="rel-unid-tabs">
+      ${UNIDADES.map((u, i) => `
+        <span class="rel-unid-tab${relUnidadeAtual === i+1 ? ' active' : ''}"
+              onclick="trocarUnidade(${i+1})">${u}</span>`).join('')}
+    </div>
+    <div class="rel-unid-titulo">Relatório da ${ordinal}</div>
+    <textarea id="relTextarea" class="rel-textarea"
+      placeholder="Digite aqui o relatório do aluno referente à ${ordinal}..."
+      oninput="atualizarContador(this)">${textoAtual}</textarea>
+    <div class="rel-char-count" id="relCharCount">${textoAtual.length} caracteres</div>`;
+}
+
+function trocarUnidade(num) {
+  salvarTextoAtual();
+  relUnidadeAtual = num;
+  renderRelPanel();
+}
+
+function atualizarContador(el) {
+  document.getElementById('relCharCount').textContent = el.value.length + ' caracteres';
+  if (currentAluno) relTextos[`${currentAluno.idx}-${relUnidadeAtual}`] = el.value;
+}
+
+function saveRel() {
+  salvarTextoAtual();
+  closeRelPanel();
 }
 
 function renderInfoBar() {
