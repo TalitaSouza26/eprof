@@ -150,6 +150,76 @@
 
     .help-btn { position: fixed; bottom: 20px; right: 20px; width: 36px; height: 36px; border-radius: 50%; background: #555; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f5f5f5; } ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+
+    /* DETALHE ALUNO */
+    .detalhe-bar { background: #fff; border-bottom: 1px solid #eee; padding: 8px 24px; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #1e4db7; font-size: 13px; cursor: pointer; }
+    .back-link:hover { text-decoration: underline; }
+    .aluno-hd-card { background: #fff; border-radius: 12px; border: 1px solid #eee; padding: 24px; display: flex; align-items: flex-start; gap: 0; margin-bottom: 16px; width: 100%; }
+    .aluno-hd-avatar { width: 44px; height: 44px; border-radius: 50%; background: #5a6a8a; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 18px; flex-shrink: 0; margin-right: 16px; margin-top: 2px; }
+    .aluno-hd-body { flex: 1; }
+    .aluno-hd-name { font-size: 18px; font-weight: 700; color: #222; margin-bottom: 12px; }
+    .aluno-hd-grid { display: grid; grid-template-columns: auto 1fr; gap: 7px 24px; }
+    .aluno-hd-label { font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 5px; }
+    .aluno-hd-label svg { width: 13px; height: 13px; }
+    .aluno-hd-value { font-size: 13px; color: #333; font-weight: 500; }
+    .freq-circ-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 24px; }
+    .freq-circ { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 24px; }
+    .freq-circ-label { font-size: 11px; color: #888; text-align: center; max-width: 80px; line-height: 1.4; }
+    .freq-hist-card { background: #fff; border-radius: 12px; border: 1px solid #eee; padding: 20px; margin-bottom: 16px; width: 100%; }
+    .freq-hist-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .freq-hist-ttl { font-size: 14px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 8px; }
+    .freq-month-sel { font-size: 12px; color: #333; border: 1px solid #ddd; border-radius: 6px; padding: 4px 10px; background: #fff; }
+    .freq-days { display: grid; grid-template-columns: repeat(30, 1fr); gap: 6px; margin-bottom: 12px; }
+    .freq-day { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .freq-day-n { font-size: 10px; color: #aaa; }
+    .freq-day-d { width: 16px; height: 16px; border-radius: 50%; background: #e0e0e0; }
+    .freq-day-d.pres { background: #4caf50; }
+    .freq-day-d.parc { background: #ffc107; }
+    .freq-day-d.falt { background: #f44336; }
+    .freq-leg { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .freq-leg-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+    .freq-leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .freq-media-txt { margin-left: auto; font-size: 12px; color: #555; }
+    .freq-media-txt strong { color: #4caf50; }
+    .det-bottom { display: grid; grid-template-columns: 1fr 320px; gap: 16px; width: 100%; }
+    .ocorr-card { background: #fff; border-radius: 12px; border: 1px solid #eee; padding: 20px; }
+    .ocorr-ttl { font-size: 14px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .ocorr-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; gap: 10px; }
+    .ocorr-empty-txt { font-size: 13px; color: #aaa; }
+    .acoes-col { display: flex; flex-direction: column; gap: 12px; }
+    .acao-card { background: #fff; border-radius: 12px; border: 1px solid #eee; padding: 20px; display: flex; align-items: center; cursor: pointer; gap: 16px; }
+    .acao-card:hover { border-color: #1e4db7; box-shadow: 0 2px 8px rgba(30,77,183,0.08); }
+    .acao-info { flex: 1; }
+    .acao-ttl { font-size: 14px; font-weight: 600; color: #1e4db7; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+    .acao-desc { font-size: 12px; color: #888; line-height: 1.5; }
+    .acao-img-wrap { width: 56px; height: 56px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+    /* FICHA PANEL */
+    .ficha-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 200; display: none; }
+    .ficha-overlay.open { display: block; }
+    .ficha-panel { position: fixed; top: 0; right: -480px; width: 460px; height: 100vh; background: #fff; z-index: 201; box-shadow: -4px 0 24px rgba(0,0,0,0.14); display: flex; flex-direction: column; transition: right 0.3s ease; }
+    .ficha-panel.open { right: 0; }
+    .ficha-ph { padding: 20px 24px; border-bottom: 1px solid #eee; display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
+    .ficha-ph-info { display: flex; flex-direction: column; gap: 2px; }
+    .ficha-ph-ttl { font-size: 15px; font-weight: 700; color: #222; }
+    .ficha-ph-sub { font-size: 12px; color: #888; }
+    .ficha-pb { flex: 1; overflow-y: auto; padding: 20px 24px; }
+    .ficha-sec { margin-bottom: 28px; }
+    .ficha-sec-ttl { font-size: 13px; font-weight: 700; color: #1e4db7; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #e8eefa; }
+    .ficha-ind { margin-bottom: 18px; }
+    .ficha-ind-txt { font-size: 12px; color: #333; margin-bottom: 8px; line-height: 1.5; }
+    .ficha-opts { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ficha-opt { padding: 4px 12px; border-radius: 20px; border: 1.5px solid #ddd; font-size: 11px; color: #666; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .ficha-opt:hover { border-color: #1e4db7; color: #1e4db7; }
+    .ficha-opt.s-sim { background: #d4f7e0; border-color: #1e8a4a; color: #1e8a4a; }
+    .ficha-opt.s-vezes { background: #fff8e8; border-color: #e0a020; color: #a07000; }
+    .ficha-opt.s-nao { background: #fff0e8; border-color: #f26522; color: #c04000; }
+    .ficha-opt.s-ntrab { background: #f0f0f0; border-color: #aaa; color: #777; }
+    .ficha-pf { padding: 16px 24px; border-top: 1px solid #eee; flex-shrink: 0; display: flex; gap: 10px; }
+    .ficha-save { flex: 1; padding: 11px; background: #1e4db7; color: #fff; border: none; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .ficha-save:hover { background: #1640a0; }
+    .ficha-cancel { padding: 11px 20px; background: #f5f5f5; color: #555; border: none; border-radius: 20px; font-size: 13px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -193,7 +263,11 @@
     </div>
   </div>
 
-  <div class="info-bar">
+  <div id="detalheBar" style="display:none" class="detalhe-bar">
+    <span class="back-link" onclick="closeDetalheAluno()">← Voltar para visualização da turma</span>
+  </div>
+
+  <div id="infoBar" class="info-bar">
     <div class="info-bar-top">
       <div class="info-fields" id="infoFields"></div>
       <div class="topbar-actions" id="topbarActions"></div>
@@ -247,6 +321,23 @@
 
 <div class="help-btn">?</div>
 
+<!-- FICHA PANEL -->
+<div class="ficha-overlay" id="fichaOverlay" onclick="closeFichaPanel()"></div>
+<div class="ficha-panel" id="fichaPanel">
+  <div class="ficha-ph">
+    <div class="ficha-ph-info">
+      <div class="ficha-ph-ttl">Ficha de avaliação</div>
+      <div class="ficha-ph-sub" id="fichaPanelSub">Perfil de Desenvolvimento — Grupo I</div>
+    </div>
+    <button class="modal-close" onclick="closeFichaPanel()">×</button>
+  </div>
+  <div class="ficha-pb" id="fichaPanelBody"></div>
+  <div class="ficha-pf">
+    <button class="ficha-save" onclick="saveFicha()">Salvar ficha</button>
+    <button class="ficha-cancel" onclick="closeFichaPanel()">Cancelar</button>
+  </div>
+</div>
+
 <script>
 // ============ DATA ============
 const TURMAS_REGULAR = [
@@ -261,36 +352,6 @@ const TURMAS_REGULAR = [
 ];
 
 const TURMAS_INFANTIL = [
-  {
-    id:'i1', nome:'Turma Girassol', tag:'CN III · Grupo 2', faixa:'1a7m – 2a11m',
-    escola:'CMEI Estrela do Mar', turno:'Vespertino · 13:00 – 17:00',
-    total:15, presentes:12, ocorrencias:2,
-    horarios:[
-      { nome:'Acolhida',                                  inicio:'13:00', fim:'13:15' },
-      { nome:'Desjejum',                                  inicio:'13:15', fim:'13:30' },
-      { nome:'Roda de Conversa',                          inicio:'13:30', fim:'14:00' },
-      { nome:'Momento de Leitura',                        inicio:'14:00', fim:'14:30' },
-      { nome:'Lanche',                                    inicio:'14:30', fim:'15:00' },
-      { nome:'Atividade Principal',                       inicio:'15:00', fim:'16:00' },
-      { nome:'Atividade Motora/Livre',                    inicio:'16:00', fim:'16:40' },
-      { nome:'Arrumação da Sala e organização para saída',inicio:'16:40', fim:'17:00' },
-    ]
-  },
-  {
-    id:'i2', nome:'Turma Borboleta', tag:'PN I · Grupo 3', faixa:'3a0m – 3a11m',
-    escola:'CMEI Estrela do Mar', turno:'Matutino · 07:00 – 11:00',
-    total:18, presentes:14, ocorrencias:1,
-    horarios:[
-      { nome:'Acolhida',          inicio:'07:00', fim:'07:15' },
-      { nome:'Café da manhã',     inicio:'07:15', fim:'07:40' },
-      { nome:'Roda de Conversa',  inicio:'07:40', fim:'08:10' },
-      { nome:'Atividade Dirigida',inicio:'08:10', fim:'09:30' },
-      { nome:'Pátio Livre',       inicio:'09:30', fim:'10:00' },
-      { nome:'Lanche',            inicio:'10:00', fim:'10:20' },
-      { nome:'Atividade Cultural',inicio:'10:20', fim:'10:50' },
-      { nome:'Organização e saída',inicio:'10:50', fim:'11:00' },
-    ]
-  },
   {
     id:'i3', nome:'Turma Pintinho', tag:'Berçário · Grupo 1', faixa:'0a0m – 1a6m',
     escola:'CMEI Estrela do Mar', turno:'Integral · 07:30 – 17:30',
@@ -311,6 +372,88 @@ const TURMAS_INFANTIL = [
       { nome:'Jantar / Higiene pessoal',                    inicio:'16:00', fim:'16:50' },
       { nome:'Arrumação da sala e organização para a saída',inicio:'16:50', fim:'17:00' },
       { nome:'Horário de tolerância',                       inicio:'17:00', fim:'17:30' },
+    ]
+  },
+  {
+    id:'i4', nome:'Turma Colibri', tag:'CN I · Grupo 1', faixa:'1a0m – 1a11m',
+    escola:'CMEI Estrela do Mar', turno:'Integral · 07:30 – 17:30',
+    total:12, presentes:10, ocorrencias:1,
+    horarios:[
+      { nome:'Acolhida',                                    inicio:'07:30', fim:'08:00' },
+      { nome:'Desjejum',                                    inicio:'08:00', fim:'08:20' },
+      { nome:'Roda de Conversa',                            inicio:'08:20', fim:'08:50' },
+      { nome:'Momento de Leitura',                          inicio:'08:50', fim:'09:20' },
+      { nome:'Atividade Principal',                         inicio:'09:20', fim:'10:00' },
+      { nome:'Atividade motora direcionada e/ou livre',     inicio:'10:00', fim:'10:50' },
+      { nome:'Banho',                                       inicio:'10:50', fim:'11:40' },
+      { nome:'Almoço / Higiene bucal',                      inicio:'11:40', fim:'12:30' },
+      { nome:'Sono',                                        inicio:'12:30', fim:'13:30' },
+      { nome:'Lanche',                                      inicio:'13:30', fim:'14:00' },
+      { nome:'Atividade Principal',                         inicio:'14:00', fim:'15:00' },
+      { nome:'Atividade motora direcionada e/ou livre',     inicio:'15:00', fim:'16:00' },
+      { nome:'Jantar / Higiene pessoal',                    inicio:'16:00', fim:'16:50' },
+      { nome:'Arrumação da sala e organização para a saída',inicio:'16:50', fim:'17:00' },
+      { nome:'Horário de tolerância',                       inicio:'17:00', fim:'17:30' },
+    ]
+  },
+  {
+    id:'i5', nome:'Turma Arco-Íris', tag:'CN II · Grupo 2', faixa:'2a0m – 2a5m',
+    escola:'CMEI Estrela do Mar', turno:'Vespertino · 13:00 – 17:00',
+    total:14, presentes:11, ocorrencias:2,
+    horarios:[
+      { nome:'Acolhida',                                   inicio:'13:00', fim:'13:15' },
+      { nome:'Desjejum',                                   inicio:'13:15', fim:'13:35' },
+      { nome:'Roda de Conversa',                           inicio:'13:35', fim:'14:00' },
+      { nome:'Momento de Leitura',                         inicio:'14:00', fim:'14:30' },
+      { nome:'Atividade Principal',                        inicio:'14:30', fim:'15:30' },
+      { nome:'Atividade Motora/Livre',                     inicio:'15:30', fim:'16:20' },
+      { nome:'Lanche',                                     inicio:'16:20', fim:'16:45' },
+      { nome:'Arrumação da sala e organização para saída', inicio:'16:45', fim:'17:00' },
+    ]
+  },
+  {
+    id:'i1', nome:'Turma Girassol', tag:'CN III · Grupo 2', faixa:'2a6m – 2a11m',
+    escola:'CMEI Estrela do Mar', turno:'Vespertino · 13:00 – 17:00',
+    total:15, presentes:12, ocorrencias:2,
+    horarios:[
+      { nome:'Acolhida',                                   inicio:'13:00', fim:'13:15' },
+      { nome:'Desjejum',                                   inicio:'13:15', fim:'13:30' },
+      { nome:'Roda de Conversa',                           inicio:'13:30', fim:'14:00' },
+      { nome:'Momento de Leitura',                         inicio:'14:00', fim:'14:30' },
+      { nome:'Lanche',                                     inicio:'14:30', fim:'15:00' },
+      { nome:'Atividade Principal',                        inicio:'15:00', fim:'16:00' },
+      { nome:'Atividade Motora/Livre',                     inicio:'16:00', fim:'16:40' },
+      { nome:'Arrumação da sala e organização para saída', inicio:'16:40', fim:'17:00' },
+    ]
+  },
+  {
+    id:'i2', nome:'Turma Borboleta', tag:'PN I · Grupo 3', faixa:'3a0m – 3a11m',
+    escola:'CMEI Estrela do Mar', turno:'Matutino · 07:00 – 11:00',
+    total:18, presentes:14, ocorrencias:1,
+    horarios:[
+      { nome:'Acolhida',           inicio:'07:00', fim:'07:15' },
+      { nome:'Café da manhã',      inicio:'07:15', fim:'07:40' },
+      { nome:'Roda de Conversa',   inicio:'07:40', fim:'08:10' },
+      { nome:'Atividade Dirigida', inicio:'08:10', fim:'09:30' },
+      { nome:'Pátio Livre',        inicio:'09:30', fim:'10:00' },
+      { nome:'Lanche',             inicio:'10:00', fim:'10:20' },
+      { nome:'Atividade Cultural', inicio:'10:20', fim:'10:50' },
+      { nome:'Organização e saída',inicio:'10:50', fim:'11:00' },
+    ]
+  },
+  {
+    id:'i6', nome:'Turma Estrela', tag:'PN II · Grupo 4', faixa:'4a0m – 5a11m',
+    escola:'CMEI Estrela do Mar', turno:'Matutino · 07:00 – 11:00',
+    total:20, presentes:17, ocorrencias:3,
+    horarios:[
+      { nome:'Acolhida',                inicio:'07:00', fim:'07:15' },
+      { nome:'Café da manhã',           inicio:'07:15', fim:'07:40' },
+      { nome:'Roda de Conversa',        inicio:'07:40', fim:'08:15' },
+      { nome:'Atividade Dirigida',      inicio:'08:15', fim:'09:30' },
+      { nome:'Pátio / Brincadeira Livre',inicio:'09:30', fim:'10:00' },
+      { nome:'Lanche',                  inicio:'10:00', fim:'10:20' },
+      { nome:'Projeto / Atividade Cultural',inicio:'10:20', fim:'10:50' },
+      { nome:'Organização e saída',     inicio:'10:50', fim:'11:00' },
     ]
   },
 ];
@@ -336,10 +479,244 @@ const CRIANCAS_MOCK = [
   { nome:'Finn Barbosa',   freq:95 },
 ];
 
+const FICHA_GRUPO1 = [
+  { campo: 'O Eu, o Outro e o Nós', indicadores: [
+    'Interagir com crianças da mesma faixa etária e adultos ao explorar espaços, materiais, objetos e brinquedos.',
+    'Comunicar necessidades, desejos e emoções, utilizando gestos, balbucios, palavras.',
+    'Reconhecer seu corpo e expressa suas sensações em momentos de alimentação, higiene, brincadeira e descanso.',
+    'Responder ao próprio nome olhando ou dando o braço para ser pego.',
+    'Interagir com outras crianças da mesma faixa etária e adultos, adaptando-se ao convívio social.',
+    'Reconhecer a voz e fisionomia das pessoas de maior convívio, professor/cuidador, colegas.',
+    'Manifestar-se em brincadeiras simples de dar e receber, lançar objetos no chão e recebê-los de volta.',
+    'Explorar o ambiente ao seu redor a partir da intencionalidade pedagógica do professor.',
+    'Participar de brincadeiras tradicionais com adultos, como esconder e achar, faz de conta com outras crianças, representando atividades sociais.',
+    'Demonstrar nos momentos de refeição manipulação progressiva dos alimentos a serem consumidos.',
+  ]},
+  { campo: 'Corpo, Gestos e Movimentos', indicadores: [
+    'Movimentar as partes do corpo para exprimir corporalmente emoções, necessidades e desejos.',
+    'Imitar gestos e movimentos de outras crianças, adultos e animais.',
+    'Participar do cuidado do corpo e da promoção do seu bem-estar.',
+    'Utilizar os movimentos de preensão, encaixe e lançamento, ampliando suas possibilidades de manuseio de diferentes materiais e objetos.',
+    'Interagir com o meio cultural através de sons e brincadeiras que valorizem a cultura local.',
+    'Demonstrar curiosidade em manipular novos objetos e brinquedos.',
+    'Desenvolver movimentos de imitação de outros bebês ou adultos nas situações de brincadeiras; arrastar-se, engatinhar-se, andar em busca de brinquedos e objetos de diferentes formas, cores, tamanhos, peso, textura; pegar, amassar, empilhar, montar, encaixar, mover.',
+    'Compartilhar, com os adultos, de momentos como troca de fraldas, alimentação e sono, e de algumas ações como buscar o travesseiro, segurar a mamadeira entre outros.',
+    'Reconhecer as pessoas que fazem parte do seu convívio e cuidado, solicitando-os quando sentir desconforto, relacionados às expressões de suas necessidades e formação de vínculos afetivos.',
+  ]},
+  { campo: 'Traços, Sons, Cores e Formas', indicadores: [
+    'Explorar sons produzidos com o próprio corpo e com objetos do ambiente.',
+    'Traçar marcas gráficas em diferentes suportes, usando instrumentos riscantes e tintas.',
+    'Explorar e reconhecer características de materiais estruturados e não estruturados.',
+    'Imitar, explorar e reconhecer diferentes fontes sonoras.',
+  ]},
+  { campo: 'Escuta, Fala, Pensamento e Imaginação', indicadores: [
+    'Reconhecer quando é chamado pelo nome e reconhecer os nomes de pessoas com quem convive.',
+    'Demonstrar interesse ao ouvir a leitura de poemas e a apresentação de músicas.',
+    'Demonstrar interesse ao ouvir histórias lidas ou contadas, observando ilustrações e os movimentos de leitura do adulto-leitor.',
+    'Reconhecer elementos das ilustrações de histórias, apontando-os a pedido do adulto-leitor.',
+    'Imitar as variações de entonação e gestos realizados pelos adultos, ao ler histórias e ao cantar.',
+    'Comunicar-se com outras pessoas usando movimentos, gestos, balbucios, fala e outras formas de expressão.',
+    'Conhecer e manipular materiais impressos e audiovisuais em diferentes portadores (livro, revista, gibi, jornal, cartaz, CD, tablet etc.).',
+    'Comunicar-se mesmo antes de falar por meios de gestos, balbucios, sorrisos, choros, birras, etc.',
+    'Divertir-se nos espaços do faz de conta, explorando brinquedos, livros, fantasias e objetos diferenciados.',
+    'Brincar com materiais naturais (água, tocos, terra, areia, argila, pedras, folhas) e utensílios produzidos com materiais como colheres de pau, panelas, chaleiras, latas, pneus, madeira.',
+  ]},
+  { campo: 'Espaços, Tempos, Quantidades, Relações e Transformações', indicadores: [
+    'Explorar e descobrir as propriedades de objetos e materiais (odor, cor, sabor, temperatura).',
+    'Explorar relações de causa e efeito (transbordar, tingir, misturar, mover e remover etc.) na interação com o mundo físico.',
+    'Explorar o ambiente pela ação e observação, manipulando, experimentando e fazendo descobertas.',
+    'Manipular, experimentar, arrumar e explorar o espaço por meio de experiências de deslocamentos de si e dos objetos.',
+    'Manipular materiais diversos e variados para comparar as diferenças e semelhanças entre eles.',
+    'Vivenciar diferentes ritmos, velocidades e fluxos nas interações e brincadeiras (em danças, balanços, escorregadores etc.).',
+    'Participar de brincadeiras que envolvam obstáculos passando por cima, ao lado ou removendo-os, para alcançar um brinquedo desejado.',
+    'Brincar com objetos variados, em grupos ou individualmente, encaixando, montando, desmontando, esvaziando, enchendo, identificando assim pequenas características.',
+    'Participar de brincadeiras em espaços internos e externos e ao ar livre, em contato com a natureza (embaixo de árvores, campos) por um tempo significativo.',
+  ]},
+  { campo: 'Culturas Regionais', indicadores: [
+    'Vivenciar as culturas das infâncias nos diversos espaços e tempos do brincar e aprender.',
+    'Possibilitar o acolhimento e a individualidade na construção da identidade cultural.',
+    'Promover a interlocução da família para potencializar as experiências e identidade das crianças.',
+    'Conhecer e valorizar as tradições culturais da família, da escola e da cidade.',
+    'Possibilitar o conhecimento de mundo através da cultura do brincar.',
+  ]},
+];
+
+const FICHA_GRUPO2 = [
+  { campo: 'O Eu, o Outro e o Nós', indicadores: [
+    'Demonstrar atitudes de cuidado e solidariedade na interação com crianças e adultos.',
+    'Demonstrar imagem positiva de si e confiança em sua capacidade para enfrentar dificuldades e desafios.',
+    'Compartilhar os objetos e os espaços com crianças da mesma faixa etária e adultos.',
+    'Comunicar-se com os colegas e os adultos, buscando compreendê-los e fazendo-se compreender.',
+    'Perceber que as pessoas têm características físicas diferentes e respeitar essas diferenças.',
+    'Respeitar regras básicas de convívio social nas interações e brincadeiras.',
+    'Resolver conflitos nas interações e brincadeiras, com a orientação de um adulto.',
+    'Demonstrar senso de autocuidado, de reciprocidade, solidariedade, empatia e de interdependência com o meio.',
+    'Reconhecer outros grupos sociais e culturais, outros modos de vida, diferentes atitudes, técnicas e rituais de cuidados pessoais e do grupo, costumes, celebrações e narrativas, estabelecendo vínculos de afetividade.',
+    'Agir com progressiva autonomia diante do cuidado com o corpo executando ações simples, relacionadas à saúde.',
+    'Perceber as diferenças e semelhanças entre os participantes de seu grupo e reconhecer as próprias características e potencialidades, a partir dos recursos afetivos e sociais que lhe forem oferecidos.',
+    'Reconhecer-se nos brinquedos que lhe são oferecidos e na organização dos espaços escolares.',
+    'Identificar as relações de parentesco, sua organização e os modos de ser de outros grupos sociais, respeitando a especificidade de compreensão própria da idade.',
+    'Possibilitar que cada criança construa o seu modo próprio de agir, sentir e pensar.',
+  ]},
+  { campo: 'Corpo, Gestos e Movimentos', indicadores: [
+    'Apropriar-se de gestos e movimentos de sua cultura no cuidado de si e nos jogos e brincadeiras.',
+    'Deslocar seu corpo no espaço, orientando-se por noções, como em frente, atrás, no alto, embaixo, dentro, fora etc., ao se envolver em brincadeiras e atividades de diferentes naturezas.',
+    'Explorar formas de deslocamento no espaço (pular, saltar, dançar), combinando movimentos e seguindo orientações.',
+    'Demonstrar progressiva independência no cuidado do corpo.',
+    'Desenvolver progressivamente as habilidades manuais, adquirindo controle para desenhar, pintar, rasgar, folhear, entre outros.',
+    'Desenvolver por meio das diferentes linguagens, como a música, a dança, o teatro, as brincadeiras de faz de conta, o entrelaçamento entre corpo, emoção e linguagem.',
+    'Apropriar-se das possibilidades expressivas do próprio movimento, utilizando gestos diversos e do ritmo corporal, cuidado de si e do outro nas suas brincadeiras, danças, jogos e demais situações de interação.',
+    'Apropriar-se de jogos e brincadeiras da cultura popular, afro-brasileira, africana, indígena e cigana.',
+    'Controlar gradualmente o próprio movimento, aperfeiçoando seus recursos de deslocamento e ajustando suas habilidades motoras para a utilização em jogos, brincadeiras, danças e demais situações.',
+    'Identificar situações de risco no ambiente adotando hábitos de autocuidado, valorizando as atitudes relacionadas com a higiene, alimentação, conforto, segurança, proteção e cuidados com o corpo.',
+  ]},
+  { campo: 'Traços, Sons, Cores e Formas', indicadores: [
+    'Criar sons com materiais, objetos e instrumentos musicais, para acompanhar diversos ritmos de música.',
+    'Utilizar materiais variados com possibilidades de manipulação (argila, massa de modelar), explorando cores, texturas, superfícies, planos, formas e volumes ao criar objetos tridimensionais.',
+    'Utilizar diferentes fontes sonoras disponíveis no ambiente em brincadeiras cantadas, canções, músicas e melodias.',
+    'Conviver com diferentes manifestações artísticas, culturais e científicas, locais e universais.',
+    'Expressar-se através da autoria coletiva e individual com sons, traços, gestos, danças, mímicas, encenações, canções, desenhos, modelagens, manipulação de diversos materiais e de recursos tecnológicos.',
+    'Utilizar o senso estético, da sensibilidade, da criatividade e da expressão pessoal.',
+    'Utilizar em suas brincadeiras objetos construídos com materiais não estruturados como garrafas de plástico, pedrinhas, folhas, pedaços de madeira, argila, areia, etc.',
+    'Familiarizar-se com a escrita por meio do manuseio de livros, revistas e outros portadores de textos e da vivência de diversas situações nas quais seu uso se faça necessário.',
+  ]},
+  { campo: 'Escuta, Fala, Pensamento e Imaginação', indicadores: [
+    'Dialogar com crianças e adultos, expressando desejos, necessidades, sentimentos e opiniões.',
+    'Identificar e criar diferentes sons e reconhecer rimas e aliterações em cantigas de roda e textos poéticos.',
+    'Demonstrar interesse e atenção ao ouvir a leitura de histórias e outros textos, diferenciando escrita de ilustrações e acompanhando, com orientação do adulto-leitor, a direção da leitura (de cima para baixo, da esquerda para a direita).',
+    'Formular e responder perguntas sobre fatos da história narrada, identificando cenários, personagens e principais acontecimentos.',
+    'Relatar experiências e fatos acontecidos, histórias ouvidas, filmes ou peças teatrais assistidos etc.',
+    'Criar e contar histórias oralmente, com base em imagens ou temas sugeridos.',
+    'Manusear diferentes portadores textuais, demonstrando reconhecer seus usos sociais.',
+    'Manipular textos e participar de situações de escuta para ampliar seu contato com diferentes gêneros textuais (parlendas, histórias de aventura, tirinhas, cartazes de sala, cardápios, notícias etc.).',
+    'Manusear diferentes instrumentos e suportes de escrita para desenhar, traçar letras e outros sinais gráficos.',
+  ]},
+  { campo: 'Espaços, Tempos, Quantidades, Relações e Transformações', indicadores: [
+    'Explorar e descrever semelhanças e diferenças entre as características e propriedades dos objetos (textura, massa, tamanho).',
+    'Observar, relatar e descrever incidentes do cotidiano e fenômenos naturais (luz solar, vento, chuva etc.).',
+    'Compartilhar, com outras crianças, situações de cuidado de plantas e animais nos espaços da instituição e fora deles.',
+    'Identificar relações espaciais (dentro e fora, em cima, embaixo, acima, abaixo, entre e do lado) e temporais (antes, durante e depois).',
+    'Classificar objetos considerando determinado atributo (tamanho, peso, cor, forma etc.).',
+    'Utilizar conceitos básicos de tempo (agora, antes, durante, depois, ontem, hoje, amanhã, lento, rápido, depressa, devagar).',
+    'Contar oralmente objetos, pessoas, livros etc. em contextos diversos.',
+    'Registrar com números a quantidade de crianças (meninas e meninos, presentes e ausentes) e a quantidade de objetos da mesma natureza (bonecas, bolas, livros etc.).',
+    'Observar, descrever e desenvolver atitudes de manutenção, respeito e cuidado com os animais, plantas, paisagem local e todos os elementos que fazem parte da sua vivência.',
+    'Observar e lidar com transformações decorrentes de misturas de elementos e materiais.',
+    'Representar os lugares onde vive e se relaciona, utilizando diferentes linguagens.',
+    'Analisar situações-problema do seu cotidiano e levantar hipóteses para solucioná-las.',
+  ]},
+  { campo: 'Culturas Regionais', indicadores: [
+    'Pesquisar e vivenciar as culturas das infâncias nos diversos espaços e tempos do brincar e aprender.',
+    'Perceber-se como ser integrante da cultura no meio em que está inserido.',
+    'Experienciar o mundo através da cultura do brincar.',
+    'Interagir com outras turmas em diversos momentos do cotidiano escolar.',
+    'Valorizar a cultura local e regional a partir das vivências do grupo familiar e da escola.',
+    'Proporcionar experiências culturais da cidade de Porto Seguro – BA.',
+    'Conhecer e valorizar a diversidade cultural.',
+  ]},
+];
+
+const FICHA_GRUPO3 = [
+  { campo: 'O Eu, o Outro e o Nós', indicadores: [
+    'Demonstrar empatia pelos outros, percebendo que as pessoas têm diferentes sentimentos, necessidades e maneiras de pensar e agir.',
+    'Agir de maneira independente, com confiança em suas capacidades, reconhecendo suas conquistas e limitações.',
+    'Ampliar as relações interpessoais, desenvolvendo atitudes de participação e cooperação.',
+    'Comunicar suas ideias e sentimentos a pessoas e grupos diversos.',
+    'Demonstrar valorização das características de seu corpo e respeitar as características dos outros (crianças e adultos) com os quais convive.',
+    'Manifestar interesse e respeito por diferentes culturas e modos de vida.',
+    'Usar estratégias pautadas no respeito mútuo para lidar com conflitos nas interações com crianças e adultos.',
+    'Manter senso de autocuidado, de reciprocidade, solidariedade, empatia e de interdependência com o meio.',
+    'Respeitar e reconhecer outros grupos sociais e culturais, outros modos de vida, diferentes atitudes, técnicas e rituais de cuidados pessoais e do grupo, costumes, celebrações e narrativas.',
+    'Agir com autonomia diante do cuidado com o corpo executando ações simples, relacionadas à saúde.',
+    'Possibilitar que cada criança construa o seu modo próprio de agir, sentir e pensar.',
+    'Ter uma autoimagem positiva, ampliando a sua autoconfiança e identificando suas reais possibilidades e limitações.',
+    'Conhecer as tradições culturais e valores de sua família e da comunidade local e regional, identificando o seu pertencimento aos diversos grupos dos quais participam, respeitando suas regras básicas de convívio social e a diversidade que os compõe.',
+    'Construir formas de interação e criatividade com respeito aos brinquedos que lhe são oferecidos e na organização dos espaços escolares.',
+    'Identificar e enfrentar situações de conflito, utilizando seus recursos pessoais, respeitando as outras crianças, exigindo reciprocidade, desenvolvendo atitudes de ajuda e colaboração.',
+    'Respeitar as tradições culturais, os diferentes modos de pensar, agir e sentir, demonstrando respeito às diferenças individuais, aprendendo a conviver, ser e estar.',
+    'Reconhecer papéis sociais existentes em seu grupo de convívio, levando a criança a perceber que uma mesma pessoa detém papéis sociais diferentes.',
+  ]},
+  { campo: 'Corpo, Gestos e Movimentos', indicadores: [
+    'Conhecer a multiplicidade de funções e manifestações motoras e criar, com o corpo, formas diversificadas de expressão de sentimentos, sensações e emoções tanto nas situações do cotidiano quanto em brincadeiras, dança, teatro e música.',
+    'Demonstrar controle e adequação do uso de seu corpo em brincadeiras e jogos, escuta e reconto de histórias, atividades artísticas, entre outras possibilidades.',
+    'Criar movimentos, gestos, olhares e mímicas em brincadeiras, jogos e atividades artísticas, como dança, teatro e música.',
+    'Adotar hábitos de autocuidado relacionados a higiene, alimentação, conforto e aparência.',
+    'Coordenar suas habilidades manuais no atendimento adequado a seus interesses e necessidades em situações diversas.',
+    'Explorar diferentes qualidades e dinâmicas do movimento, como força, velocidade, resistência e flexibilidade, conhecendo gradativamente os limites e as potencialidades de seu corpo.',
+    'Demonstrar valorização pelas brincadeiras e jogos da cultura popular, afro-brasileira, africana e indígena, compreendendo e aplicando os princípios de cordialidade e respeito na relação com os colegas e professor.',
+    'Definir a própria dominância lateral a partir das brincadeiras.',
+    'Apropriar-se progressivamente da imagem global do seu corpo, conhecendo e identificando seus segmentos e elementos, desenvolvendo cada vez mais uma atitude de interesse e cuidado com o próprio corpo.',
+  ]},
+  { campo: 'Traços, Sons, Cores e Formas', indicadores: [
+    'Utilizar sons produzidos por materiais, objetos e instrumentos musicais durante brincadeiras de faz de conta, encenações, criações musicais e festas.',
+    'Expressar-se livremente por meio de desenho, pintura, colagem, dobradura e escultura, criando produções bidimensionais e tridimensionais.',
+    'Reconhecer as qualidades do som (intensidade, duração, altura e timbre), utilizando-as em suas produções sonoras e ao ouvir músicas e sons.',
+    'Apreciar e participar de diferentes manifestações artísticas, culturais e científicas, locais e universais.',
+    'Identificar as diversas formas de expressão e linguagens, como artes visuais, pintura, modelagem, desenho, escultura, dobradura, colagem, fotografia, música, teatro, dança e audiovisual.',
+    'Exercitar a autoria coletiva e individual com sons, traços, gestos, danças, mímicas, encenações, canções, desenhos, modelagens, manipulação de diversos materiais e de recursos tecnológicos.',
+    'Desenvolver o senso estético, da sensibilidade, da criatividade, da expressão e da comunicação.',
+    'Reconhecer e ampliar as possibilidades de interação com os diferentes brinquedos não estruturados.',
+    'Ter interesse, cuidado e respeito por suas próprias produções e as dos colegas.',
+    'Reconhecer as artes visuais como um meio de comunicação, expressão e construção de conhecimento, admitindo as expressões artísticas como forma de registro social.',
+    'Expressar-se de forma espontânea, produzindo pequenos textos coletivamente utilizando o conhecimento de que dispõe sobre o sistema de escrita.',
+  ]},
+  { campo: 'Escuta, Fala, Pensamento e Imaginação', indicadores: [
+    'Expressar ideias, desejos e sentimentos sobre suas vivências, por meio da linguagem oral e escrita (escrita espontânea), de fotos, desenhos e outras formas de expressão.',
+    'Inventar brincadeiras cantadas, poemas e canções, criando rimas, aliterações e ritmos.',
+    'Escolher e folhear livros, procurando orientar-se por temas e ilustrações e tentando identificar palavras conhecidas.',
+    'Recontar histórias ouvidas e planejar coletivamente roteiros de vídeos e de encenações, definindo os contextos, os personagens, a estrutura da história.',
+    'Recontar histórias ouvidas para produção de reconto escrito, tendo o professor como escriba.',
+    'Produzir suas próprias histórias orais e escritas (escrita espontânea) em situações com função social significativa.',
+    'Levantar hipóteses sobre gêneros textuais veiculados em portadores conhecidos, recorrendo a estratégias de observação gráfica e/ou de leitura.',
+    'Selecionar livros e textos de gêneros conhecidos para a leitura de um adulto e/ou para sua própria leitura (partindo de seu repertório sobre esses textos).',
+    'Levantar hipóteses em relação à linguagem escrita, realizando registros de palavras e textos por meio de escrita espontânea.',
+    'Ampliar gradativamente suas possibilidades de comunicação e expressão, interessando-se por conhecer vários gêneros orais e escritos, participando de diversas situações de intercâmbio social.',
+    'Transmitir informações, criar histórias, explicar e defender suas ideias.',
+    'Fazer pseudoleitura.',
+  ]},
+  { campo: 'Espaços, Tempos, Quantidades, Relações e Transformações', indicadores: [
+    'Estabelecer relações de comparação entre objetos, observando suas propriedades.',
+    'Observar e descrever mudanças em diferentes materiais, resultantes de ações sobre eles, em experimentos envolvendo fenômenos naturais e artificiais.',
+    'Identificar e selecionar fontes de informações para responder a questões sobre a natureza, seus fenômenos, sua conservação.',
+    'Classificar objetos e figuras de acordo com suas semelhanças e diferenças.',
+    'Relatar fatos importantes sobre seu nascimento e desenvolvimento, a história dos seus familiares e da sua comunidade.',
+    'Relacionar números às suas respectivas quantidades e identificar o antes, o depois e o entre em uma sequência.',
+    'Expressar medidas (peso, altura etc.), construindo gráficos básicos.',
+    'Conhecer e interpretar o ambiente, realizando comparações para desenvolver condições favoráveis ao pensamento lógico e matemático.',
+    'Reconhecer as relações de parentesco e sociais a partir das tradições, profissões, alimentação, culturas, etnia, costumes das pessoas que fazem parte do seu convívio.',
+    'Explorar e registrar os conhecimentos matemáticos através de jogos e brincadeiras que possibilitem contagem, ordenação, relações entre quantidades, dimensões, medidas, comparação de pesos e comprimentos, avaliação de distâncias, relação espacial, classificação de objetos e reconhecimento de formas geométricas.',
+    'Perceber os períodos da semana e do dia através das atividades de rotina.',
+    'Explorar e descrever o ambiente escolar e seu entorno, compreendendo a sua localização.',
+    'Resolver situações-problema do cotidiano, envolvendo as ideias de subtração, comparação, agrupamento, conceitos de parcelas iguais, classificação e seriação através de desenhos e objetos.',
+  ]},
+  { campo: 'Culturas Regionais', indicadores: [
+    'Conhecer outras manifestações artísticas, sociais e culturais.',
+    'Perceber-se como integrante da cultura no meio em que está inserido.',
+    'Vivenciar as culturas das infâncias nos diferentes espaços e tempos do brincar e aprender.',
+    'Interagir com outras turmas em diversos momentos do cotidiano escolar.',
+    'Participar da construção da identidade cultural de sua turma.',
+    'Experienciar a cultura escolar, local e regional, relacionando-as com a cultura das infâncias e das famílias.',
+    'Participar das manifestações culturais da escola e da cidade.',
+    'Respeitar a diversidade humana.',
+    'Experienciar e compreender o mundo através da cultura do brincar.',
+    'Conhecer os principais patrimônios culturais da cidade de Porto Seguro, de natureza material e imaterial.',
+  ]},
+];
+
+function getFichaParaTurma(tag) {
+  if (!tag) return null;
+  if (tag.includes('Berçário') || tag.match(/CN\s*I[^IV]/i) || tag.includes('CN I ') || tag.endsWith('CN I')) return FICHA_GRUPO1;
+  if (tag.includes('CN II') || tag.includes('CN III')) return FICHA_GRUPO2;
+  if (tag.includes('PN I') || tag.includes('PN II')) return FICHA_GRUPO3;
+  return null;
+}
+
 // ============ STATE ============
 let currentTurma = null;
 let currentTab = 'inicio';
 let modalTab = 'regular';
+let currentAluno = null;
+let fichaRespostas = {};
 
 // ============ INIT ============
 selectTurma(TURMAS_REGULAR[5]); // default: 2° ano A - Ed. Física
@@ -347,10 +724,220 @@ selectTurma(TURMAS_REGULAR[5]); // default: 2° ano A - Ed. Física
 // ============ SELECT TURMA ============
 function selectTurma(turma) {
   currentTurma = turma;
+  currentAluno = null;
+  document.getElementById('detalheBar').style.display = 'none';
+  document.getElementById('infoBar').style.display = '';
+  document.getElementById('tabsBar').style.display = '';
   currentTab = turma.tag ? 'criancas' : 'inicio';
   renderInfoBar();
   renderTabs();
   renderContent();
+}
+
+// ============ DETALHE ALUNO ============
+function openDetalheAluno(idx, source) {
+  const list = source === 'criancas' ? CRIANCAS_MOCK : ALUNOS_MOCK;
+  currentAluno = { ...list[idx], idx, source: source || 'alunos' };
+  if (!('status' in currentAluno)) currentAluno.status = 'Ativo';
+  if (!('ocorr' in currentAluno)) currentAluno.ocorr = 0;
+  document.getElementById('detalheBar').style.display = '';
+  document.getElementById('infoBar').style.display = 'none';
+  document.getElementById('tabsBar').style.display = 'none';
+  renderDetalheAluno();
+}
+
+function closeDetalheAluno() {
+  currentAluno = null;
+  document.getElementById('detalheBar').style.display = 'none';
+  document.getElementById('infoBar').style.display = '';
+  document.getElementById('tabsBar').style.display = '';
+  renderContent();
+}
+
+function renderDetalheAluno() {
+  const a = currentAluno;
+  const t = currentTurma;
+  const isInfantil = !!t.tag;
+  const turno = isInfantil ? t.turno.split('·')[0].trim() : t.turno;
+  const serie = isInfantil ? (t.tag || '') : '1° ano – Ensino Fundamental I';
+  const freqColor = a.freq >= 85 ? '#4caf50' : '#e0a020';
+  const el = document.getElementById('mainContent');
+
+  el.innerHTML = `
+    <div style="width:100%;display:flex;flex-direction:column;gap:16px;">
+      <div class="aluno-hd-card">
+        <div class="aluno-hd-avatar">${a.nome[0]}</div>
+        <div class="aluno-hd-body">
+          <div class="aluno-hd-name">${a.nome}</div>
+          <div class="aluno-hd-grid">
+            <span class="aluno-hd-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Status</span>
+            <span class="aluno-hd-value"><span class="badge-ativo" style="font-size:11px;padding:3px 14px;">${a.status}</span></span>
+            <span class="aluno-hd-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Turma</span>
+            <span class="aluno-hd-value">${t.nome}</span>
+            <span class="aluno-hd-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Instituição</span>
+            <span class="aluno-hd-value">${t.escola}</span>
+            <span class="aluno-hd-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Turno</span>
+            <span class="aluno-hd-value">${turno}</span>
+            <span class="aluno-hd-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Série</span>
+            <span class="aluno-hd-value">${serie}</span>
+          </div>
+        </div>
+        <div class="freq-circ-wrap">
+          <div class="freq-circ" style="background:${freqColor}">${a.freq}</div>
+          <div class="freq-circ-label">Frequência média geral (%)</div>
+        </div>
+      </div>
+
+      <div class="freq-hist-card">
+        <div class="freq-hist-top">
+          <div class="freq-hist-ttl">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2" width="16" height="16"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6" stroke-width="3"/><line x1="3" y1="12" x2="3.01" y2="12" stroke-width="3"/><line x1="3" y1="18" x2="3.01" y2="18" stroke-width="3"/></svg>
+            Histórico de frequência do mês
+          </div>
+          <select class="freq-month-sel"><option>Junho</option><option>Maio</option><option>Abril</option></select>
+        </div>
+        <div class="freq-days">
+          ${Array.from({length:30},(_,i)=>`
+            <div class="freq-day">
+              <span class="freq-day-n">${String(i+1).padStart(2,'0')}</span>
+              <div class="freq-day-d"></div>
+            </div>`).join('')}
+        </div>
+        <div class="freq-leg">
+          <div class="freq-leg-item"><div class="freq-leg-dot" style="background:#4caf50"></div>Presença</div>
+          <div class="freq-leg-item"><div class="freq-leg-dot" style="background:#ffc107"></div>Presença parcial</div>
+          <div class="freq-leg-item"><div class="freq-leg-dot" style="background:#f44336"></div>Falta</div>
+          <div class="freq-leg-item"><div class="freq-leg-dot" style="background:#e0e0e0"></div>Sem aula</div>
+          <div class="freq-media-txt">Frequência média do mês: <strong>${a.freq.toFixed(1)}%</strong></div>
+        </div>
+      </div>
+
+      <div class="det-bottom">
+        <div class="ocorr-card">
+          <div class="ocorr-ttl">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2" width="16" height="16"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Registro de ocorrências
+          </div>
+          <div class="ocorr-empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            <span class="ocorr-empty-txt">Nenhum registro encontrado</span>
+          </div>
+        </div>
+        <div class="acoes-col">
+          ${isInfantil && getFichaParaTurma(t.tag) ? `
+          <div class="acao-card" onclick="openFichaPanel()">
+            <div class="acao-info">
+              <div class="acao-ttl">Fichas de avaliação <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+              <div class="acao-desc">Preencha e edite as fichas de avaliação — Perfil de Desenvolvimento · Grupo I</div>
+            </div>
+            <div class="acao-img-wrap">
+              <svg viewBox="0 0 60 60" width="52" height="52">
+                <rect x="8" y="4" width="36" height="48" rx="3" fill="#f0a830"/>
+                <rect x="14" y="13" width="20" height="3" rx="1.5" fill="#fff"/>
+                <circle cx="11" cy="14.5" r="2" fill="#4caf50"/>
+                <rect x="14" y="20" width="24" height="2.5" rx="1.2" fill="#fff" opacity="0.75"/>
+                <circle cx="11" cy="21.2" r="2" fill="#4caf50"/>
+                <rect x="14" y="27" width="20" height="2.5" rx="1.2" fill="#fff" opacity="0.6"/>
+                <circle cx="11" cy="28.2" r="2" fill="#e0e0e0"/>
+                <rect x="14" y="34" width="16" height="2.5" rx="1.2" fill="#fff" opacity="0.5"/>
+                <circle cx="11" cy="35.2" r="2" fill="#e0e0e0"/>
+                <path d="M35 42 L48 29 L52 33 L39 46 Z" fill="#e53935"/>
+                <path d="M48 29 L52 33 L54 27 Z" fill="#b71c1c"/>
+              </svg>
+            </div>
+          </div>` : ''}
+          <div class="acao-card">
+            <div class="acao-info">
+              <div class="acao-ttl">Relatórios do aluno <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+              <div class="acao-desc">Preencha e edite os relatórios dos alunos dos anos iniciais do Ensino Fundamental I</div>
+            </div>
+            <div class="acao-img-wrap">
+              <svg viewBox="0 0 60 60" width="52" height="52">
+                <rect x="8" y="4" width="36" height="48" rx="3" fill="#90caf9"/>
+                <rect x="12" y="13" width="28" height="2.5" rx="1.2" fill="#333" opacity="0.4"/>
+                <rect x="12" y="19" width="24" height="2" rx="1" fill="#444" opacity="0.35"/>
+                <rect x="12" y="24" width="26" height="2" rx="1" fill="#444" opacity="0.35"/>
+                <rect x="12" y="29" width="22" height="2" rx="1" fill="#444" opacity="0.3"/>
+                <rect x="12" y="34" width="18" height="2" rx="1" fill="#444" opacity="0.25"/>
+                <path d="M36 42 L49 29 L53 33 L40 46 Z" fill="#ffd600"/>
+                <path d="M49 29 L53 33 L55 27 Z" fill="#f9a825"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ============ FICHA PANEL ============
+function openFichaPanel() {
+  document.getElementById('fichaOverlay').classList.add('open');
+  document.getElementById('fichaPanel').classList.add('open');
+  renderFichaPanel();
+}
+
+function closeFichaPanel() {
+  document.getElementById('fichaOverlay').classList.remove('open');
+  document.getElementById('fichaPanel').classList.remove('open');
+}
+
+let fichaCampoAtual = 0;
+
+function renderFichaPanel() {
+  const a = currentAluno;
+  const ficha = getFichaParaTurma(currentTurma.tag);
+  const grupo = ficha === FICHA_GRUPO2 ? 'Grupo II' : 'Grupo I';
+  document.getElementById('fichaPanelSub').textContent = a ? `${a.nome} — Perfil de Desenvolvimento · ${grupo}` : `Perfil de Desenvolvimento — ${grupo}`;
+  fichaCampoAtual = 0;
+  renderFichaCampo();
+}
+
+function renderFichaCampo() {
+  const a = currentAluno;
+  const si = fichaCampoAtual;
+  const fichaAtual = getFichaParaTurma(currentTurma.tag) || FICHA_GRUPO1;
+  const sec = fichaAtual[si];
+  const clsMap = ['s-sim','s-vezes','s-nao','s-ntrab'];
+  const labels = ['SIM','ÀS VEZES','AINDA NÃO','NÃO TRABALHADO'];
+  const opts = ['sim','as-vezes','ainda-nao','nao-trab'];
+
+  const selectHtml = `
+    <div style="margin-bottom:20px;">
+      <label style="font-size:11px;color:#aaa;display:block;margin-bottom:6px;">Campo de Experiência</label>
+      <select class="freq-month-sel" style="width:100%;padding:8px 12px;font-size:13px;border-radius:8px;color:#1e4db7;font-weight:600;border-color:#1e4db7;" onchange="fichaCampoAtual=parseInt(this.value);renderFichaCampo()">
+        ${fichaAtual.map((s, i) => `<option value="${i}"${i===si?' selected':''}>${s.campo}</option>`).join('')}
+      </select>
+    </div>`;
+
+  let indicHtml = '';
+  sec.indicadores.forEach((ind, ii) => {
+    const key = `${a ? a.idx : 0}-${si}-${ii}`;
+    const sel = fichaRespostas[key] || '';
+    indicHtml += `<div class="ficha-ind">
+      <div class="ficha-ind-txt">${ii+1}. ${ind}</div>
+      <div class="ficha-opts">
+        ${opts.map((opt, oi) => `<span class="ficha-opt${sel===opt?' '+clsMap[oi]:''}" onclick="toggleFichaOpt('${key}','${opt}',this,${oi})">${labels[oi]}</span>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('fichaPanelBody').innerHTML = selectHtml + indicHtml;
+}
+
+function toggleFichaOpt(key, opt, el, optIdx) {
+  const clsMap = ['s-sim','s-vezes','s-nao','s-ntrab'];
+  const container = el.closest('.ficha-opts');
+  container.querySelectorAll('.ficha-opt').forEach((btn, i) => btn.classList.remove(clsMap[i]));
+  if (fichaRespostas[key] === opt) {
+    delete fichaRespostas[key];
+  } else {
+    fichaRespostas[key] = opt;
+    el.classList.add(clsMap[optIdx]);
+  }
+}
+
+function saveFicha() {
+  closeFichaPanel();
 }
 
 function renderInfoBar() {
@@ -477,7 +1064,7 @@ function renderContent() {
             <span>Ocorrências</span>
             <span>Visualização</span>
           </div>
-          ${ALUNOS_MOCK.map(a => `
+          ${ALUNOS_MOCK.map((a, idx) => `
             <div class="aluno-row">
               <div class="aluno-name">
                 <div class="aluno-avatar">${a.nome[0]}</div>
@@ -486,22 +1073,26 @@ function renderContent() {
               <span><span class="${a.status === 'Ativo' ? 'badge-ativo' : 'badge-inativo'}">${a.status}</span></span>
               <span class="${a.freq >= 80 ? 'aluno-freq-val' : 'aluno-freq-warn'}">${a.freq.toFixed(1).replace('.',',')}%</span>
               <span class="aluno-ocorr">${a.ocorr}</span>
-              <span><button class="ver-detalhes-btn">Ver detalhes ↗</button></span>
+              <span><button class="ver-detalhes-btn" onclick="openDetalheAluno(${idx})">Ver detalhes ↗</button></span>
             </div>`).join('')}
         </div>
       </div>`;
   } else if (currentTab === 'criancas') {
+    const temFicha = t.tag && !!getFichaParaTurma(t.tag);
     el.innerHTML = `
-      <div class="content-main">
-        <div class="alunos-list">
-          <div class="alunos-header" style="grid-template-columns:1fr auto;"><span>Criança</span><span>Frequência</span></div>
-          ${CRIANCAS_MOCK.map(a => `
-            <div class="aluno-row" style="grid-template-columns:1fr auto;">
+      <div style="width:100%">
+        <div class="alunos-table">
+          <div class="alunos-header" style="grid-template-columns:1fr 120px ${temFicha ? '150px' : ''};">
+            <span>Criança</span><span>Frequência</span>${temFicha ? '<span>Visualização</span>' : ''}
+          </div>
+          ${CRIANCAS_MOCK.map((a, idx) => `
+            <div class="aluno-row" style="grid-template-columns:1fr 120px ${temFicha ? '150px' : ''};">
               <div class="aluno-name">
                 <div class="aluno-avatar">${a.nome.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
                 ${a.nome}
               </div>
-              <span class="aluno-freq ${a.freq >= 85 ? 'freq-ok' : 'freq-warn'}">${a.freq}%</span>
+              <span class="${a.freq >= 85 ? 'aluno-freq-val' : 'aluno-freq-warn'}">${a.freq}%</span>
+              ${temFicha ? `<span><button class="ver-detalhes-btn" onclick="openDetalheAluno(${idx},'criancas')">Ver detalhes ↗</button></span>` : ''}
             </div>`).join('')}
         </div>
       </div>`;
