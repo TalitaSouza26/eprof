@@ -162,6 +162,49 @@
     .criar-option-title { font-size: 15px; font-weight: 700; color: #222; }
     .criar-option-desc { font-size: 12px; color: #aaa; line-height: 1.5; }
 
+    /* MODAL SEMANAL */
+    .modal-semanal { background: #fff; border-radius: 16px; width: 660px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal-semanal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; }
+    .modal-semanal-info { background: #eef2fb; border-radius: 10px; padding: 14px 16px; margin: 0 24px; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #1e4db7; line-height: 1.5; }
+    .modal-semanal-info svg { flex-shrink: 0; margin-top: 1px; }
+    .modal-semanal-dias { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 20px 24px; }
+    .modal-dia-card { border: 1px solid #e8eef8; border-radius: 12px; padding: 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; background: #fff; }
+    .modal-dia-label { font-size: 10px; font-weight: 700; color: #aaa; letter-spacing: 0.8px; text-transform: uppercase; }
+    .modal-dia-num { font-size: 28px; font-weight: 700; color: #222; line-height: 1.1; }
+    .modal-dia-mes { font-size: 12px; color: #aaa; }
+    .modal-dia-hora { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #aaa; margin-top: 4px; }
+    .modal-semanal-footer { padding: 0 24px 24px; }
+    .btn-concluido { width: 100%; background: #1e4db7; color: #fff; border: none; border-radius: 10px; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; }
+    .btn-concluido:hover { background: #1840a0; }
+
+    /* MODAL CRIAR PLANO (formulário) */
+    .modal-form { background: #fff; border-radius: 16px; width: 580px; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal-form-header { padding: 22px 24px 16px; border-bottom: 1px solid #f0f0f0; }
+    .modal-form-title { font-size: 18px; font-weight: 700; color: #222; }
+    .modal-form-sub { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #aaa; margin-top: 4px; }
+    .modal-form-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 18px; }
+    .form-label { font-size: 13px; font-weight: 600; color: #1e4db7; margin-bottom: 6px; display: block; }
+    .form-input { width: 100%; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #333; outline: none; font-family: inherit; transition: border-color 0.15s; }
+    .form-input:focus { border-color: #1e4db7; }
+    .form-input::placeholder { color: #bbb; }
+    .form-textarea { width: 100%; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #333; outline: none; font-family: inherit; resize: vertical; min-height: 90px; transition: border-color 0.15s; }
+    .form-textarea:focus { border-color: #1e4db7; }
+    .form-textarea::placeholder { color: #bbb; }
+    .form-select { width: 100%; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #555; outline: none; font-family: inherit; background: #fff; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; cursor: pointer; }
+    .campos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .campo-card { border: 1.5px solid #eee; border-radius: 12px; padding: 16px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; }
+    .campo-card:hover { border-color: #1e4db7; background: #f5f8ff; }
+    .campo-card.selected { border-color: #1e4db7; background: #eef2fb; }
+    .campo-card .campo-emoji { font-size: 28px; line-height: 1; }
+    .campo-card .campo-nome { font-size: 11px; color: #555; line-height: 1.3; }
+    .campo-card.selected .campo-nome { color: #1e4db7; font-weight: 600; }
+    .visib-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .visib-btn { border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; transition: border-color 0.15s, color 0.15s; background: #fff; }
+    .visib-btn.selected { border-color: #1e4db7; color: #1e4db7; }
+    .modal-form-footer { padding: 0 24px 24px; }
+    .btn-criar-plano { width: 100%; background: #f26522; color: #fff; border: none; border-radius: 10px; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; }
+    .btn-criar-plano:hover { background: #e05010; }
+
     /* filter active state */
     .filter-disc.active { border-color: #f26522; }
     .filter-disc-item-selected { color: #f26522; font-weight: 600; }
@@ -267,20 +310,209 @@
       <button onclick="closeModal()" style="background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;line-height:1;">×</button>
     </div>
     <div class="modal-criar-body">
-      <div class="criar-option" onclick="closeModal()">
+      <div class="criar-option" onclick="abrirFormPlanoIndividual()">
         <div class="criar-option-icon" id="iconIA">
           <svg id="iconIASvg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         </div>
         <div class="criar-option-title">Criar com IA</div>
         <div class="criar-option-desc">Deixe a inteligência artificial te ajudar a criar um plano de aula completo e personalizado</div>
       </div>
-      <div class="criar-option" onclick="closeModal()">
+      <div class="criar-option" onclick="abrirFormPlanoIndividual()">
         <div class="criar-option-icon" id="iconManual">
           <svg id="iconManualSvg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </div>
         <div class="criar-option-title">Criar manualmente</div>
         <div class="criar-option-desc">Crie seu plano de aula do zero com total controle sobre cada detalhe</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Criar plano semanal -->
+<div class="modal-overlay hidden" id="modalSemanal" onclick="if(event.target===this)document.getElementById('modalSemanal').classList.add('hidden')">
+  <div class="modal-semanal">
+    <div class="modal-semanal-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#222;">Criar plano semanal</div>
+          <div style="font-size:12px;color:#aaa;">Turma Girassol · CN III · Grupo 2</div>
+        </div>
+      </div>
+      <button onclick="document.getElementById('modalSemanal').classList.add('hidden')" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="modal-semanal-info">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Estes são os seus <strong>próximos dias de aula disponíveis para planejamento, definidos pela coordenação.</strong> Ao concluir, você poderá adicionar o plano de cada dia individualmente.</span>
+    </div>
+    <div class="modal-semanal-dias">
+      <div class="modal-dia-card">
+        <div class="modal-dia-label">SEGUNDA</div>
+        <div class="modal-dia-num">01</div>
+        <div class="modal-dia-mes">Junho 2026</div>
+        <div class="modal-dia-hora"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>13:00 – 17:00</div>
+      </div>
+      <div class="modal-dia-card">
+        <div class="modal-dia-label">TERÇA</div>
+        <div class="modal-dia-num">02</div>
+        <div class="modal-dia-mes">Junho 2026</div>
+        <div class="modal-dia-hora"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>13:00 – 17:00</div>
+      </div>
+      <div class="modal-dia-card">
+        <div class="modal-dia-label">QUARTA</div>
+        <div class="modal-dia-num">03</div>
+        <div class="modal-dia-mes">Junho 2026</div>
+        <div class="modal-dia-hora"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>13:00 – 17:00</div>
+      </div>
+      <div class="modal-dia-card">
+        <div class="modal-dia-label">QUINTA</div>
+        <div class="modal-dia-num">04</div>
+        <div class="modal-dia-mes">Junho 2026</div>
+        <div class="modal-dia-hora"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>13:00 – 17:00</div>
+      </div>
+      <div class="modal-dia-card">
+        <div class="modal-dia-label">SEXTA</div>
+        <div class="modal-dia-num">05</div>
+        <div class="modal-dia-mes">Junho 2026</div>
+        <div class="modal-dia-hora"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>13:00 – 17:00</div>
+      </div>
+    </div>
+    <div class="modal-semanal-footer">
+      <button class="btn-concluido" onclick="concluirSemanal()">Concluído — ir para planejamento &rsaquo;</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: IA ou Manual (Adicionar plano semanal) -->
+<div class="modal-overlay hidden" id="modalIaManual" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-criar" style="--tipo-color:#1e4db7;--tipo-shadow:rgba(30,77,183,0.12);--tipo-icon-bg:#eef0fb;">
+    <div class="modal-criar-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;background:#eef0fb;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#222;" id="iaManualDia"></div>
+          <div style="font-size:12px;color:#aaa;">Como você deseja criar seu plano de aula?</div>
+        </div>
+      </div>
+      <button onclick="document.getElementById('modalIaManual').classList.add('hidden')" style="background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="modal-criar-body">
+      <div class="criar-option" onclick="abrirFormPlano()" style="--tipo-color:#1e4db7;--tipo-shadow:rgba(30,77,183,0.12);--tipo-icon-bg:#eef0fb;">
+        <div class="criar-option-icon" style="background:#eef0fb;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </div>
+        <div class="criar-option-title">Criar com IA</div>
+        <div class="criar-option-desc">Deixe a inteligência artificial te ajudar a criar um plano completo e personalizado</div>
+      </div>
+      <div class="criar-option" onclick="abrirFormPlano()" style="--tipo-color:#1e4db7;--tipo-shadow:rgba(30,77,183,0.12);--tipo-icon-bg:#eef0fb;">
+        <div class="criar-option-icon" style="background:#eef0fb;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <div class="criar-option-title">Criar manualmente</div>
+        <div class="criar-option-desc">Crie seu plano do zero com total controle sobre cada detalhe</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Criar Plano de Aula (formulário) -->
+<div class="modal-overlay hidden" id="modalFormPlano" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-form">
+    <div class="modal-form-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="modal-form-title">Criar Plano de Aula</div>
+          <div class="modal-form-sub">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="formPlanoData">Terça, 27 de maio de 2026</span>
+          </div>
+        </div>
+        <button onclick="document.getElementById('modalFormPlano').classList.add('hidden')" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;margin-top:-4px;">×</button>
+      </div>
+    </div>
+    <div class="modal-form-body">
+      <!-- Título -->
+      <div>
+        <label class="form-label">Título do plano</label>
+        <input class="form-input" type="text" placeholder="Ex: Brincando com o corpo" />
+      </div>
+      <!-- Campos de Experiência -->
+      <div>
+        <label class="form-label">Campos de Experiência</label>
+        <div class="campos-grid">
+          <div class="campo-card" onclick="toggleCampo(this)">
+            <span class="campo-emoji">🏃</span>
+            <span class="campo-nome">Corpo, gestos e movimentos</span>
+          </div>
+          <div class="campo-card" onclick="toggleCampo(this)">
+            <span class="campo-emoji">👥</span>
+            <span class="campo-nome">O eu, o outro e o nós</span>
+          </div>
+          <div class="campo-card" onclick="toggleCampo(this)">
+            <span class="campo-emoji">🎨</span>
+            <span class="campo-nome">Traços, sons, cores e formas</span>
+          </div>
+          <div class="campo-card" onclick="toggleCampo(this)">
+            <span class="campo-emoji">💬</span>
+            <span class="campo-nome">Escuta, fala, pensamentos e imaginação</span>
+          </div>
+          <div class="campo-card" onclick="toggleCampo(this)">
+            <span class="campo-emoji">🔢</span>
+            <span class="campo-nome">Espaços, tempos, quantidades, relações, transformações</span>
+          </div>
+          <div class="campo-card" onclick="toggleCampo(this)">
+            <span class="campo-emoji">🌍</span>
+            <span class="campo-nome">Culturas Regionais</span>
+          </div>
+        </div>
+      </div>
+      <!-- Tema -->
+      <div>
+        <label class="form-label">Tema</label>
+        <input class="form-input" type="text" placeholder="Ex: Conhecendo meu corpo" />
+      </div>
+      <!-- Metodologia -->
+      <div>
+        <label class="form-label">Metodologia</label>
+        <select class="form-select">
+          <option value="">Selecione uma metodologia</option>
+          <option>Metodologia Ativa</option>
+          <option>Expositiva</option>
+          <option>Modelo 5E</option>
+          <option>Socioemocional</option>
+          <option>Técnica</option>
+          <option>Projetos</option>
+        </select>
+      </div>
+      <!-- Recursos didáticos -->
+      <div>
+        <label class="form-label">Recursos didáticos</label>
+        <textarea class="form-textarea" placeholder="Descreva os materiais e recursos necessários"></textarea>
+      </div>
+      <!-- Visibilidade -->
+      <div>
+        <label class="form-label">Visibilidade</label>
+        <div class="visib-group">
+          <div class="visib-btn selected" id="visibPublico" onclick="selectVisib('publico')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Público
+          </div>
+          <div class="visib-btn" id="visibPrivado" onclick="selectVisib('privado')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Privado
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-form-footer">
+      <button class="btn-criar-plano" onclick="document.getElementById('modalFormPlano').classList.add('hidden')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Criar plano de aula
+      </button>
     </div>
   </div>
 </div>
@@ -314,8 +546,16 @@ const PLANOS_SEMANAL = {
     },
     {
       titulo: 'Semana de 01 a 05 de junho de 2026',
+      total: 5, criados: 0,
       bloqueada: true,
-      subtitulo: 'Esta semana estará disponível após a conclusão da semana anterior'
+      subtitulo: 'Esta semana estará disponível após a conclusão da semana anterior',
+      dias: [
+        { label:'SEGUNDA', num:'01', plano: null },
+        { label:'TERÇA',   num:'02', plano: null },
+        { label:'QUARTA',  num:'03', plano: null },
+        { label:'QUINTA',  num:'04', plano: null },
+        { label:'SEXTA',   num:'05', plano: null },
+      ]
     }
   ]
 };
@@ -403,6 +643,7 @@ function renderSemanal(el) {
           ${s.dias.map(d => `
             <div class="dia-col">
               <div class="dia-col-label">${d.label}</div>
+              <div class="dia-col-num">${d.num}</div>
               ${d.plano ? `
               <div class="plan-card-sm">
                 <div class="plan-card-preview">
@@ -436,7 +677,13 @@ function renderSemanal(el) {
                     </div>
                   </div>
                 </div>
-              </div>` : ''}
+              </div>` : `
+              <div onclick="abrirAdicionarPlano('${d.label}','${d.num}','${s.mes || 'maio'}')" style="border:1.5px dashed #c8d8f0;border-radius:10px;padding:24px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;margin-top:2px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:#e8eefa;display:flex;align-items:center;justify-content:center;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <span style="font-size:11px;color:#1e4db7;font-weight:600;">Adicionar plano</span>
+              </div>`}
             </div>`).join('')}
         </div>
       </div>`;
@@ -525,13 +772,57 @@ function filterPlans() { if (tipoAtual === 'individual') render(); }
 
 // ======== MODAL CRIAR ========
 function openCriarModal() {
-  document.getElementById('modalCriar').classList.remove('hidden');
+  if (tipoAtual === 'semanal') {
+    document.getElementById('modalSemanal').classList.remove('hidden');
+  } else {
+    document.getElementById('modalCriar').classList.remove('hidden');
+  }
 }
 function closeModal() {
   document.getElementById('modalCriar').classList.add('hidden');
+  document.getElementById('modalSemanal').classList.add('hidden');
 }
 function handleOverlayClick(e) {
   if (e.target === document.getElementById('modalCriar')) closeModal();
+}
+function concluirSemanal() {
+  document.getElementById('modalSemanal').classList.add('hidden');
+  PLANOS_SEMANAL.semanas[1].bloqueada = false;
+  render();
+}
+
+// ======== ADICIONAR PLANO ========
+const DIAS_NOMES = ['SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA'];
+const DIAS_FULL  = ['Segunda','Terça','Quarta','Quinta','Sexta'];
+let _diaAtual = null;
+
+function abrirFormPlanoIndividual() {
+  document.getElementById('modalCriar').classList.add('hidden');
+  document.getElementById('formPlanoData').textContent = 'Plano Individual';
+  document.getElementById('modalFormPlano').classList.remove('hidden');
+}
+
+function abrirAdicionarPlano(label, num, mes) {
+  _diaAtual = { label, num, mes };
+  const nomeDia = DIAS_FULL[DIAS_NOMES.indexOf(label)] || label;
+  document.getElementById('iaManualDia').textContent = `${nomeDia}, ${num} de ${mes} de 2026`;
+  document.getElementById('modalIaManual').classList.remove('hidden');
+}
+
+function abrirFormPlano() {
+  document.getElementById('modalIaManual').classList.add('hidden');
+  if (_diaAtual) {
+    const nomeDia = DIAS_FULL[DIAS_NOMES.indexOf(_diaAtual.label)] || _diaAtual.label;
+    document.getElementById('formPlanoData').textContent = `${nomeDia}, ${_diaAtual.num} de ${_diaAtual.mes} de 2026`;
+  }
+  document.getElementById('modalFormPlano').classList.remove('hidden');
+}
+
+function toggleCampo(el) { el.classList.toggle('selected'); }
+
+function selectVisib(v) {
+  document.getElementById('visibPublico').classList.toggle('selected', v === 'publico');
+  document.getElementById('visibPrivado').classList.toggle('selected', v === 'privado');
 }
 
 // close all dropdowns on outside click
