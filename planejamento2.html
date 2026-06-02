@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eProf - Todos os Planos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; display: flex; height: 100vh; overflow: hidden; font-size: 13px; color: #333; }
+
+    /* SIDEBAR */
+    .sidebar { width: 180px; min-width: 180px; background: #fff; display: flex; flex-direction: column; border-right: 1px solid #eee; padding-bottom: 12px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; padding: 16px 16px 12px; border-bottom: 1px solid #f0f0f0; }
+    .logo-icon { width: 36px; height: 36px; background: #f26522; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; }
+    .logo-text .eprof { font-weight: 700; font-size: 14px; color: #f26522; }
+    .logo-badge { background: #f26522; color: #fff; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-top: 1px; width: fit-content; }
+    .nav { flex: 1; padding: 8px 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; color: #666; cursor: pointer; font-size: 13px; transition: background 0.15s; text-decoration: none; }
+    .nav-item:hover { background: #fef5f0; color: #f26522; }
+    .nav-item.active { background: #fef5f0; color: #f26522; font-weight: 600; border-right: 3px solid #f26522; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-bottom { padding: 8px 16px; border-top: 1px solid #f0f0f0; }
+    .logout { display: flex; align-items: center; gap: 8px; color: #888; cursor: pointer; font-size: 13px; padding: 6px 0; }
+    .logout:hover { color: #f26522; }
+
+    /* MAIN */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* TOPBAR */
+    .topbar { background: #fff; border-bottom: 1px solid #eee; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-title { font-size: 17px; font-weight: 700; color: #222; }
+    .topbar-sub { font-size: 12px; color: #888; margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #f26522; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; }
+    .user-name { font-weight: 600; font-size: 13px; color: #222; text-align: right; }
+    .user-role { font-size: 11px; color: #888; text-align: right; }
+
+    /* FILTER BAR */
+    .filter-bar { background: #fff; border-bottom: 1px solid #eee; padding: 12px 24px; display: flex; align-items: center; gap: 12px; }
+    .search-input { display: flex; align-items: center; gap: 8px; border: 1px solid #e0e0e0; border-radius: 20px; padding: 7px 16px; flex: 1; background: #fff; }
+    .search-input svg { width: 15px; height: 15px; color: #aaa; flex-shrink: 0; }
+    .search-input input { border: none; outline: none; font-size: 13px; color: #555; width: 100%; background: transparent; }
+    .search-input input::placeholder { color: #bbb; }
+
+    /* CONTENT */
+    .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+    /* GRID */
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    /* CARDS */
+    .plan-card { background: #fff; border-radius: 14px; border: 1px solid #eee; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow 0.15s; cursor: pointer; }
+    .plan-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .plan-card-preview { height: 120px; position: relative; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+    .plan-card-preview.orange { background: #f3f4f8; }
+    .plan-card-preview.blue   { background: #f0f3fb; }
+    .preview-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .preview-bottom { display: flex; justify-content: flex-end; }
+    .badge-visib { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+    .badge-visib.publico { background: #d4f7e0; color: #1e8a4a; }
+    .badge-visib.privado { background: #e8eefa; color: #1e4db7; }
+    .ia-diamond { width: 30px; height: 30px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .ia-diamond svg { width: 16px; height: 16px; }
+    .trash-btn { width: 30px; height: 30px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.1); cursor: pointer; }
+    .trash-btn svg { width: 14px; height: 14px; color: #f26522; }
+    .trash-btn:hover { background: #fff0e8; }
+    .plan-card-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+    .plan-card-title { font-size: 14px; font-weight: 700; color: #222; line-height: 1.3; }
+    .plan-card-desc { font-size: 12px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .disc-badge { font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 20px; display: inline-block; margin-top: 2px; }
+    .disc-badge.orange { background: #fff0e8; color: #f26522; }
+    .disc-badge.blue   { background: #e8eefa; color: #1e4db7; }
+    .plan-card-meta { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+    .plan-meta-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #aaa; }
+    .plan-meta-row svg { width: 13px; height: 13px; flex-shrink: 0; }
+    .tag-exp { background: #e8eefa; color: #1e4db7; font-size: 10px; padding: 2px 6px; border-radius: 20px; display: inline-block; }
+    .tags-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f5f5f5; } ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+    .help-btn { position: fixed; bottom: 20px; right: 20px; width: 36px; height: 36px; border-radius: 50%; background: #555; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+    .empty-state { text-align: center; padding: 60px 20px; color: #bbb; font-size: 14px; }
+    .filter-pill { border: 1.5px solid #e0e0e0; border-radius: 20px; padding: 7px 16px; font-size: 13px; font-weight: 500; color: #666; background: #fff; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .filter-pill:hover { border-color: #f26522; color: #f26522; }
+    .filter-pill.active { border-color: #f26522; color: #f26522; background: #fff5f0; font-weight: 600; }
+    .btn-criar { background: #f26522; color: #fff; border: none; border-radius: 20px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: background 0.15s; }
+    .btn-criar:hover { background: #e05010; }
+
+    /* MODAIS */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 200; }
+    .modal-overlay.hidden { display: none; }
+    /* escolha tipo */
+    .modal-escolha { background: #fff; border-radius: 16px; width: 580px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal-escolha-header { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px; }
+    .modal-escolha-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 24px 24px; }
+    .escolha-card { border: 1.5px solid #eee; border-radius: 16px; padding: 36px 24px 28px; display: flex; flex-direction: column; align-items: center; gap: 14px; cursor: pointer; text-align: center; transition: border-color 0.15s, box-shadow 0.15s; }
+    .escolha-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .escolha-card.disc:hover    { border-color: #f26522; }
+    .escolha-card.semanal:hover { border-color: #1e4db7; }
+    .escolha-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .escolha-icon.orange { background: #fff0e8; }
+    .escolha-icon.blue   { background: #eef2fb; }
+    .escolha-title { font-size: 16px; font-weight: 700; color: #222; }
+    .escolha-desc  { font-size: 13px; color: #aaa; line-height: 1.5; }
+    /* período semanal */
+    .modal-periodo { background: #fff; border-radius: 16px; width: 640px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal-periodo-header { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px; }
+    .modal-periodo-info { background: #eef2fb; border-radius: 10px; margin: 0 24px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #1e4db7; line-height: 1.5; }
+    .modal-periodo-dias { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; padding: 20px 24px; }
+    .periodo-dia { border: 1.5px solid #e8eef8; border-radius: 12px; padding: 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .periodo-dia:hover { border-color: #1e4db7; background: #f5f8ff; }
+    .periodo-dia.selected { border-color: #1e4db7; background: #eef2fb; }
+    .periodo-dia-label { font-size: 10px; font-weight: 700; color: #aaa; letter-spacing: 0.8px; text-transform: uppercase; }
+    .periodo-dia-num { font-size: 28px; font-weight: 700; color: #222; line-height: 1.1; }
+    .periodo-dia.selected .periodo-dia-num { color: #1e4db7; }
+    .periodo-dia-mes { font-size: 12px; color: #aaa; }
+    .btn-continuar { width: calc(100% - 48px); margin: 0 24px 24px; background: #ccc; color: #fff; border: none; border-radius: 10px; padding: 16px; font-size: 15px; font-weight: 600; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; }
+    .btn-continuar.active { background: #1e4db7; cursor: pointer; }
+    .btn-continuar.active:hover { background: #1840a0; }
+    /* IA / Manual */
+    .modal-iamanual { background: #fff; border-radius: 16px; width: 560px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal-iamanual-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #f0f0f0; }
+    .modal-iamanual-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 24px; }
+    .ia-option { border: 1px solid #eee; border-radius: 16px; padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; cursor: pointer; text-align: center; transition: border-color 0.15s, box-shadow 0.15s; }
+    .ia-option:hover { border-color: #f26522; box-shadow: 0 2px 12px rgba(242,101,34,0.12); }
+    .ia-option-icon { width: 64px; height: 64px; border-radius: 50%; background: #fff0e8; display: flex; align-items: center; justify-content: center; }
+    .ia-option-title { font-size: 15px; font-weight: 700; color: #222; }
+    .ia-option-desc  { font-size: 12px; color: #aaa; line-height: 1.5; }
+    /* form individual */
+    .modal-form { background: #fff; border-radius: 16px; width: 580px; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal-form-header { padding: 22px 24px 16px; border-bottom: 1px solid #f0f0f0; }
+    .modal-form-title { font-size: 18px; font-weight: 700; color: #222; }
+    .modal-form-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 18px; }
+    .form-label { font-size: 13px; font-weight: 600; color: #1e4db7; margin-bottom: 6px; display: block; }
+    .form-input { width: 100%; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #333; outline: none; font-family: inherit; transition: border-color 0.15s; }
+    .form-input:focus { border-color: #1e4db7; }
+    .form-input::placeholder { color: #bbb; }
+    .form-textarea { width: 100%; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #333; outline: none; font-family: inherit; resize: vertical; min-height: 90px; transition: border-color 0.15s; }
+    .form-textarea::placeholder { color: #bbb; }
+    .form-select { width: 100%; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #555; outline: none; font-family: inherit; background: #fff; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; cursor: pointer; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .duracao-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .duracao-btn { border: 1.5px solid #e0e0e0; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; display: flex; align-items: center; gap: 5px; background: #fff; transition: border-color 0.15s, color 0.15s; }
+    .duracao-btn:hover { border-color: #f26522; color: #f26522; }
+    .duracao-btn.selected { border-color: #f26522; color: #f26522; background: #fff5f0; }
+    .visib-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .visib-btn { border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; transition: border-color 0.15s, color 0.15s; background: #fff; }
+    .visib-btn.selected { border-color: #1e4db7; color: #1e4db7; }
+    .modal-form-footer { padding: 0 24px 24px; }
+    .btn-criar-plano { width: 100%; background: #f26522; color: #fff; border: none; border-radius: 10px; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; }
+    .btn-criar-plano:hover { background: #e05010; }
+    .campo-s-card { border: 1.5px solid #eee; border-radius: 12px; padding: 16px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; }
+    .campo-s-card:hover { border-color: #1e4db7; background: #f5f8ff; }
+    .campo-s-card.selected { border-color: #1e4db7; background: #eef2fb; }
+    .campo-s-nome { font-size: 11px; color: #555; line-height: 1.3; }
+    .campo-s-card.selected .campo-s-nome { color: #1e4db7; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">ep</div>
+    <div class="logo-text">
+      <span class="eprof">eprof</span>
+      <span class="logo-badge">EDUCAÇÃO</span>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="index.html"        class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Página inicial</a>
+    <a href="index.html"        class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Minhas aulas</a>
+    <a href="turmas.html"       class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Minhas turmas</a>
+    <a href="planejamento.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>Planejamento</a>
+    <a href="planejamento2.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planejamento2</a>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comunicação</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Acervo digital</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Suporte</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>Configurações</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <div>
+        <div class="topbar-title">Todos os Planos</div>
+        <div class="topbar-sub">Município de Porto Seguro</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div><div class="user-name">Yuri Derevtsoff</div><div class="user-role">Professor</div></div>
+      <div class="avatar">YD</div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="search-input">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Buscar por plano de aula..." id="searchInput" oninput="render()" />
+    </div>
+    <select id="filtroTipo" onchange="setFiltro(this.value)" style="border:1px solid #e0e0e0;border-radius:20px;padding:7px 16px;font-size:13px;color:#555;background:#fff;outline:none;cursor:pointer;font-family:inherit;">
+      <option value="todos">Todos os planos</option>
+      <option value="orange">Plano de aula por disciplina</option>
+      <option value="blue">Ed. Infantil</option>
+    </select>
+    <select id="filtroDisc" onchange="setFiltroDisc(this.value)" style="border:1px solid #e0e0e0;border-radius:20px;padding:7px 16px;font-size:13px;color:#555;background:#fff;outline:none;cursor:pointer;font-family:inherit;">
+      <option value="">Disciplina</option>
+      <option>Matemática</option>
+      <option>Língua Portuguesa</option>
+      <option>Ciências</option>
+      <option>História</option>
+      <option>Geografia</option>
+      <option>Arte</option>
+      <option>Educação Física</option>
+      <option>Inglês</option>
+    </select>
+    <select id="filtroCampo" onchange="setFiltroCampo(this.value)" style="border:1px solid #e0e0e0;border-radius:20px;padding:7px 16px;font-size:13px;color:#555;background:#fff;outline:none;cursor:pointer;font-family:inherit;">
+      <option value="">Campo de Experiência</option>
+      <option>Corpo, gestos e mov.</option>
+      <option>O eu, o outro e o nós</option>
+      <option>Traços, sons, cores</option>
+      <option>Escuta, fala e pensamentos</option>
+      <option>Traços, sons, cores e formas</option>
+    </select>
+    <button class="btn-criar" onclick="document.getElementById('modalEscolha').classList.remove('hidden')">+ Criar plano de aula</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="plans-grid" id="plansGrid"></div>
+  </div>
+</div>
+
+<!-- MODAL 1: Escolha tipo de plano -->
+<div class="modal-overlay hidden" id="modalEscolha" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-escolha">
+    <div class="modal-escolha-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:42px;height:42px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#222;">Criar plano de aula</div>
+          <div style="font-size:12px;color:#aaa;">Escolha o tipo de planejamento que deseja criar</div>
+        </div>
+      </div>
+      <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="modal-escolha-body">
+      <div class="escolha-card disc" onclick="abrirIndividual()">
+        <div class="escolha-icon orange">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="escolha-title">Plano por disciplina</div>
+        <div class="escolha-desc">Crie um planejamento específico para uma disciplina</div>
+      </div>
+      <div class="escolha-card semanal" onclick="abrirPeriodoSemanal()">
+        <div class="escolha-icon blue">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg>
+        </div>
+        <div class="escolha-title">Plano semanal</div>
+        <div class="escolha-desc">Crie um planejamento para toda a semana de atividades</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 2: Período semanal -->
+<div class="modal-overlay hidden" id="modalPeriodo" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-periodo">
+    <div class="modal-periodo-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:42px;height:42px;background:#eef2fb;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#222;">Escolher período semanal</div>
+          <div style="font-size:12px;color:#aaa;">Selecione o dia inicial do seu plano semanal</div>
+        </div>
+      </div>
+      <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="modal-periodo-info">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Você pode criar planos semanais entre os dias <strong>02/06/2026 a 06/06/2026</strong>. Escolha o dia inicial da semana de planejamento.</span>
+    </div>
+    <div class="modal-periodo-dias">
+      <div class="periodo-dia" onclick="selecionarDia(this,'Segunda')"><div class="periodo-dia-label">SEGUNDA</div><div class="periodo-dia-num">2</div><div class="periodo-dia-mes">Jun 2026</div></div>
+      <div class="periodo-dia" onclick="selecionarDia(this,'Terça')"  ><div class="periodo-dia-label">TERÇA</div>  <div class="periodo-dia-num">3</div><div class="periodo-dia-mes">Jun 2026</div></div>
+      <div class="periodo-dia" onclick="selecionarDia(this,'Quarta')" ><div class="periodo-dia-label">QUARTA</div> <div class="periodo-dia-num">4</div><div class="periodo-dia-mes">Jun 2026</div></div>
+      <div class="periodo-dia" onclick="selecionarDia(this,'Quinta')" ><div class="periodo-dia-label">QUINTA</div> <div class="periodo-dia-num">5</div><div class="periodo-dia-mes">Jun 2026</div></div>
+      <div class="periodo-dia" onclick="selecionarDia(this,'Sexta')"  ><div class="periodo-dia-label">SEXTA</div>  <div class="periodo-dia-num">6</div><div class="periodo-dia-mes">Jun 2026</div></div>
+    </div>
+    <button class="btn-continuar" id="btnContinuar" onclick="abrirIaManual()">Continuar ›</button>
+  </div>
+</div>
+
+<!-- MODAL 3: IA ou Manual -->
+<div class="modal-overlay hidden" id="modalIaManual" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-iamanual">
+    <div class="modal-iamanual-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#222;">Criar plano de aula</div>
+          <div style="font-size:12px;color:#aaa;">Como você deseja criar seu plano de aula?</div>
+        </div>
+      </div>
+      <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="modal-iamanual-body">
+      <div class="ia-option" onclick="abrirFormPlano()">
+        <div class="ia-option-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+        <div class="ia-option-title">Criar com IA</div>
+        <div class="ia-option-desc">Deixe a inteligência artificial te ajudar a criar um plano completo e personalizado</div>
+      </div>
+      <div class="ia-option" onclick="abrirFormPlano()">
+        <div class="ia-option-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+        <div class="ia-option-title">Criar manualmente</div>
+        <div class="ia-option-desc">Crie seu plano do zero com total controle sobre cada detalhe</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 4: Formulário individual -->
+<div class="modal-overlay hidden" id="modalFormPlano" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-form">
+    <div class="modal-form-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="modal-form-title">Criar plano de aula</div>
+        </div>
+        <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;margin-top:-4px;">×</button>
+      </div>
+    </div>
+    <div class="modal-form-body">
+      <div><label class="form-label">Título</label><input class="form-input" type="text" placeholder="Qual será o título do plano de aula?" /></div>
+      <div class="form-row">
+        <div>
+          <label class="form-label">Nível de ensino</label>
+          <select class="form-select" id="nivelEnsino2" onchange="atualizarSeries2()">
+            <option value="">Selecione uma opção</option>
+            <option value="ei">Educação Infantil</option>
+            <option value="ef1">Ensino Fundamental I</option>
+            <option value="ef2">Ensino Fundamental II</option>
+            <option value="em">Ensino Médio</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Série ou ano</label>
+          <select class="form-select" id="serieAno2"><option value="">Selecione uma opção</option></select>
+        </div>
+      </div>
+      <div><label class="form-label">Disciplina</label>
+        <select class="form-select">
+          <option value="">Selecione uma opção</option>
+          <option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option>
+          <option>História</option><option>Geografia</option><option>Arte</option>
+          <option>Educação Física</option><option>Inglês</option>
+        </select>
+      </div>
+      <div><label class="form-label">Assunto ou tema</label><input class="form-input" type="text" placeholder="Qual será o tema central da aula?" /></div>
+      <div><label class="form-label">Metodologia de ensino</label>
+        <select class="form-select">
+          <option value="">Selecione uma opção</option>
+          <option>Ativa</option><option>Expositiva</option><option>Modelo 5E</option>
+          <option>Socioemocional</option><option>Técnica</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Duração da aula</label>
+        <div class="duracao-group">
+          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>50 min</div>
+          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>100 min</div>
+          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>150 min</div>
+          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>200 min</div>
+          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>250 min</div>
+          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>300 min</div>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Deseja compartilhar no Acervo Digital?</label>
+        <div class="visib-group">
+          <div class="visib-btn" id="acervoP2" onclick="selAcervo('publico')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Tornar público</div>
+          <div class="visib-btn" id="acervoPr2" onclick="selAcervo('privado')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Manter privado</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-form-footer">
+      <button class="btn-criar-plano" onclick="fecharTudo()">Criar plano de aula <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 5: Formulário semanal (Ed. Infantil) -->
+<div class="modal-overlay hidden" id="modalFormSemanal" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-form">
+    <div class="modal-form-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="modal-form-title">Criar Plano de Aula</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#aaa;margin-top:4px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="formSemanalData">Quarta, 03 de junho de 2026</span>
+          </div>
+        </div>
+        <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;margin-top:-4px;">×</button>
+      </div>
+    </div>
+    <div class="modal-form-body">
+      <!-- Título -->
+      <div>
+        <label class="form-label">Título do plano</label>
+        <input class="form-input" type="text" placeholder="Ex: Brincando com o corpo" />
+      </div>
+      <!-- Campos de Experiência -->
+      <div>
+        <label class="form-label">Campos de Experiência</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🏃</span><span class="campo-s-nome">Corpo, gestos e movimentos</span></div>
+          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">👥</span><span class="campo-s-nome">O eu, o outro e o nós</span></div>
+          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🎨</span><span class="campo-s-nome">Traços, sons, cores e formas</span></div>
+          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">💬</span><span class="campo-s-nome">Escuta, fala, pensamentos e imaginação</span></div>
+          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🔢</span><span class="campo-s-nome">Espaços, tempos, quantidades, relações, transformações</span></div>
+          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🌍</span><span class="campo-s-nome">Culturas Regionais</span></div>
+        </div>
+      </div>
+      <!-- Tema -->
+      <div>
+        <label class="form-label">Tema</label>
+        <input class="form-input" type="text" placeholder="Ex: Conhecendo meu corpo" />
+      </div>
+      <!-- Metodologia -->
+      <div>
+        <label class="form-label">Metodologia</label>
+        <select class="form-select">
+          <option value="">Selecione uma metodologia</option>
+          <option>Metodologia Ativa</option><option>Expositiva</option><option>Modelo 5E</option>
+          <option>Socioemocional</option><option>Técnica</option><option>Projetos</option>
+        </select>
+      </div>
+      <!-- Recursos -->
+      <div>
+        <label class="form-label">Recursos didáticos</label>
+        <textarea class="form-textarea" placeholder="Descreva os materiais e recursos necessários"></textarea>
+      </div>
+      <!-- Visibilidade -->
+      <div>
+        <label class="form-label">Visibilidade</label>
+        <div class="visib-group">
+          <div class="visib-btn selected" id="visibPS" onclick="selVisibS('publico')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Público
+          </div>
+          <div class="visib-btn" id="visibPrS" onclick="selVisibS('privado')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Privado
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-form-footer">
+      <button class="btn-criar-plano" onclick="fecharTudo()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Criar plano de aula
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="help-btn">?</div>
+
+<script>
+const TODOS = [
+  // Individuais — Ensino Regular
+  { titulo:'Introdução às formas geométricas',            desc:'Explorando figuras geométricas e suas propriedades...', badge:'Matemática',        serie:'Fundamental I – 2° ano', data:'25 de maio de 2026', visib:'Público', tipo:'orange', tags:[] },
+  { titulo:'Contação de histórias – Folclore brasileiro', desc:'Narrativas populares e o folclore brasileiro na...',    badge:'Língua Portuguesa',  serie:'Fundamental I – 3° ano', data:'27 de maio de 2026', visib:'Privado', tipo:'orange', tags:[] },
+  { titulo:'Experimentos de física – Densidade',          desc:'Experimentos práticos sobre densidade dos materiais...',badge:'Ciências',            serie:'Fundamental I – 2° ano', data:'29 de maio de 2026', visib:'Público', tipo:'orange', tags:[] },
+  // Semanais — Ed. Infantil
+  { titulo:'Explorando texturas',   desc:'Atividades sensoriais com diferentes texturas e materiais...', badge:'Ed. Infantil – CN III', serie:'Ed. Infantil – CN III', data:'25 de maio de 2026', visib:'Público', tipo:'blue', tags:['Corpo, gestos e mov.','Traços, sons, cores'] },
+  { titulo:'Histórias e fantasias', desc:'Narrativas imaginárias e contação de histórias em grupo...',   badge:'Ed. Infantil – CN III', serie:'Ed. Infantil – CN III', data:'26 de maio de 2026', visib:'Público', tipo:'blue', tags:['Escuta, fala e pensamentos','O eu, o outro e o nós'] },
+  { titulo:'Brincando com o corpo', desc:'Movimentos, ritmo e consciência corporal através de jogos...',  badge:'Ed. Infantil – CN III', serie:'Ed. Infantil – CN III', data:'27 de maio de 2026', visib:'Público', tipo:'blue', tags:['Corpo, gestos e mov.','O eu, o outro e o nós'] },
+  { titulo:'Descobrindo cores',     desc:'Experimentação com tintas, pigmentos e misturas de cores...',  badge:'Ed. Infantil – CN III', serie:'Ed. Infantil – CN III', data:'28 de maio de 2026', visib:'Público', tipo:'blue', tags:['Traços, sons, cores e formas','Escuta, fala e pensamentos'] },
+  { titulo:'Música e movimento',    desc:'Ritmo, dança e expressão musical com instrumentos simples...', badge:'Ed. Infantil – CN III', serie:'Ed. Infantil – CN III', data:'29 de maio de 2026', visib:'Público', tipo:'blue', tags:['Corpo, gestos e mov.','Traços, sons, cores'] },
+];
+
+let filtroAtual = 'todos';
+let filtroDisc  = '';
+let filtroCampo = '';
+
+function setFiltro(tipo) {
+  filtroAtual = tipo;
+  filtroDisc  = '';
+  filtroCampo = '';
+
+  const fd = document.getElementById('filtroDisc');
+  const fc = document.getElementById('filtroCampo');
+
+  fd.value = ''; fc.value = '';
+
+  if (tipo === 'orange') {
+    fd.disabled = false; fd.style.opacity = '1';
+    fc.disabled = true;  fc.style.opacity = '0.4';
+  } else if (tipo === 'blue') {
+    fc.disabled = false; fc.style.opacity = '1';
+    fd.disabled = true;  fd.style.opacity = '0.4';
+  } else {
+    fd.disabled = true; fd.style.opacity = '0.4';
+    fc.disabled = true; fc.style.opacity = '0.4';
+  }
+  render();
+}
+
+function setFiltroDisc(val)  { filtroDisc  = val; render(); }
+function setFiltroCampo(val) { filtroCampo = val; render(); }
+
+function render() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const planos = TODOS.filter(p => {
+    if (filtroAtual !== 'todos' && p.tipo !== filtroAtual) return false;
+    if (filtroDisc  && p.badge !== filtroDisc) return false;
+    if (filtroCampo && !p.tags.some(t => t === filtroCampo)) return false;
+    if (q && !p.titulo.toLowerCase().includes(q) && !p.badge.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const grid = document.getElementById('plansGrid');
+
+  if (!planos.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Nenhum plano encontrado.</div>';
+    return;
+  }
+
+  grid.innerHTML = planos.map(p => `
+    <div class="plan-card">
+      <div class="plan-card-preview ${p.tipo}">
+        <div class="preview-top">
+          <span class="badge-visib ${p.visib === 'Público' ? 'publico' : 'privado'}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+              ${p.visib === 'Público'
+                ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+                : '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>'}
+            </svg>
+            ${p.visib}
+          </span>
+          <div class="ia-diamond">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="#3b82f6"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+          </div>
+        </div>
+        <div class="preview-bottom">
+          <div class="trash-btn" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="plan-card-body">
+        <div class="plan-card-title">${p.titulo}</div>
+        <div class="plan-card-desc">${p.desc}</div>
+        <span class="disc-badge ${p.tipo}">${p.badge}</span>
+        ${p.tags.length ? `<div class="tags-row">${p.tags.map(t=>`<span class="tag-exp">${t}</span>`).join('')}</div>` : ''}
+        <div class="plan-card-meta">
+          <div class="plan-meta-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            ${p.data}
+          </div>
+          <div class="plan-meta-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            ${p.serie}
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+const DIAS_PT = { 'Segunda':'Segunda-feira', 'Terça':'Terça-feira', 'Quarta':'Quarta-feira', 'Quinta':'Quinta-feira', 'Sexta':'Sexta-feira' };
+const NUMS_DIA = { 'Segunda':'02', 'Terça':'03', 'Quarta':'04', 'Quinta':'05', 'Sexta':'06' };
+
+function fecharTudo() {
+  ['modalEscolha','modalPeriodo','modalIaManual','modalFormPlano','modalFormSemanal'].forEach(id =>
+    document.getElementById(id).classList.add('hidden'));
+}
+
+function abrirPeriodoSemanal() {
+  _fluxoAtual = 'semanal';
+  document.getElementById('modalEscolha').classList.add('hidden');
+  document.querySelectorAll('.periodo-dia').forEach(d => d.classList.remove('selected'));
+  document.getElementById('btnContinuar').classList.remove('active');
+  document.getElementById('modalPeriodo').classList.remove('hidden');
+}
+
+function selecionarDia(el, nome) {
+  document.querySelectorAll('.periodo-dia').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  _diaSelecionado = `${DIAS_PT[nome] || nome}, ${NUMS_DIA[nome]} de junho de 2026`;
+  document.getElementById('btnContinuar').classList.add('active');
+}
+
+function abrirIaManual() {
+  if (!document.getElementById('btnContinuar').classList.contains('active')) return;
+  document.getElementById('modalPeriodo').classList.add('hidden');
+  document.getElementById('modalIaManual').classList.remove('hidden');
+}
+
+let _fluxoAtual = 'individual'; // 'individual' | 'semanal'
+let _diaSelecionado = '';
+
+function abrirIndividual() {
+  _fluxoAtual = 'individual';
+  document.getElementById('modalEscolha').classList.add('hidden');
+  document.getElementById('modalIaManual').classList.remove('hidden');
+}
+
+function abrirFormPlano() {
+  document.getElementById('modalIaManual').classList.add('hidden');
+  if (_fluxoAtual === 'semanal') {
+    document.getElementById('formSemanalData').textContent = _diaSelecionado;
+    document.getElementById('modalFormSemanal').classList.remove('hidden');
+  } else {
+    document.getElementById('modalFormPlano').classList.remove('hidden');
+  }
+}
+
+function selVisibS(v) {
+  document.getElementById('visibPS').classList.toggle('selected', v === 'publico');
+  document.getElementById('visibPrS').classList.toggle('selected', v === 'privado');
+}
+
+const SERIES2 = { ei:['Berçário','Maternal I','Maternal II','Pré I (CN III)','Pré II (CN IV)'], ef1:['1° ano','2° ano','3° ano','4° ano','5° ano'], ef2:['6° ano','7° ano','8° ano','9° ano'], em:['1° ano','2° ano','3° ano'] };
+function atualizarSeries2() {
+  const nivel = document.getElementById('nivelEnsino2').value;
+  const sel = document.getElementById('serieAno2');
+  sel.innerHTML = '<option value="">Selecione uma opção</option>' + (SERIES2[nivel]||[]).map(s=>`<option>${s}</option>`).join('');
+}
+function selDur(el) { document.querySelectorAll('.duracao-btn').forEach(b=>b.classList.remove('selected')); el.classList.add('selected'); }
+function selAcervo(v) { document.getElementById('acervoP2').classList.toggle('selected',v==='publico'); document.getElementById('acervoPr2').classList.toggle('selected',v==='privado'); }
+
+// inicia filtros secundários desabilitados (padrão = Todos os planos)
+document.getElementById('filtroDisc').disabled  = true;
+document.getElementById('filtroDisc').style.opacity  = '0.4';
+document.getElementById('filtroCampo').disabled = true;
+document.getElementById('filtroCampo').style.opacity = '0.4';
+render();
+</script>
+</body>
+</html>
