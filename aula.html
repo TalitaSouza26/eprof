@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eProf - Detalhe da Aula</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f1f5; min-height: 100vh; font-size: 13px; color: #333; }
+
+    /* TOPBAR */
+    .topbar { background: #f0f1f5; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .page-icon { width: 32px; height: 32px; border: 2px solid #f26522; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .page-icon svg { width: 16px; height: 16px; color: #f26522; }
+    .page-title { font-size: 18px; font-weight: 700; color: #222; }
+    .page-sub { font-size: 12px; color: #888; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .trophy-avatar { width: 38px; height: 38px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; }
+    .trophy-avatar svg { width: 20px; height: 20px; color: #aaa; }
+    .user-avatar { width: 38px; height: 38px; border-radius: 50%; background: #f26522; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+    .user-name { font-weight: 600; font-size: 13px; color: #222; }
+    .user-role { font-size: 11px; color: #888; }
+
+    /* BACK */
+    .back-link { padding: 0 32px 12px; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #f26522; cursor: pointer; text-decoration: none; width: fit-content; }
+    .back-link:hover { opacity: 0.8; }
+    .back-link svg { width: 14px; height: 14px; }
+
+    /* INFO CARD */
+    .info-card { background: #fff; margin: 0 32px; border-radius: 12px; padding: 20px 24px; border: 1px solid #e8e8e8; position: relative; }
+    .info-grid { display: grid; grid-template-columns: 110px 1fr; gap: 7px 0; align-items: center; }
+    .info-label { font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 5px; }
+    .info-label svg { width: 13px; height: 13px; }
+    .info-value { font-size: 13px; color: #333; font-weight: 500; }
+    .badge-disc { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; display: inline-block; }
+    .badge-orange { background: #fff0e8; color: #f26522; }
+    .badge-blue { background: #e8eefa; color: #1e4db7; }
+    .ao-vivo { position: absolute; top: 20px; right: 24px; background: #f0f0f0; color: #999; font-size: 11px; font-weight: 600; padding: 5px 14px; border-radius: 20px; }
+
+    /* TABS */
+    .tabs-wrap { margin: 16px 32px 0; }
+    .tabs { display: flex; background: #f0f0f0; padding: 5px; border-radius: 10px; gap: 2px; }
+    .tab { flex: 1; padding: 8px 10px; font-size: 12px; color: #888; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: 7px; white-space: nowrap; transition: all 0.15s; }
+    .tab:hover { color: #555; background: #e6e6e6; }
+    .tab.active { background: #fff; color: #f26522; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .tab svg { width: 13px; height: 13px; }
+
+    /* CONTENT CARDS */
+    .cards-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 16px 32px 32px; }
+
+    .aula-card { background: #fff; border-radius: 12px; border: 1px solid #eee; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-height: 260px; }
+    .aula-card-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; }
+    .card-icon { width: 64px; height: 64px; opacity: 0.25; }
+    .card-icon svg { width: 64px; height: 64px; }
+    .card-empty-label { font-size: 13px; color: #bbb; }
+    .card-action { font-size: 13px; color: #f26522; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .card-action:hover { opacity: 0.8; }
+    .card-action-gray { font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 5px; }
+    .card-action-gray svg { width: 14px; height: 14px; }
+
+    /* ORANGE CARD */
+    .aula-card.orange-card { background: linear-gradient(145deg, #f26522, #e05010); border: none; color: #fff; }
+    .orange-card .card-icon { opacity: 1; }
+    .orange-card .card-icon svg { color: #fff; }
+    .oc-icon-wrap { position: relative; display: inline-block; }
+    .oc-badge { position: absolute; bottom: -4px; right: -8px; background: #ffd600; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+    .oc-badge svg { width: 14px; height: 14px; color: #7a5c00; }
+    .orange-card .card-empty-label { color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 700; line-height: 1.3; }
+    .orange-card .card-desc { font-size: 12px; color: rgba(255,255,255,0.8); text-align: center; line-height: 1.5; }
+    .orange-card .card-action { color: #fff; border-top: 1px solid rgba(255,255,255,0.3); width: 100%; padding-top: 12px; justify-content: center; }
+    .orange-card .card-action:hover { opacity: 0.85; }
+
+    /* CHAMADA TAB */
+    .chamada-wrap { margin: 16px 32px 32px; background: #fff; border-radius: 12px; border: 1px solid #eee; overflow: hidden; }
+    .chamada-header { display: grid; grid-template-columns: 1fr 140px 140px; padding: 10px 20px; border-bottom: 1px solid #eee; font-size: 12px; color: #aaa; }
+    .chamada-row { display: grid; grid-template-columns: 1fr 140px 140px; padding: 13px 20px; border-bottom: 1px solid #f5f5f5; align-items: center; }
+    .chamada-row:last-child { border-bottom: none; }
+    .chamada-row:hover { background: #fafafa; }
+    .aluno-name { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #333; }
+    .aluno-avatar { width: 32px; height: 32px; border-radius: 50%; background: #dde3ef; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #5a6a8a; flex-shrink: 0; }
+    .toggle-pres { display: flex; align-items: center; gap: 8px; }
+    .pres-btn { padding: 5px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #eee; background: #f5f5f5; color: #aaa; transition: all 0.15s; }
+    .pres-btn.presente { background: #d4f7e0; color: #1e8a4a; border-color: #b2e8c8; }
+    .pres-btn.falta { background: #fde8e8; color: #c0392b; border-color: #f5c0c0; }
+    .pres-btn:hover { opacity: 0.85; }
+    .justif-select { border: 1px solid #ddd; border-radius: 6px; padding: 5px 10px; font-size: 12px; color: #555; background: #fff; cursor: pointer; }
+
+    /* PLANO TAB */
+    .plano-wrap { margin: 16px 32px 32px; }
+    .plano-empty { background: #fff; border-radius: 12px; border: 2px dashed #eee; padding: 60px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+    .plano-empty svg { width: 48px; height: 48px; color: #ddd; }
+    .plano-empty-title { font-size: 15px; font-weight: 600; color: #bbb; }
+    .plano-empty-sub { font-size: 13px; color: #ccc; }
+    .btn-primary { background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 10px 24px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .btn-primary:hover { background: #e05010; }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="page-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+    <div>
+      <div class="page-title">Minhas Aulas</div>
+      <div class="page-sub">Educação Municipal de Porto Seguro</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="trophy-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 21h8M12 17v4M7 4H4a1 1 0 00-1 1v3a4 4 0 004 4h1M17 4h3a1 1 0 011 1v3a4 4 0 01-4 4h-1"/><path d="M7 4h10v6a5 5 0 01-10 0V4z"/></svg></div>
+    <div class="user-avatar">YD</div>
+    <div>
+      <div class="user-name">Yuri Derevtsoff</div>
+      <div class="user-role">Professor</div>
+    </div>
+  </div>
+</div>
+
+<!-- BACK -->
+<a href="index.html" class="back-link">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  Voltar para minhas aulas
+</a>
+
+<!-- INFO CARD -->
+<div class="info-card" id="infoCard">
+  <div class="ao-vivo">Ao vivo</div>
+  <div class="info-grid" id="infoGrid"></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs" id="aulaTabsBar"></div>
+</div>
+
+<!-- CONTENT -->
+<div id="aulaContent"></div>
+
+<script>
+// ---------- PARSE URL PARAMS ----------
+const params = new URLSearchParams(location.search);
+const disc    = params.get('disc')    || 'Educação Física';
+const turma   = params.get('turma')   || '2° ano A';
+const hora    = params.get('hora')    || '07:50 – 08:20';
+const diaNum  = params.get('diaNum')  || '14';
+const diaNome = params.get('diaNome') || 'Quinta';
+const mes     = params.get('mes')     || 'maio';
+const ano     = params.get('ano')     || '2026';
+const escola  = params.get('escola')  || 'Colégio Municipal de Porto Seguro';
+const serie   = params.get('serie')   || '2° ano – Ensino Fundamental I';
+const tipo    = params.get('tipo')    || 'regular'; // 'regular' | 'infantil'
+
+const DIAS_SEMANA = { '14':'Quinta-Feira','15':'Sexta-Feira','16':'Sábado','17':'Domingo','18':'Segunda-Feira','19':'Terça-Feira' };
+const MESES = { 'janeiro':1,'fevereiro':2,'março':3,'abril':4,'maio':5,'junho':6,'julho':7,'agosto':8,'setembro':9,'outubro':10,'novembro':11,'dezembro':12 };
+const MESES_NOME = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+function diaExtenso() {
+  return `${diaNum} de ${mes} de ${ano}`;
+}
+function diaSemana() {
+  return DIAS_SEMANA[diaNum] || diaNome + '-feira';
+}
+
+// ---------- INFO ----------
+const isBlue = tipo === 'infantil';
+document.getElementById('infoGrid').innerHTML = `
+  <span class="info-label">${svg('users')} Turma</span>       <span class="info-value">${turma}</span>
+  <span class="info-label">${svg('book')} Disciplina</span>   <span class="info-value"><span class="badge-disc ${isBlue?'badge-blue':'badge-orange'}">${disc}</span></span>
+  <span class="info-label">${svg('cal')} Data</span>          <span class="info-value">${diaExtenso()}</span>
+  <span class="info-label">${svg('cal')} Dia</span>           <span class="info-value">${diaSemana()}</span>
+  <span class="info-label">${svg('clock')} Horário</span>     <span class="info-value">${hora.replace('–','às').replace('-','às')}</span>
+  <span class="info-label">${svg('pin')} Instituição</span>   <span class="info-value">${escola}</span>
+  <span class="info-label">${svg('grad')} Série</span>        <span class="info-value">${serie}</span>
+`;
+
+// ---------- TABS ----------
+let currentTab = 'inicio';
+const TABS = [
+  ['inicio',   'Início',       'home'],
+  ['chamada',  'Chamada',      'list'],
+  ['plano',    'Plano de aula','folder'],
+  ['avaliacao','Avaliação',    'star'],
+  ['apresentacao','Apresentação','monitor'],
+  ['anotacao', 'Anotação',     'edit'],
+];
+
+function renderTabs() {
+  document.getElementById('aulaTabsBar').innerHTML = TABS.map(([id,label,icon]) =>
+    `<div class="tab ${id===currentTab?'active':''}" onclick="switchTab('${id}')">${svg(icon)} ${label}</div>`
+  ).join('');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  renderTabs();
+  renderContent();
+}
+
+// ---------- CONTENT ----------
+const ALUNOS = ['Caio Lopes','Clóvis Souza','Davi Brito','Edmunda Santos','Januário Santos','Joana Soares','João Pedro','Marta Silva','Rodrygo Goes'];
+const presState = {};
+ALUNOS.forEach(a => presState[a] = 'presente');
+
+function renderContent() {
+  const el = document.getElementById('aulaContent');
+
+  if (currentTab === 'inicio') {
+    el.innerHTML = `
+      <div class="cards-row">
+        <!-- Plano de aula -->
+        <div class="aula-card">
+          <div class="aula-card-body">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+            <span class="card-empty-label">Sem plano de aula<br>vinculado</span>
+          </div>
+          <div class="card-action" onclick="switchTab('plano')">Adicionar +</div>
+        </div>
+        <!-- Avaliação -->
+        <div class="aula-card">
+          <div class="aula-card-body">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+            <span class="card-empty-label">Sem avaliação<br>vinculada</span>
+          </div>
+          <div class="card-action" onclick="switchTab('avaliacao')">Adicionar +</div>
+        </div>
+        <!-- Apresentação -->
+        <div class="aula-card">
+          <div class="aula-card-body">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M8 10l2 2 4-4"/></svg></div>
+            <span class="card-empty-label">Sem apresentação<br>vinculada</span>
+          </div>
+          <div class="card-action-gray">
+            Em breve
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+        </div>
+        <!-- Ocorrência -->
+        <div class="aula-card orange-card">
+          <div class="aula-card-body">
+            <div class="oc-icon-wrap">
+              <svg width="56" height="56" viewBox="0 0 64 64" fill="none">
+                <rect x="10" y="6" width="36" height="46" rx="3" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                <rect x="16" y="18" width="24" height="2.5" rx="1" fill="rgba(255,255,255,0.5)"/>
+                <rect x="16" y="25" width="20" height="2.5" rx="1" fill="rgba(255,255,255,0.5)"/>
+                <rect x="16" y="32" width="16" height="2.5" rx="1" fill="rgba(255,255,255,0.5)"/>
+                <circle cx="46" cy="44" r="12" fill="#ffd600"/>
+                <path d="M46 38v8" stroke="#7a5c00" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="46" cy="49" r="1.5" fill="#7a5c00"/>
+              </svg>
+            </div>
+            <span class="card-empty-label">Deseja registrar<br>uma ocorrência?</span>
+            <span class="card-desc">Registre ocorrências disciplinares ou pedagógicas, selecionando os alunos envolvidos ou aplicando o relato a toda a turma</span>
+          </div>
+          <div class="card-action">Registrar ocorrência +</div>
+        </div>
+      </div>`;
+  }
+
+  else if (currentTab === 'chamada') {
+    el.innerHTML = `
+      <div class="chamada-wrap">
+        <div class="chamada-header">
+          <span>Nome do aluno</span><span>Presença</span><span>Justificativa</span>
+        </div>
+        ${ALUNOS.map(a => `
+          <div class="chamada-row">
+            <div class="aluno-name">
+              <div class="aluno-avatar">${a[0]}</div>${a}
+            </div>
+            <div class="toggle-pres">
+              <button class="pres-btn presente" id="p_${a.replace(/\s/g,'_')}" onclick="togglePres('${a}',this)">Presente</button>
+            </div>
+            <select class="justif-select" id="j_${a.replace(/\s/g,'_')}" style="display:none">
+              <option value="">Selecionar justificativa</option>
+              <option>Atestado médico</option>
+              <option>Falta justificada</option>
+              <option>Outros</option>
+            </select>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  else if (currentTab === 'plano') {
+    el.innerHTML = `
+      <div class="plano-wrap">
+        <div class="plano-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <div class="plano-empty-title">Nenhum plano de aula vinculado</div>
+          <div class="plano-empty-sub">Vincule ou crie um plano de aula para esta aula</div>
+          <button class="btn-primary">+ Adicionar plano de aula</button>
+        </div>
+      </div>`;
+  }
+
+  else if (currentTab === 'avaliacao') {
+    el.innerHTML = `
+      <div class="plano-wrap">
+        <div class="plano-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+          <div class="plano-empty-title">Nenhuma avaliação vinculada</div>
+          <div class="plano-empty-sub">Crie ou vincule uma avaliação para esta aula</div>
+          <button class="btn-primary">+ Adicionar avaliação</button>
+        </div>
+      </div>`;
+  }
+
+  else {
+    el.innerHTML = `
+      <div class="plano-wrap">
+        <div class="plano-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div class="plano-empty-title">Em breve</div>
+          <div class="plano-empty-sub">Esta funcionalidade estará disponível em breve.</div>
+        </div>
+      </div>`;
+  }
+}
+
+function togglePres(nome, btn) {
+  const key = nome.replace(/\s/g,'_');
+  const justif = document.getElementById('j_' + key);
+  if (btn.classList.contains('presente')) {
+    btn.classList.remove('presente');
+    btn.classList.add('falta');
+    btn.textContent = 'Falta';
+    if (justif) justif.style.display = '';
+  } else {
+    btn.classList.remove('falta');
+    btn.classList.add('presente');
+    btn.textContent = 'Presente';
+    if (justif) justif.style.display = 'none';
+  }
+}
+
+// ---------- SVG HELPERS ----------
+function svg(name) {
+  const map = {
+    users:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>`,
+    book:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`,
+    cal:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+    clock:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    pin:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+    grad:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+    home:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`,
+    list:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+    folder:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>`,
+    star:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    monitor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+    edit:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  };
+  return map[name] || '';
+}
+
+// ---------- INIT ----------
+renderTabs();
+renderContent();
+</script>
+</body>
+</html>

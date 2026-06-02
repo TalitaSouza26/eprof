@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eProf - Minhas aulas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; display: flex; height: 100vh; overflow: hidden; font-size: 13px; color: #333; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 168px;
+      min-width: 168px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #eee;
+      padding-bottom: 12px;
+    }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: #f26522;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 13px;
+      letter-spacing: -0.5px;
+    }
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-text .eprof { font-weight: 700; font-size: 14px; color: #f26522; }
+    .logo-badge {
+      background: #f26522; color: #fff;
+      font-size: 8px; font-weight: 700;
+      padding: 1px 5px; border-radius: 3px;
+      letter-spacing: 0.5px;
+      margin-top: 1px;
+      width: fit-content;
+    }
+    .nav { flex: 1; padding: 8px 0; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 16px;
+      color: #666; cursor: pointer;
+      border-radius: 0;
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+    .nav-item:hover { background: #fef5f0; }
+    .nav-item.active { background: #fef5f0; color: #f26522; font-weight: 600; border-right: 3px solid #f26522; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-bottom {
+      padding: 8px 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .logout {
+      display: flex; align-items: center; gap: 8px;
+      color: #888; cursor: pointer; font-size: 13px; padding: 6px 0;
+    }
+    .logout svg { width: 16px; height: 16px; }
+
+    /* MAIN */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* TOP BAR */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-left .icon-cal {
+      color: #f26522;
+    }
+    .topbar-title { font-size: 17px; font-weight: 700; color: #222; }
+    .topbar-sub { font-size: 12px; color: #888; margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #f26522; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 12px;
+    }
+    .user-info { text-align: right; }
+    .user-name { font-weight: 600; font-size: 13px; color: #222; }
+    .user-role { font-size: 11px; color: #888; }
+
+    /* CALENDAR HEADER */
+    .cal-header {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 10px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .month-nav { display: flex; align-items: center; gap: 12px; }
+    .month-nav button {
+      background: none; border: none; cursor: pointer;
+      color: #666; font-size: 16px; padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .month-nav button:hover { background: #f5f5f5; }
+    .month-label { font-weight: 600; font-size: 14px; color: #222; }
+    .legend { display: flex; align-items: center; gap: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-orange { background: #f26522; }
+    .dot-blue { background: #1e4db7; }
+    .today-btn {
+      display: flex; align-items: center; gap: 6px;
+      border: 1px solid #ddd; background: #fff;
+      padding: 5px 12px; border-radius: 6px;
+      font-size: 12px; color: #444; cursor: pointer;
+    }
+    .today-btn:hover { background: #f9f9f9; }
+
+    /* GRID */
+    .cal-grid-wrapper { flex: 1; overflow-x: auto; overflow-y: auto; }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: 168px repeat(6, 1fr);
+      min-width: 900px;
+      grid-template-rows: auto auto;
+      align-items: start;
+    }
+
+    /* Day column headers */
+    .day-header {
+      background: #fff;
+      border-bottom: 2px solid #eee;
+      border-right: 1px solid #eee;
+      padding: 10px 12px;
+      text-align: center;
+      position: sticky; top: 0; z-index: 2;
+    }
+    .day-header.today { color: #f26522; }
+    .day-name { font-size: 11px; color: #888; text-transform: capitalize; }
+    .day-num { font-size: 22px; font-weight: 700; line-height: 1.2; }
+    .day-header.today .day-num { color: #f26522; }
+
+    /* Row label column */
+    .row-label-header {
+      background: #fff;
+      border-bottom: 2px solid #eee;
+      border-right: 1px solid #eee;
+      position: sticky; top: 0; z-index: 3;
+    }
+
+    /* Day cells */
+    .day-cell {
+      border-right: 1px solid #eee;
+      background: #fafbfd;
+      padding: 0 8px 12px;
+      min-width: 0;
+    }
+    .day-cell.today-col { background: #fffaf7; }
+
+    .period-label {
+      font-size: 10px; font-weight: 700; color: #aaa;
+      letter-spacing: 0.8px; padding: 10px 0 6px;
+      text-transform: uppercase;
+    }
+
+    /* CLASS CARD */
+    .class-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      padding: 9px 10px;
+      margin-bottom: 6px;
+    }
+    .card-tag {
+      display: inline-block;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 4px;
+      margin-bottom: 5px;
+    }
+    .tag-orange { background: #fff0e8; color: #f26522; }
+    .tag-blue { background: #e8eefa; color: #1e4db7; border-left: 3px solid #1e4db7; border-radius: 0 4px 4px 0; padding-left: 8px; }
+    .card-title { font-size: 13px; font-weight: 600; color: #222; margin-bottom: 4px; }
+    .card-info { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #888; margin-bottom: 2px; }
+    .card-info svg { width: 11px; height: 11px; flex-shrink: 0; }
+    .card-link {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 500;
+      margin-top: 5px;
+    }
+    .link-plan { color: #1e4db7; }
+    .link-warn { color: #e0a020; }
+    .link-plan svg, .link-warn svg { width: 12px; height: 12px; }
+    .card-ext { float: right; color: #aaa; margin-top: -2px; }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f5f5f5; }
+    ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+
+    /* card clickable */
+    .class-card { cursor: pointer; }
+    .class-card:hover { border-color: #f26522; box-shadow: 0 2px 8px rgba(242,101,34,0.12); transform: translateY(-1px); transition: all 0.15s; }
+
+    /* help button */
+    .help-btn {
+      position: fixed; bottom: 20px; right: 20px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #555; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">ep</div>
+    <div class="logo-text">
+      <span class="eprof">eprof</span>
+      <span class="logo-badge">EDUCAÇÃO</span>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Página inicial
+    </div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Minhas aulas
+    </div>
+    <a href="turmas.html" class="nav-item" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Minhas turmas
+    </a>
+    <a href="planejamento.html" class="nav-item" style="text-decoration:none;color:inherit;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Planejamento
+    </a>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Planejamento2
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Comunicação
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Acervo digital
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Suporte
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>
+      Configurações
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sair da conta
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg class="icon-cal" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div>
+        <div class="topbar-title">Minhas aulas</div>
+        <div class="topbar-sub">Município de Porto Seguro</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        <div class="user-name">Yuri Derevtsoff</div>
+        <div class="user-role">Professor</div>
+      </div>
+      <div class="avatar">YD</div>
+    </div>
+  </div>
+
+  <!-- CALENDAR HEADER -->
+  <div class="cal-header">
+    <div class="month-nav">
+      <button>&#8249;</button>
+      <span class="month-label">Maio – 2026</span>
+      <button>&#8250;</button>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="dot dot-orange"></div> Ensino Regular</div>
+      <div class="legend-item"><div class="dot dot-blue"></div> Ed. Infantil</div>
+      <button class="today-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Ir para hoje
+      </button>
+    </div>
+  </div>
+
+  <!-- CALENDAR GRID -->
+  <div class="cal-grid-wrapper">
+    <div class="cal-grid">
+
+      <!-- HEADER ROW -->
+      <div class="row-label-header"></div>
+
+      <div class="day-header today">
+        <div class="day-name">Quinta</div>
+        <div class="day-num">14</div>
+      </div>
+      <div class="day-header">
+        <div class="day-name">Sexta</div>
+        <div class="day-num">15</div>
+      </div>
+      <div class="day-header">
+        <div class="day-name">Sábado</div>
+        <div class="day-num">16</div>
+      </div>
+      <div class="day-header">
+        <div class="day-name">Domingo</div>
+        <div class="day-num">17</div>
+      </div>
+      <div class="day-header">
+        <div class="day-name">Segunda</div>
+        <div class="day-num">18</div>
+      </div>
+      <div class="day-header">
+        <div class="day-name">Terça</div>
+        <div class="day-num">19</div>
+      </div>
+
+      <!-- CONTENT ROW (single row spanning all days) -->
+      <!-- Empty first cell -->
+      <div style="background:#fff; border-right:1px solid #eee;"></div>
+
+      <!-- QUINTA 14 -->
+      <div class="day-cell today-col">
+        <div class="period-label">Manhã</div>
+
+        <div class="class-card">
+          <span class="card-tag tag-orange">Educação Física</span>
+          <div class="card-title">2° ano A</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Col. Municipal de Porto...
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            07:50 – 08:20
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano vinculado
+          </div>
+        </div>
+
+        <div class="class-card">
+          <span class="card-tag tag-orange">Educação Física</span>
+          <div class="card-title">3° ano A</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Col. Municipal de Porto...
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            08:20 – 09:10
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano vinculado
+          </div>
+        </div>
+
+        <div class="class-card">
+          <span class="card-tag tag-orange">Arte</span>
+          <div class="card-title">1° ano A</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Col. Municipal de Porto...
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            09:10 – 10:00
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano vinculado
+          </div>
+        </div>
+
+        <div class="period-label">Tarde</div>
+
+        <div class="class-card" style="border-left: 3px solid #1e4db7;">
+          <div class="card-header">
+            <span class="card-tag tag-blue">Traços, sons, cores e formas</span>
+            <svg class="card-ext" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+          <div class="card-title">CN III</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            CMEI Estrela do Mar
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            13:00 – 17:00
+          </div>
+          <div class="card-link link-plan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Planejamento semanal vinculado
+          </div>
+        </div>
+      </div>
+
+      <!-- SEXTA 15 -->
+      <div class="day-cell">
+        <div class="period-label">Manhã</div>
+
+        <div class="class-card">
+          <span class="card-tag tag-orange">Educação Física</span>
+          <div class="card-title">2° ano A</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Col. Municipal de Porto...
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            07:50 – 08:20
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano vinculado
+          </div>
+        </div>
+
+        <div class="class-card">
+          <span class="card-tag tag-orange">Arte</span>
+          <div class="card-title">3° ano A</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Col. Municipal de Porto...
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            08:20 – 09:10
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano vinculado
+          </div>
+        </div>
+
+        <div class="period-label">Tarde</div>
+
+        <div class="class-card" style="border-left: 3px solid #1e4db7;">
+          <div class="card-header">
+            <span class="card-tag tag-blue">Traços, sons, cores e formas</span>
+            <svg class="card-ext" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+          <div class="card-title">PN I</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            CMEI Estrela do Mar
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            13:00 – 17:00
+          </div>
+          <div class="card-link link-plan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Planejamento semanal vinculado
+          </div>
+        </div>
+      </div>
+
+      <!-- SÁBADO 16 -->
+      <div class="day-cell"></div>
+
+      <!-- DOMINGO 17 -->
+      <div class="day-cell"></div>
+
+      <!-- SEGUNDA 18 -->
+      <div class="day-cell">
+        <div class="period-label">Manhã</div>
+
+        <div class="class-card">
+          <span class="card-tag tag-orange">Arte</span>
+          <div class="card-title">2° ano A</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Col. Municipal de Porto...
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            07:50 – 08:20
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano vinculado
+          </div>
+        </div>
+
+        <div class="class-card">
+          <span class="card-tag tag-orange">Arte</span>
+          <div class="card-title">3° ano A</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Col. Municipal de Porto...
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            08:20 – 09:10
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano vinculado
+          </div>
+        </div>
+
+        <div class="period-label">Tarde</div>
+
+        <div class="class-card" style="border-left: 3px solid #1e4db7;">
+          <div class="card-header">
+            <span class="card-tag tag-blue">Traços, sons, cores e formas</span>
+            <svg class="card-ext" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+          <div class="card-title">CN II</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            CMEI Estrela do Mar
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            13:00 – 17:00
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano semanal vinculado
+          </div>
+        </div>
+      </div>
+
+      <!-- TERÇA 19 -->
+      <div class="day-cell">
+        <div class="period-label">Manhã</div>
+
+        <div class="class-card">
+          <span class="card-tag tag-orange">Agroecologia</span>
+          <div class="card-title">2° ano A</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Col. Municipal de Porto...
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            07:50 – 08:20
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano vinculado
+          </div>
+        </div>
+
+        <div class="period-label">Tarde</div>
+
+        <div class="class-card" style="border-left: 3px solid #1e4db7;">
+          <div class="card-header">
+            <span class="card-tag tag-blue">Traços, sons, cores e formas</span>
+            <svg class="card-ext" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+          <div class="card-title">PN II</div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            CMEI Estrela do Mar
+          </div>
+          <div class="card-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            13:00 – 17:00
+          </div>
+          <div class="card-link link-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Nenhum plano semanal vinculado
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="help-btn">?</div>
+
+<script>
+// Mapa dia-número → nome e série padrão por turma
+const DIA_NOMES = { '14':'Quinta','15':'Sexta','16':'Sábado','17':'Domingo','18':'Segunda','19':'Terça' };
+const SERIE_MAP = {
+  '1° ano A':'1° ano – Ensino Fundamental I',
+  '2° ano A':'2° ano – Ensino Fundamental I',
+  '3° ano A':'3° ano – Ensino Fundamental I',
+  'CN III':'Creche – Faixa CN III',
+  'CN II':'Creche – Faixa CN II',
+  'PN I':'Pré-escola – Faixa PN I',
+  'PN II':'Pré-escola – Faixa PN II',
+};
+
+// Associa cada coluna da grid ao número do dia
+const colDias = ['14','15','16','17','18','19'];
+
+document.querySelectorAll('.class-card').forEach(card => {
+  // Descobre o dia: sobe até o day-cell, pega posição na grid
+  const cell = card.closest('.day-cell');
+  const grid = card.closest('.cal-grid');
+  const cells = Array.from(grid.querySelectorAll('.day-cell'));
+  const colIndex = cells.indexOf(cell); // 0-based
+  const diaNum = colDias[colIndex] || '14';
+  const diaNome = DIA_NOMES[diaNum] || '';
+
+  // Lê dados do card
+  const disc  = card.querySelector('.card-tag')?.textContent.trim() || '';
+  const turma = card.querySelector('.card-title')?.textContent.trim() || '';
+  const infos = card.querySelectorAll('.card-info');
+  const hora  = infos[1]?.textContent.trim() || '';
+  const tipo  = card.querySelector('.tag-blue') ? 'infantil' : 'regular';
+  const serie = SERIE_MAP[turma] || turma;
+
+  card.addEventListener('click', () => {
+    const p = new URLSearchParams({
+      disc, turma, hora, diaNum, diaNome,
+      mes: 'maio', ano: '2026',
+      escola: 'Colégio Municipal de Porto Seguro',
+      serie, tipo
+    });
+    location.href = 'aula.html?' + p.toString();
+  });
+});
+</script>
+
+</body>
+</html>

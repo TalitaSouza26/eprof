@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eProf - Minhas turmas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; display: flex; height: 100vh; overflow: hidden; font-size: 13px; color: #333; }
+
+    .sidebar { width: 168px; min-width: 168px; background: #fff; display: flex; flex-direction: column; border-right: 1px solid #eee; padding-bottom: 12px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; padding: 16px 16px 12px; border-bottom: 1px solid #f0f0f0; }
+    .logo-icon { width: 36px; height: 36px; background: #f26522; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; }
+    .logo-text .eprof { font-weight: 700; font-size: 14px; color: #f26522; }
+    .logo-badge { background: #f26522; color: #fff; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-top: 1px; width: fit-content; }
+    .nav { flex: 1; padding: 8px 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; color: #666; cursor: pointer; font-size: 13px; transition: background 0.15s; text-decoration: none; }
+    .nav-item:hover { background: #fef5f0; color: #f26522; }
+    .nav-item.active { background: #fef5f0; color: #f26522; font-weight: 600; border-right: 3px solid #f26522; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-bottom { padding: 8px 16px; border-top: 1px solid #f0f0f0; }
+    .logout { display: flex; align-items: center; gap: 8px; color: #888; cursor: pointer; font-size: 13px; padding: 6px 0; }
+    .logout:hover { color: #f26522; }
+
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    .topbar { background: #fff; border-bottom: 1px solid #eee; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-title { font-size: 17px; font-weight: 700; color: #222; }
+    .topbar-sub { font-size: 12px; color: #888; margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #f26522; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; }
+    .user-name { font-weight: 600; font-size: 13px; color: #222; }
+    .user-role { font-size: 11px; color: #888; text-align: right; }
+
+    .info-bar { background: #fff; border-bottom: 1px solid #eee; padding: 14px 24px 0; }
+    .info-bar-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .info-fields { display: grid; grid-template-columns: auto 1fr; gap: 5px 16px; align-items: center; }
+    .info-label { font-size: 11px; color: #aaa; display: flex; align-items: center; gap: 4px; }
+    .info-label svg { width: 12px; height: 12px; }
+    .info-value { font-size: 13px; color: #222; font-weight: 500; }
+    .badge-discipline { background: #fff0e8; color: #f26522; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+    .badge-blue { background: #e8eefa; color: #1e4db7; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .select-turma-btn { display: flex; align-items: center; gap: 5px; color: #f26522; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .select-turma-btn:hover { opacity: 0.8; }
+    .select-turma-btn svg { width: 13px; height: 13px; }
+    .ver-horarios-btn { display: flex; align-items: center; gap: 5px; color: #555; font-size: 12px; font-weight: 500; cursor: pointer; }
+    .ver-horarios-btn:hover { color: #333; }
+    .ver-horarios-btn svg { width: 13px; height: 13px; }
+
+    .progress-bar-wrap { padding: 8px 0 12px; }
+    .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 5px; }
+    .progress-track { height: 6px; background: #eee; border-radius: 3px; }
+    .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+    .fill-orange { background: #f26522; }
+    .fill-blue { background: #1e4db7; }
+
+    .tabs { display: flex; background: #f0f0f0; padding: 6px 16px; gap: 4px; border-bottom: 1px solid #e0e0e0; }
+    .tab { padding: 7px 18px; font-size: 13px; color: #888; cursor: pointer; display: flex; align-items: center; gap: 6px; border-radius: 20px; white-space: nowrap; transition: all 0.15s; background: transparent; }
+    .tab:hover { color: #555; background: #e4e4e4; }
+    .tab.active { background: #fff; color: #f26522; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .tab svg { width: 14px; height: 14px; }
+
+    .content { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; }
+    .content-main { flex: 1; }
+    .content-side { width: 220px; min-width: 220px; display: flex; flex-direction: column; gap: 12px; }
+
+    .history-card { background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #eee; }
+    .history-title { font-size: 14px; font-weight: 600; color: #333; text-align: center; margin-bottom: 16px; }
+    .history-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
+    .history-item:last-child { border-bottom: none; }
+    .history-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .icon-yellow { background: #fffbe6; }
+    .icon-green { background: #f0faf4; }
+    .icon-red { background: #fff5f5; }
+    .history-icon svg { width: 16px; height: 16px; }
+    .history-text { font-size: 13px; color: #333; }
+    .history-date { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+    .stat-card { background: #fff; border-radius: 10px; padding: 16px; border: 1px solid #eee; }
+    .stat-label { font-size: 12px; color: #666; display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+    .stat-label svg { width: 13px; height: 13px; }
+    .stat-updated { font-size: 11px; color: #f26522; margin-bottom: 6px; }
+    .stat-value { font-size: 26px; font-weight: 700; color: #1e4db7; }
+    .stat-value.orange { color: #f26522; }
+    .stat-trend { font-size: 11px; color: #e05050; display: flex; align-items: center; gap: 3px; margin-bottom: 4px; }
+    .stat-trend svg { width: 11px; height: 11px; }
+    .stat-link { font-size: 11px; color: #f26522; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-top: 4px; }
+    .stat-link svg { width: 11px; height: 11px; }
+    .stat-link:hover { opacity: 0.8; }
+
+    /* ALUNOS TAB */
+    .alunos-table { background: #fff; border-radius: 10px; border: 1px solid #eee; overflow: hidden; width: 100%; }
+    .alunos-header { display: grid; grid-template-columns: 1fr 160px 130px 120px 150px; padding: 10px 20px; border-bottom: 1px solid #eee; font-size: 12px; color: #aaa; }
+    .aluno-row { display: grid; grid-template-columns: 1fr 160px 130px 120px 150px; padding: 13px 20px; border-bottom: 1px solid #f5f5f5; align-items: center; }
+    .aluno-row:last-child { border-bottom: none; }
+    .aluno-row:hover { background: #fafafa; }
+    .aluno-name { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #333; }
+    .aluno-avatar { width: 32px; height: 32px; border-radius: 50%; background: #dde3ef; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #5a6a8a; flex-shrink: 0; }
+    .badge-ativo { background: #d4f7e0; color: #1e8a4a; font-size: 12px; font-weight: 600; padding: 5px 20px; border-radius: 20px; display: inline-block; }
+    .badge-inativo { background: #fde8e8; color: #c0392b; font-size: 12px; font-weight: 600; padding: 5px 20px; border-radius: 20px; display: inline-block; }
+    .aluno-freq-val { font-size: 13px; font-weight: 600; color: #2a9d5c; }
+    .aluno-freq-warn { font-size: 13px; font-weight: 600; color: #e0a020; }
+    .aluno-ocorr { font-size: 13px; color: #333; }
+    .ver-detalhes-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #444; border: 1px solid #ddd; border-radius: 6px; padding: 5px 12px; cursor: pointer; background: #fff; white-space: nowrap; }
+    .ver-detalhes-btn:hover { border-color: #f26522; color: #f26522; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: #fff; border-radius: 16px; padding: 24px; width: 480px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .modal-title-wrap { display: flex; align-items: center; gap: 10px; }
+    .modal-icon { width: 36px; height: 36px; background: #fff0e8; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .modal-icon svg { width: 18px; height: 18px; color: #f26522; }
+    .modal-icon.blue-icon { background: #e8eefa; }
+    .modal-icon.blue-icon svg { color: #1e4db7; }
+    .modal-title { font-size: 16px; font-weight: 700; color: #222; }
+    .modal-subtitle { font-size: 12px; color: #aaa; }
+    .modal-close { width: 28px; height: 28px; border-radius: 50%; border: none; background: #f5f5f5; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #666; line-height: 1; }
+    .modal-close:hover { background: #eee; }
+    .modal-body { overflow-y: auto; }
+
+    .toggle-wrap { display: flex; background: #f5f5f5; border-radius: 8px; padding: 3px; margin-bottom: 16px; }
+    .toggle-btn { flex: 1; padding: 8px; border: none; background: none; border-radius: 6px; font-size: 13px; cursor: pointer; color: #888; font-weight: 500; transition: all 0.2s; }
+    .toggle-btn.active { background: #fff; color: #f26522; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .toggle-btn.active.blue { color: #1e4db7; }
+
+    .turma-list { display: flex; flex-direction: column; }
+    .turma-row { display: flex; align-items: center; gap: 12px; padding: 11px 6px; border-bottom: 1px solid #f5f5f5; cursor: pointer; border-radius: 6px; transition: background 0.12s; }
+    .turma-row:hover { background: #fef5f0; }
+    .turma-row:last-child { border-bottom: none; }
+    .turma-row-icon { width: 30px; height: 30px; background: #fff0e8; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .turma-row-icon svg { width: 15px; height: 15px; color: #f26522; }
+    .turma-row-icon.blue { background: #e8eefa; }
+    .turma-row-icon.blue svg { color: #1e4db7; }
+    .turma-row-name { flex: 1; font-size: 13px; font-weight: 500; color: #333; }
+    .turma-row-right { display: flex; align-items: center; gap: 8px; }
+    .turma-row-disc { font-size: 12px; color: #888; display: flex; align-items: center; gap: 4px; }
+    .turma-row-disc svg { width: 12px; height: 12px; }
+    .turma-ext { color: #ccc; width: 14px; height: 14px; flex-shrink: 0; }
+    .badge-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; background: #e8eefa; color: #1e4db7; }
+
+    .horario-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+    .horario-row:last-child { border-bottom: none; }
+    .horario-time { color: #888; display: flex; align-items: center; gap: 5px; font-size: 12px; }
+    .horario-time svg { width: 13px; height: 13px; }
+    .horario-footer { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; display: flex; justify-content: space-between; font-size: 12px; color: #666; }
+
+    .help-btn { position: fixed; bottom: 20px; right: 20px; width: 36px; height: 36px; border-radius: 50%; background: #555; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f5f5f5; } ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">ep</div>
+    <div class="logo-text">
+      <span class="eprof">eprof</span>
+      <span class="logo-badge">EDUCAÇÃO</span>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Página inicial</a>
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Minhas aulas</a>
+    <a href="turmas.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Minhas turmas</a>
+    <a href="planejamento.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planejamento</a>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planejamento2</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comunicação</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Acervo digital</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Suporte</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>Configurações</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      <div>
+        <div class="topbar-title">Minhas turmas</div>
+        <div class="topbar-sub">Município de Porto Seguro</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div style="text-align:right"><div class="user-name">Yuri Derevtsoff</div><div class="user-role">Professor</div></div>
+      <div class="avatar">YD</div>
+    </div>
+  </div>
+
+  <div class="info-bar">
+    <div class="info-bar-top">
+      <div class="info-fields" id="infoFields"></div>
+      <div class="topbar-actions" id="topbarActions"></div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-info"><span id="progressLabel"></span><span id="progressPct"></span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabsBar"></div>
+  <div class="content" id="mainContent"></div>
+</div>
+
+<!-- MODAL: Selecionar turma -->
+<div class="modal-overlay hidden" id="modalSelecionar">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <div class="modal-title">Selecionar turma</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modalSelecionar')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="toggle-wrap">
+        <button class="toggle-btn active" id="toggleRegular" onclick="switchModalTab('regular')">Ensino Regular</button>
+        <button class="toggle-btn" id="toggleInfantil" onclick="switchModalTab('infantil')">Ed. Infantil</button>
+      </div>
+      <div class="turma-list" id="turmaListModal"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Ver horários (dinâmico) -->
+<div class="modal-overlay hidden" id="modalHorarios">
+  <div class="modal" style="width:420px;">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-icon blue-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div>
+          <div class="modal-title">Horários da turma</div>
+          <div class="modal-subtitle" id="horariosSubtitle"></div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modalHorarios')">×</button>
+    </div>
+    <div class="modal-body" id="horariosBody"></div>
+  </div>
+</div>
+
+<div class="help-btn">?</div>
+
+<script>
+// ============ DATA ============
+const TURMAS_REGULAR = [
+  { id:'r1', nome:'1° ano A', disc:'Agroecologia', escola:'Colégio Municipal de Porto Seguro', turno:'Matutino', total:28, presentes:20, nota:7.2, freq:88, ocorrencias:5 },
+  { id:'r2', nome:'1° ano A', disc:'Arte',          escola:'Colégio Municipal de Porto Seguro', turno:'Matutino', total:28, presentes:22, nota:8.1, freq:92, ocorrencias:3 },
+  { id:'r3', nome:'1° ano A', disc:'Ciências',      escola:'Colégio Municipal de Porto Seguro', turno:'Matutino', total:28, presentes:19, nota:6.9, freq:85, ocorrencias:7 },
+  { id:'r4', nome:'2° ano A', disc:'Agroecologia',  escola:'Colégio Municipal de Porto Seguro', turno:'Matutino', total:30, presentes:24, nota:7.8, freq:91, ocorrencias:4 },
+  { id:'r5', nome:'2° ano A', disc:'Arte',           escola:'Colégio Municipal de Porto Seguro', turno:'Matutino', total:30, presentes:27, nota:8.5, freq:95, ocorrencias:2 },
+  { id:'r6', nome:'2° ano A', disc:'Educação Física',escola:'Colégio Municipal de Porto Seguro', turno:'Matutino', total:30, presentes:5,  nota:6.64,freq:90, ocorrencias:12 },
+  { id:'r7', nome:'3° ano A', disc:'Arte',            escola:'Colégio Municipal de Porto Seguro', turno:'Matutino', total:32, presentes:28, nota:8.0, freq:93, ocorrencias:3 },
+  { id:'r8', nome:'3° ano A', disc:'Educação Física', escola:'Colégio Municipal de Porto Seguro', turno:'Matutino', total:32, presentes:25, nota:7.3, freq:89, ocorrencias:6 },
+];
+
+const TURMAS_INFANTIL = [
+  {
+    id:'i1', nome:'Turma Girassol', tag:'CN III · Grupo 2', faixa:'1a7m – 2a11m',
+    escola:'CMEI Estrela do Mar', turno:'Vespertino · 13:00 – 17:00',
+    total:15, presentes:12, ocorrencias:2,
+    horarios:[
+      { nome:'Acolhida',                                  inicio:'13:00', fim:'13:15' },
+      { nome:'Desjejum',                                  inicio:'13:15', fim:'13:30' },
+      { nome:'Roda de Conversa',                          inicio:'13:30', fim:'14:00' },
+      { nome:'Momento de Leitura',                        inicio:'14:00', fim:'14:30' },
+      { nome:'Lanche',                                    inicio:'14:30', fim:'15:00' },
+      { nome:'Atividade Principal',                       inicio:'15:00', fim:'16:00' },
+      { nome:'Atividade Motora/Livre',                    inicio:'16:00', fim:'16:40' },
+      { nome:'Arrumação da Sala e organização para saída',inicio:'16:40', fim:'17:00' },
+    ]
+  },
+  {
+    id:'i2', nome:'Turma Borboleta', tag:'PN I · Grupo 3', faixa:'3a0m – 3a11m',
+    escola:'CMEI Estrela do Mar', turno:'Matutino · 07:00 – 11:00',
+    total:18, presentes:14, ocorrencias:1,
+    horarios:[
+      { nome:'Acolhida',          inicio:'07:00', fim:'07:15' },
+      { nome:'Café da manhã',     inicio:'07:15', fim:'07:40' },
+      { nome:'Roda de Conversa',  inicio:'07:40', fim:'08:10' },
+      { nome:'Atividade Dirigida',inicio:'08:10', fim:'09:30' },
+      { nome:'Pátio Livre',       inicio:'09:30', fim:'10:00' },
+      { nome:'Lanche',            inicio:'10:00', fim:'10:20' },
+      { nome:'Atividade Cultural',inicio:'10:20', fim:'10:50' },
+      { nome:'Organização e saída',inicio:'10:50', fim:'11:00' },
+    ]
+  },
+  {
+    id:'i3', nome:'Turma Pintinho', tag:'Berçário · Grupo 1', faixa:'0a0m – 1a6m',
+    escola:'CMEI Estrela do Mar', turno:'Integral · 07:00 – 17:00',
+    total:10, presentes:8, ocorrencias:0,
+    horarios:[
+      { nome:'Chegada e acolhida',  inicio:'07:00', fim:'08:00' },
+      { nome:'Amamentação/Mamadeira',inicio:'08:00', fim:'08:30' },
+      { nome:'Banho de sol',        inicio:'08:30', fim:'09:00' },
+      { nome:'Soninho',             inicio:'09:00', fim:'10:30' },
+      { nome:'Almoço',              inicio:'11:00', fim:'11:30' },
+      { nome:'Soninho da tarde',    inicio:'12:00', fim:'14:00' },
+      { nome:'Atividades sensoriais',inicio:'14:00', fim:'15:30' },
+      { nome:'Saída',               inicio:'16:30', fim:'17:00' },
+    ]
+  },
+];
+
+const ALUNOS_MOCK = [
+  { nome:'Caio Lopes',      status:'Ativo', freq:100, ocorr:0 },
+  { nome:'Clóvis Souza',    status:'Ativo', freq:100, ocorr:0 },
+  { nome:'Davi Brito',      status:'Ativo', freq:100, ocorr:0 },
+  { nome:'Edmunda Santos',  status:'Ativo', freq:100, ocorr:0 },
+  { nome:'Januário Santos', status:'Ativo', freq:100, ocorr:0 },
+  { nome:'Joana Soares',    status:'Ativo', freq:100, ocorr:0 },
+  { nome:'João Pedro',      status:'Ativo', freq:100, ocorr:0 },
+  { nome:'Marta Silva',     status:'Ativo', freq:100, ocorr:0 },
+  { nome:'Rodrygo Goes',    status:'Ativo', freq:100, ocorr:0 },
+];
+
+const CRIANCAS_MOCK = [
+  { nome:'Alice Mendes',    freq:98 },
+  { nome:'Bento Costa',    freq:90 },
+  { nome:'Clara Rocha',    freq:85 },
+  { nome:'Davi Pereira',   freq:100 },
+  { nome:'Elis Carvalho',  freq:80 },
+  { nome:'Finn Barbosa',   freq:95 },
+];
+
+// ============ STATE ============
+let currentTurma = null;
+let currentTab = 'inicio';
+let modalTab = 'regular';
+
+// ============ INIT ============
+selectTurma(TURMAS_REGULAR[5]); // default: 2° ano A - Ed. Física
+
+// ============ SELECT TURMA ============
+function selectTurma(turma) {
+  currentTurma = turma;
+  currentTab = turma.tag ? 'criancas' : 'inicio';
+  renderInfoBar();
+  renderTabs();
+  renderContent();
+}
+
+function renderInfoBar() {
+  const t = currentTurma;
+  const isInfantil = !!t.tag;
+
+  if (!isInfantil) {
+    document.getElementById('infoFields').innerHTML = `
+      <span class="info-label">${svg('users')} Turma</span>      <span class="info-value">${t.nome}</span>
+      <span class="info-label">${svg('cal')} Disciplina</span>   <span class="info-value"><span class="badge-discipline">${t.disc}</span></span>
+      <span class="info-label">${svg('pin')} Escola</span>       <span class="info-value">${t.escola}</span>
+      <span class="info-label">${svg('clock')} Turno</span>      <span class="info-value">${t.turno}</span>
+    `;
+    document.getElementById('topbarActions').innerHTML = `
+      <div class="select-turma-btn" onclick="openModal('modalSelecionar')">${svg('ext')} Selecionar turma</div>
+    `;
+    const pct = Math.round((t.presentes / t.total) * 100);
+    document.getElementById('progressLabel').textContent = `${t.presentes} de ${t.total} alunos`;
+    document.getElementById('progressPct').textContent = `${pct}%`;
+    document.getElementById('progressFill').className = 'progress-fill fill-orange';
+    document.getElementById('progressFill').style.width = pct + '%';
+  } else {
+    document.getElementById('infoFields').innerHTML = `
+      <span class="info-label">${svg('users')} Turma</span>         <span class="info-value">${t.nome}</span>
+      <span class="info-label">${svg('cal')} Grupo / Faixa</span>   <span class="info-value"><span class="badge-blue">${t.tag} · ${t.faixa}</span></span>
+      <span class="info-label">${svg('pin')} Escola</span>          <span class="info-value">${t.escola}</span>
+      <span class="info-label">${svg('clock')} Turno</span>         <span class="info-value">${t.turno}</span>
+    `;
+    document.getElementById('topbarActions').innerHTML = `
+      <div class="ver-horarios-btn" onclick="openHorarios()">${svg('clock')} Ver horários</div>
+      <div class="select-turma-btn" onclick="openModal('modalSelecionar')">${svg('ext')} Selecionar turma</div>
+    `;
+    const pct = Math.round((t.presentes / t.total) * 100);
+    document.getElementById('progressLabel').textContent = `${t.presentes} de ${t.total} crianças`;
+    document.getElementById('progressPct').textContent = `${pct}%`;
+    document.getElementById('progressFill').className = 'progress-fill fill-blue';
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+}
+
+function renderTabs() {
+  const isInfantil = !!currentTurma.tag;
+  const tabs = isInfantil
+    ? [['inicio','Início',svg('home')],['criancas','Crianças',svg('users')],['periodos','Períodos',svg('cal')],['ocorrencias','Ocorrências',svg('warn')],['acervo','Acervo',svg('folder')]]
+    : [['inicio','Início',svg('home')],['alunos','Alunos',svg('users')],['aulas','Aulas',svg('cal')],['ocorrencias','Ocorrências',svg('warn')],['notas','Notas',svg('doc')],['acervo','Acervo',svg('folder')]];
+  document.getElementById('tabsBar').innerHTML = tabs.map(([id,label,icon]) =>
+    `<div class="tab ${id===currentTab?'active':''}" onclick="switchTab('${id}')">${icon} ${label}</div>`
+  ).join('');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(el => {
+    el.classList.toggle('active', el.textContent.trim().toLowerCase().startsWith(tab === 'criancas' ? 'crian' : tab.charAt(0)));
+  });
+  // re-render tabs to update active properly
+  renderTabs();
+  renderContent();
+}
+
+function renderContent() {
+  const t = currentTurma;
+  const isInfantil = !!t.tag;
+  const el = document.getElementById('mainContent');
+
+  if (currentTab === 'inicio') {
+    if (!isInfantil) {
+      const pct = Math.round((t.presentes / t.total) * 100);
+      el.innerHTML = `
+        <div class="content-main">
+          <div class="history-card">
+            <div class="history-title">Histórico da turma</div>
+            <div class="history-item">
+              <div class="history-icon icon-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="#e0a020" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+              <div>
+                <div class="history-text">1 aluno(s) faltou(aram) na aula das 07:50 às 08:20 do dia 14/05/2026</div>
+                <div class="history-date">Quinta · 14/05/2026 às 10:19</div>
+              </div>
+            </div>
+            <div class="history-item">
+              <div class="history-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="#2a9d5c" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div>
+                <div class="history-text">Plano de aula vinculado na aula das 07:50 às 08:20 do dia 08/05/2026</div>
+                <div class="history-date">Quarta · 08/05/2026 às 15:29</div>
+              </div>
+            </div>
+            <div class="history-item">
+              <div class="history-icon icon-red"><svg viewBox="0 0 24 24" fill="none" stroke="#e05050" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+              <div>
+                <div class="history-text">Ocorrência registrada na aula das 07:50 às 08:20 do dia 08/05/2026</div>
+                <div class="history-date">Quarta · 08/05/2026 às 18:09</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-side">
+          <div class="stat-card">
+            <div class="stat-label">${svg('doc')} Nota média da turma</div>
+            <div class="stat-updated">Atualizado em 13/05/2026</div>
+            <div class="stat-value">${t.nota.toFixed(2).replace('.',',')}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">${svg('cal')} Frequência média da turma</div>
+            <div class="stat-trend">${svg('down')} 10,0% em relação à semana anterior</div>
+            <div class="stat-value">${t.freq},0%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">${svg('warn')} Ocorrências registradas</div>
+            <div class="stat-value orange">${t.ocorrencias}</div>
+            <div class="stat-link">${svg('ext')} Visualizar ocorrências</div>
+          </div>
+        </div>`;
+    } else {
+      el.innerHTML = `<div style="color:#aaa;font-size:13px;margin:auto;padding-top:40px;">Selecione uma aba para ver o conteúdo da turma.</div>`;
+    }
+  } else if (currentTab === 'alunos') {
+    el.innerHTML = `
+      <div style="width:100%">
+        <div class="alunos-table">
+          <div class="alunos-header">
+            <span>Nome do aluno</span>
+            <span>Status</span>
+            <span>Frequência</span>
+            <span>Ocorrências</span>
+            <span>Visualização</span>
+          </div>
+          ${ALUNOS_MOCK.map(a => `
+            <div class="aluno-row">
+              <div class="aluno-name">
+                <div class="aluno-avatar">${a.nome[0]}</div>
+                ${a.nome}
+              </div>
+              <span><span class="${a.status === 'Ativo' ? 'badge-ativo' : 'badge-inativo'}">${a.status}</span></span>
+              <span class="${a.freq >= 80 ? 'aluno-freq-val' : 'aluno-freq-warn'}">${a.freq.toFixed(1).replace('.',',')}%</span>
+              <span class="aluno-ocorr">${a.ocorr}</span>
+              <span><button class="ver-detalhes-btn">Ver detalhes ↗</button></span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  } else if (currentTab === 'criancas') {
+    el.innerHTML = `
+      <div class="content-main">
+        <div class="alunos-list">
+          <div class="alunos-header" style="grid-template-columns:1fr auto;"><span>Criança</span><span>Frequência</span></div>
+          ${CRIANCAS_MOCK.map(a => `
+            <div class="aluno-row" style="grid-template-columns:1fr auto;">
+              <div class="aluno-name">
+                <div class="aluno-avatar">${a.nome.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+                ${a.nome}
+              </div>
+              <span class="aluno-freq ${a.freq >= 85 ? 'freq-ok' : 'freq-warn'}">${a.freq}%</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    el.innerHTML = `<div style="color:#aaa;font-size:13px;margin:auto;padding-top:40px;">Conteúdo da aba em construção.</div>`;
+  }
+}
+
+// ============ MODAIS ============
+function openModal(id) {
+  if (id === 'modalSelecionar') renderModalList();
+  document.getElementById(id).classList.remove('hidden');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.add('hidden'); });
+});
+
+function switchModalTab(tab) {
+  modalTab = tab;
+  document.getElementById('toggleRegular').className = 'toggle-btn' + (tab==='regular'?' active':'');
+  document.getElementById('toggleInfantil').className = 'toggle-btn' + (tab==='infantil'?' active blue':'');
+  renderModalList();
+}
+
+function renderModalList() {
+  const list = document.getElementById('turmaListModal');
+  if (modalTab === 'regular') {
+    list.innerHTML = TURMAS_REGULAR.map(t => `
+      <div class="turma-row" onclick="pickTurma('${t.id}')">
+        <div class="turma-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <span class="turma-row-name">${t.nome}</span>
+        <div class="turma-row-right">
+          <span class="turma-row-disc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${t.disc}</span>
+          <svg class="turma-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+      </div>`).join('');
+  } else {
+    list.innerHTML = TURMAS_INFANTIL.map(t => `
+      <div class="turma-row" onclick="pickTurma('${t.id}')">
+        <div class="turma-row-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <span class="turma-row-name">${t.nome}</span>
+        <div class="turma-row-right">
+          <span class="badge-tag">${t.tag}</span>
+          <svg class="turma-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function pickTurma(id) {
+  closeModal('modalSelecionar');
+  const t = [...TURMAS_REGULAR, ...TURMAS_INFANTIL].find(x => x.id === id);
+  if (t) selectTurma(t);
+}
+
+function openHorarios() {
+  const t = currentTurma;
+  document.getElementById('horariosSubtitle').textContent = `${t.nome} · ${t.tag.split('·')[0].trim()}`;
+  document.getElementById('horariosBody').innerHTML = t.horarios.map(h => `
+    <div class="horario-row">
+      <span>${h.nome}</span>
+      <span class="horario-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${h.inicio} – ${h.fim}</span>
+    </div>`).join('') + `
+    <div class="horario-footer">
+      <span>Turno: <strong style="color:#f26522">${t.turno.split('·')[0].trim()}</strong></span>
+      <span>Total: <strong>${calcHoras(t.horarios)}</strong></span>
+    </div>`;
+  openModal('modalHorarios');
+}
+
+function calcHoras(horarios) {
+  const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+  const ini = toMin(horarios[0].inicio);
+  const fim = toMin(horarios[horarios.length-1].fim);
+  const diff = fim - ini;
+  return diff % 60 === 0 ? `${diff/60} horas` : `${Math.floor(diff/60)}h${diff%60}min`;
+}
+
+// ============ SVG HELPERS ============
+function svg(name) {
+  const map = {
+    users:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>`,
+    cal:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+    pin:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+    clock:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    ext:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
+    warn:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    doc:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+    folder: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>`,
+    home:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`,
+    down:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>`,
+  };
+  return map[name] || '';
+}
+</script>
+</body>
+</html>
