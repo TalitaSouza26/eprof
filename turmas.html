@@ -198,7 +198,7 @@
     /* FICHA PANEL */
     .ficha-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 200; display: none; }
     .ficha-overlay.open { display: block; }
-    .ficha-panel { position: fixed; top: 0; right: -480px; width: 460px; height: 100vh; background: #fff; z-index: 201; box-shadow: -4px 0 24px rgba(0,0,0,0.14); display: flex; flex-direction: column; transition: right 0.3s ease; }
+    .ficha-panel { position: fixed; top: 0; right: -680px; width: 660px; height: 100vh; background: #fff; z-index: 201; box-shadow: -4px 0 24px rgba(0,0,0,0.14); display: flex; flex-direction: column; transition: right 0.3s ease; }
     .ficha-panel.open { right: 0; }
     .ficha-ph { padding: 20px 24px; border-bottom: 1px solid #eee; display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
     .ficha-ph-info { display: flex; flex-direction: column; gap: 2px; }
@@ -221,12 +221,35 @@
     .ficha-save:hover { background: #1640a0; }
     .ficha-cancel { padding: 11px 20px; background: #f5f5f5; color: #555; border: none; border-radius: 20px; font-size: 13px; cursor: pointer; }
 
+    /* FICHA TABELA */
+    .fr-legend { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .fr-leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #444; }
+    .fr-leg-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; }
+    .fr-leg-sim  { background: #2e7d32; }
+    .fr-leg-av   { background: #f9a825; }
+    .fr-leg-an   { background: #f26522; }
+    .fr-leg-nt   { background: #757575; }
+    .fr-table { width: 100%; border-collapse: collapse; }
+    .fr-table th { background: #1e4db7; color: #fff; font-size: 11px; font-weight: 600; padding: 8px 6px; text-align: center; }
+    .fr-table th:first-child { text-align: left; padding-left: 10px; }
+    .fr-table th.unid { width: 52px; }
+    .fr-obj-row td { padding: 8px 6px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; font-size: 12px; color: #333; line-height: 1.4; }
+    .fr-obj-row:last-child td { border-bottom: none; }
+    .fr-obj-row td:first-child { padding-left: 10px; }
+    .fr-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: #f26522; color: #fff; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-right: 6px; float: left; margin-top: 2px; }
+    .fr-select { border: 1px solid #ddd; border-radius: 6px; padding: 4px 2px; font-size: 11px; width: 100%; outline: none; color: #555; background: #fff; }
+    .fr-select:focus { border-color: #1e4db7; }
+    .fr-select.v-sim { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+    .fr-select.v-av  { background: #fff8e1; color: #e65100; border-color: #f9a825; }
+    .fr-select.v-an  { background: #fff3e0; color: #e64a19; border-color: #f26522; }
+    .fr-select.v-nt  { background: #f5f5f5; color: #757575; border-color: #9e9e9e; }
+
     /* RELATÓRIO PANEL */
     .rel-unid-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
     .rel-unid-tab { padding: 6px 16px; border-radius: 20px; border: 1.5px solid #ddd; font-size: 12px; font-weight: 500; color: #666; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
     .rel-unid-tab:hover { border-color: #1e4db7; color: #1e4db7; }
     .rel-unid-tab.active { background: #1e4db7; border-color: #1e4db7; color: #fff; font-weight: 600; }
-    .rel-unid-titulo { font-size: 13px; font-weight: 700; color: #222; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .rel-unid-titulo { font-size: 13px; font-weight: 700; color: #222; margin-bottom: 10px; }
     .rel-textarea { width: 100%; min-height: 340px; padding: 14px; border: 1.5px solid #ddd; border-radius: 10px; font-size: 13px; color: #333; font-family: 'Segoe UI', Arial, sans-serif; resize: vertical; line-height: 1.6; outline: none; transition: border-color 0.15s; }
     .rel-textarea:focus { border-color: #1e4db7; }
     .rel-char-count { font-size: 11px; color: #aaa; text-align: right; margin-top: 6px; }
@@ -928,43 +951,66 @@ function renderFichaCampo() {
   const si = fichaCampoAtual;
   const fichaAtual = getFichaParaTurma(currentTurma.tag) || FICHA_GRUPO1;
   const sec = fichaAtual[si];
-  const clsMap = ['s-sim','s-vezes','s-nao','s-ntrab'];
-  const labels = ['SIM','ÀS VEZES','AINDA NÃO','NÃO TRABALHADO'];
-  const opts = ['sim','as-vezes','ainda-nao','nao-trab'];
 
-  const selectHtml = `
-    <div style="margin-bottom:20px;">
-      <label style="font-size:11px;color:#aaa;display:block;margin-bottom:6px;">Campo de Experiência</label>
-      <select class="freq-month-sel" style="width:100%;padding:8px 12px;font-size:13px;border-radius:8px;color:#1e4db7;font-weight:600;border-color:#1e4db7;" onchange="fichaCampoAtual=parseInt(this.value);renderFichaCampo()">
+  const legendHtml = `
+    <div class="fr-legend">
+      <div class="fr-leg-item"><span class="fr-leg-badge fr-leg-sim">SIM</span> Sim</div>
+      <div class="fr-leg-item"><span class="fr-leg-badge fr-leg-av">AV</span> Às Vezes</div>
+      <div class="fr-leg-item"><span class="fr-leg-badge fr-leg-an">AN</span> Ainda Não</div>
+      <div class="fr-leg-item"><span class="fr-leg-badge fr-leg-nt">NT</span> Não Trabalhado</div>
+    </div>`;
+
+  const selectCampoHtml = `
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;color:#aaa;display:block;margin-bottom:5px;">Campo de Experiência</label>
+      <select style="width:100%;padding:8px 12px;font-size:13px;border-radius:8px;color:#1e4db7;font-weight:600;border:1.5px solid #1e4db7;outline:none;" onchange="fichaCampoAtual=parseInt(this.value);renderFichaCampo()">
         ${fichaAtual.map((s, i) => `<option value="${i}"${i===si?' selected':''}>${s.campo}</option>`).join('')}
       </select>
     </div>`;
 
-  let indicHtml = '';
-  sec.indicadores.forEach((ind, ii) => {
-    const key = `${a ? a.idx : 0}-${si}-${ii}`;
-    const sel = fichaRespostas[key] || '';
-    indicHtml += `<div class="ficha-ind">
-      <div class="ficha-ind-txt">${ii+1}. ${ind}</div>
-      <div class="ficha-opts">
-        ${opts.map((opt, oi) => `<span class="ficha-opt${sel===opt?' '+clsMap[oi]:''}" onclick="toggleFichaOpt('${key}','${opt}',this,${oi})">${labels[oi]}</span>`).join('')}
-      </div>
-    </div>`;
-  });
+  const opts = [
+    {val:'sim', label:'SIM',  cls:'v-sim'},
+    {val:'av',  label:'AV',   cls:'v-av'},
+    {val:'an',  label:'AN',   cls:'v-an'},
+    {val:'nt',  label:'NT',   cls:'v-nt'},
+  ];
 
-  document.getElementById('fichaPanelBody').innerHTML = selectHtml + indicHtml;
+  const tableHtml = `
+    <table class="fr-table">
+      <thead><tr>
+        <th>Indicadores</th>
+        <th class="unid">I</th>
+        <th class="unid">II</th>
+        <th class="unid">III</th>
+        <th class="unid">IV</th>
+      </tr></thead>
+      <tbody>
+        ${sec.indicadores.map((ind, ii) => {
+          const baseKey = `${a ? a.idx : 0}-${si}-${ii}`;
+          return `<tr class="fr-obj-row">
+            <td><span class="fr-num">${ii+1}</span>${ind}</td>
+            ${[1,2,3,4].map(u => {
+              const key = `${baseKey}-${u}`;
+              const val = fichaRespostas[key] || '';
+              const cls = opts.find(o=>o.val===val)?.cls || '';
+              return `<td><select class="fr-select ${cls}" onchange="salvarFichaSelect('${key}',this)">
+                <option value=""></option>
+                ${opts.map(o=>`<option value="${o.val}"${val===o.val?' selected':''}>${o.label}</option>`).join('')}
+              </select></td>`;
+            }).join('')}
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+
+  document.getElementById('fichaPanelBody').innerHTML = legendHtml + selectCampoHtml + tableHtml;
 }
 
-function toggleFichaOpt(key, opt, el, optIdx) {
-  const clsMap = ['s-sim','s-vezes','s-nao','s-ntrab'];
-  const container = el.closest('.ficha-opts');
-  container.querySelectorAll('.ficha-opt').forEach((btn, i) => btn.classList.remove(clsMap[i]));
-  if (fichaRespostas[key] === opt) {
-    delete fichaRespostas[key];
-  } else {
-    fichaRespostas[key] = opt;
-    el.classList.add(clsMap[optIdx]);
-  }
+function salvarFichaSelect(key, sel) {
+  const clsMap = {sim:'v-sim', av:'v-av', an:'v-an', nt:'v-nt'};
+  sel.className = 'fr-select ' + (clsMap[sel.value] || '');
+  if (sel.value) fichaRespostas[key] = sel.value;
+  else delete fichaRespostas[key];
 }
 
 function saveFicha() {
@@ -975,7 +1021,7 @@ function saveFicha() {
 let relUnidadeAtual = 1;
 let relTextos = {}; // key: "alunoIdx-unidade"
 
-const UNIDADES = ['1ª Unidade', '2ª Unidade', '3ª Unidade', '4ª Unidade'];
+const UNIDADES = ['Inicial', 'I Bimestre', 'II Bimestre', 'III Bimestre', 'IV Bimestre'];
 
 function openRelPanel() {
   relUnidadeAtual = 1;
@@ -1003,7 +1049,11 @@ function renderRelPanel() {
   document.getElementById('relPanelSub').textContent = a ? a.nome : '';
 
   const textoAtual = relTextos[`${a ? a.idx : 0}-${relUnidadeAtual}`] || '';
-  const ordinal = UNIDADES[relUnidadeAtual - 1];
+  const unidade = UNIDADES[relUnidadeAtual - 1];
+  const titulo = unidade === 'Inicial' ? 'Relatório Inicial' : `Relatório do ${unidade}`;
+  const placeholder = unidade === 'Inicial'
+    ? 'Escreva o relatório inicial do aluno...'
+    : `Escreva o relatório do ${unidade}...`;
 
   document.getElementById('relPanelBody').innerHTML = `
     <div class="rel-unid-tabs">
@@ -1011,9 +1061,9 @@ function renderRelPanel() {
         <span class="rel-unid-tab${relUnidadeAtual === i+1 ? ' active' : ''}"
               onclick="trocarUnidade(${i+1})">${u}</span>`).join('')}
     </div>
-    <div class="rel-unid-titulo">Relatório da ${ordinal}</div>
+    <div class="rel-unid-titulo">${titulo}</div>
     <textarea id="relTextarea" class="rel-textarea"
-      placeholder="Digite aqui o relatório do aluno referente à ${ordinal}..."
+      placeholder="${placeholder}"
       oninput="atualizarContador(this)">${textoAtual}</textarea>
     <div class="rel-char-count" id="relCharCount">${textoAtual.length} caracteres</div>`;
 }
@@ -1075,7 +1125,7 @@ function renderInfoBar() {
 function renderTabs() {
   const isInfantil = !!currentTurma.tag;
   const tabs = isInfantil
-    ? [['inicio','Início',svg('home')],['criancas','Crianças',svg('users')],['periodos','Períodos',svg('cal')],['ocorrencias','Ocorrências',svg('warn')],['acervo','Acervo',svg('folder')]]
+    ? [['inicio','Início',svg('home')],['criancas','Alunos',svg('users')],['aulas','Aulas',svg('cal')],['ocorrencias','Ocorrências',svg('warn')],['acervo','Acervo',svg('folder')]]
     : [['inicio','Início',svg('home')],['alunos','Alunos',svg('users')],['aulas','Aulas',svg('cal')],['ocorrencias','Ocorrências',svg('warn')],['notas','Notas',svg('doc')],['acervo','Acervo',svg('folder')]];
   document.getElementById('tabsBar').innerHTML = tabs.map(([id,label,icon]) =>
     `<div class="tab ${id===currentTab?'active':''}" onclick="switchTab('${id}')">${icon} ${label}</div>`

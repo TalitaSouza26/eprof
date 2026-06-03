@@ -275,36 +275,6 @@
   </div>
 </div>
 
-<!-- MODAL 2: Período semanal -->
-<div class="modal-overlay hidden" id="modalPeriodo" onclick="if(event.target===this)this.classList.add('hidden')">
-  <div class="modal-periodo">
-    <div class="modal-periodo-header">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:42px;height:42px;background:#eef2fb;border-radius:10px;display:flex;align-items:center;justify-content:center;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div>
-          <div style="font-size:16px;font-weight:700;color:#222;">Escolher período semanal</div>
-          <div style="font-size:12px;color:#aaa;">Selecione o dia inicial do seu plano semanal</div>
-        </div>
-      </div>
-      <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</button>
-    </div>
-    <div class="modal-periodo-info">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>Você pode criar planos semanais entre os dias <strong>02/06/2026 a 06/06/2026</strong>. Escolha o dia inicial da semana de planejamento.</span>
-    </div>
-    <div class="modal-periodo-dias">
-      <div class="periodo-dia" onclick="selecionarDia(this,'Segunda')"><div class="periodo-dia-label">SEGUNDA</div><div class="periodo-dia-num">2</div><div class="periodo-dia-mes">Jun 2026</div></div>
-      <div class="periodo-dia" onclick="selecionarDia(this,'Terça')"  ><div class="periodo-dia-label">TERÇA</div>  <div class="periodo-dia-num">3</div><div class="periodo-dia-mes">Jun 2026</div></div>
-      <div class="periodo-dia" onclick="selecionarDia(this,'Quarta')" ><div class="periodo-dia-label">QUARTA</div> <div class="periodo-dia-num">4</div><div class="periodo-dia-mes">Jun 2026</div></div>
-      <div class="periodo-dia" onclick="selecionarDia(this,'Quinta')" ><div class="periodo-dia-label">QUINTA</div> <div class="periodo-dia-num">5</div><div class="periodo-dia-mes">Jun 2026</div></div>
-      <div class="periodo-dia" onclick="selecionarDia(this,'Sexta')"  ><div class="periodo-dia-label">SEXTA</div>  <div class="periodo-dia-num">6</div><div class="periodo-dia-mes">Jun 2026</div></div>
-    </div>
-    <button class="btn-continuar" id="btnContinuar" onclick="abrirIaManual()">Continuar ›</button>
-  </div>
-</div>
-
 <!-- MODAL 3: IA ou Manual -->
 <div class="modal-overlay hidden" id="modalIaManual" onclick="if(event.target===this)this.classList.add('hidden')">
   <div class="modal-iamanual">
@@ -589,28 +559,13 @@ const DIAS_PT = { 'Segunda':'Segunda-feira', 'Terça':'Terça-feira', 'Quarta':'
 const NUMS_DIA = { 'Segunda':'02', 'Terça':'03', 'Quarta':'04', 'Quinta':'05', 'Sexta':'06' };
 
 function fecharTudo() {
-  ['modalEscolha','modalPeriodo','modalIaManual','modalFormPlano','modalFormSemanal'].forEach(id =>
+  ['modalEscolha','modalIaManual','modalFormPlano','modalFormSemanal'].forEach(id =>
     document.getElementById(id).classList.add('hidden'));
 }
 
 function abrirPeriodoSemanal() {
   _fluxoAtual = 'semanal';
   document.getElementById('modalEscolha').classList.add('hidden');
-  document.querySelectorAll('.periodo-dia').forEach(d => d.classList.remove('selected'));
-  document.getElementById('btnContinuar').classList.remove('active');
-  document.getElementById('modalPeriodo').classList.remove('hidden');
-}
-
-function selecionarDia(el, nome) {
-  document.querySelectorAll('.periodo-dia').forEach(d => d.classList.remove('selected'));
-  el.classList.add('selected');
-  _diaSelecionado = `${DIAS_PT[nome] || nome}, ${NUMS_DIA[nome]} de junho de 2026`;
-  document.getElementById('btnContinuar').classList.add('active');
-}
-
-function abrirIaManual() {
-  if (!document.getElementById('btnContinuar').classList.contains('active')) return;
-  document.getElementById('modalPeriodo').classList.add('hidden');
   document.getElementById('modalIaManual').classList.remove('hidden');
 }
 

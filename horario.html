@@ -67,11 +67,15 @@
     .add-slot-btn { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #ddd; border-radius: 20px; padding: 5px 14px; font-size: 12px; color: #555; background: #fff; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
     .add-slot-btn:hover { border-color: #f26522; color: #f26522; }
     .add-slot-btn .plus { color: #f26522; font-size: 15px; line-height: 1; font-weight: 400; }
-    .slot-card { border-left: 3px solid #1e4db7; padding: 6px 10px; cursor: pointer; border-radius: 0 6px 6px 0; background: #fff; }
+    .slot-card { border-left: 3px solid #1e4db7; padding: 6px 10px 6px 10px; border-radius: 0 6px 6px 0; background: #fff; display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
     .slot-card:hover { background: #f5f8ff; }
+    .slot-info { cursor: pointer; flex: 1; }
     .slot-rotina { font-size: 12px; font-weight: 700; color: #1e4db7; margin-bottom: 2px; }
     .slot-turma  { font-size: 11px; color: #888; margin-bottom: 3px; }
     .slot-prof   { font-size: 11px; color: #f26522; font-weight: 500; }
+    .slot-del { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; color: #ccc; display: flex; align-items: center; }
+    .slot-del:hover { color: #f26522; }
+    .slot-del svg { width: 13px; height: 13px; }
 
     /* EMPTY STATE */
     .empty-state { display: flex; align-items: center; justify-content: center; padding: 60px 20px; color: #bbb; font-size: 13px; }
@@ -310,10 +314,15 @@ function renderTabela() {
         if (val) {
           const [prof, rotina] = val.split(' · ');
           return `<td>
-            <div class="slot-card" onclick="abrirSlot(${i},${di})">
-              <div class="slot-rotina">${rotina || ''}</div>
-              <div class="slot-turma">${turma}</div>
-              <div class="slot-prof">${prof || ''}</div>
+            <div class="slot-card">
+              <div class="slot-info" onclick="abrirSlot(${i},${di})">
+                <div class="slot-rotina">${rotina || ''}</div>
+                <div class="slot-turma">${turma}</div>
+                <div class="slot-prof">${prof || ''}</div>
+              </div>
+              <button class="slot-del" onclick="limparSlot(${i},${di})" title="Remover">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
             </div>
           </td>`;
         }
@@ -375,6 +384,11 @@ function editarHorario(i) {
 
 function removerHorario(i) {
   horarios.splice(i, 1);
+  renderTabela();
+}
+
+function limparSlot(rowIdx, colIdx) {
+  horarios[rowIdx].dias[colIdx] = '';
   renderTabela();
 }
 
