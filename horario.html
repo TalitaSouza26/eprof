@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>eProf – Gerir Horários</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; display: flex; height: 100vh; overflow: hidden; font-size: 13px; color: #333; }
+
+    /* SIDEBAR */
+    .sidebar { width: 168px; min-width: 168px; background: #fff; display: flex; flex-direction: column; border-right: 1px solid #eee; padding-bottom: 12px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; padding: 16px 16px 12px; border-bottom: 1px solid #f0f0f0; }
+    .logo-icon { width: 36px; height: 36px; background: #f26522; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; }
+    .logo-text .eprof { font-weight: 700; font-size: 14px; color: #f26522; display: block; }
+    .logo-badge { background: #f26522; color: #fff; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-top: 1px; display: inline-block; }
+    .nav { flex: 1; padding: 8px 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; color: #666; cursor: pointer; font-size: 13px; transition: background 0.15s; text-decoration: none; }
+    .nav-item:hover { background: #fef5f0; color: #f26522; }
+    .nav-item.active { background: #fef5f0; color: #f26522; font-weight: 600; border-right: 3px solid #f26522; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-bottom { padding: 8px 16px; border-top: 1px solid #f0f0f0; }
+    .logout { display: flex; align-items: center; gap: 8px; color: #888; cursor: pointer; font-size: 13px; padding: 6px 0; }
+
+    /* MAIN */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* TOPBAR */
+    .topbar { background: #fff; border-bottom: 1px solid #eee; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-title { font-size: 17px; font-weight: 700; color: #222; }
+    .topbar-sub { font-size: 12px; color: #888; margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #f26522; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; }
+    .user-name { font-weight: 600; font-size: 13px; color: #222; }
+    .user-role { font-size: 11px; color: #888; text-align: right; }
+
+    /* FILTER BAR */
+    .filter-bar { background: #fff; border-bottom: 1px solid #eee; padding: 12px 24px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .filter-select { border: 1px solid #ddd; border-radius: 8px; padding: 7px 12px; font-size: 13px; color: #333; background: #fff; cursor: pointer; outline: none; }
+    .filter-select:focus { border-color: #f26522; }
+    .add-btn { margin-left: auto; background: #f26522; color: #fff; border: none; border-radius: 20px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .add-btn:hover { background: #d9561e; }
+
+    /* CONTENT */
+    .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+    /* TABLE CARD */
+    .table-card { background: #fff; border-radius: 12px; border: 1px solid #eee; overflow: hidden; }
+    .schedule-table { width: 100%; border-collapse: collapse; }
+    .schedule-table th { background: #f9fafb; font-size: 12px; font-weight: 600; color: #555; padding: 12px 16px; text-align: left; border-bottom: 1px solid #eee; }
+    .schedule-table th:first-child { width: 130px; }
+    .schedule-table td { padding: 12px 16px; font-size: 13px; color: #333; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
+    .schedule-table tr:last-child td { border-bottom: none; }
+    .schedule-table tr:hover td { background: #fafafa; }
+    .hora-cell { white-space: nowrap; }
+    .hora-times { display: flex; flex-direction: column; gap: 3px; }
+    .hora-time { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+    .hora-time svg { width: 12px; height: 12px; color: #aaa; flex-shrink: 0; }
+    .hora-actions { display: flex; flex-direction: column; gap: 4px; margin-left: 8px; }
+    .hora-cell-wrap { display: flex; align-items: center; gap: 4px; }
+    .icon-btn { background: none; border: none; cursor: pointer; padding: 2px; display: flex; align-items: center; justify-content: center; }
+    .icon-btn svg { width: 14px; height: 14px; }
+    .icon-btn.edit svg { color: #f26522; }
+    .icon-btn.del svg { color: #f26522; }
+    .icon-btn:hover { opacity: 0.7; }
+    .add-slot-btn { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #ddd; border-radius: 20px; padding: 5px 14px; font-size: 12px; color: #555; background: #fff; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+    .add-slot-btn:hover { border-color: #f26522; color: #f26522; }
+    .add-slot-btn .plus { color: #f26522; font-size: 15px; line-height: 1; font-weight: 400; }
+    .slot-card { border-left: 3px solid #1e4db7; padding: 6px 10px; cursor: pointer; border-radius: 0 6px 6px 0; background: #fff; }
+    .slot-card:hover { background: #f5f8ff; }
+    .slot-rotina { font-size: 12px; font-weight: 700; color: #1e4db7; margin-bottom: 2px; }
+    .slot-turma  { font-size: 11px; color: #888; margin-bottom: 3px; }
+    .slot-prof   { font-size: 11px; color: #f26522; font-weight: 500; }
+
+    /* EMPTY STATE */
+    .empty-state { display: flex; align-items: center; justify-content: center; padding: 60px 20px; color: #bbb; font-size: 13px; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: #fff; border-radius: 16px; padding: 28px; width: 400px; box-shadow: 0 8px 40px rgba(0,0,0,0.16); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .modal-title { font-size: 16px; font-weight: 700; color: #222; }
+    .modal-close { width: 28px; height: 28px; border-radius: 50%; border: none; background: #f5f5f5; cursor: pointer; font-size: 18px; color: #666; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .modal-close:hover { background: #eee; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 12px; font-weight: 600; color: #555; }
+    .form-input { border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 14px; color: #333; outline: none; transition: border-color 0.15s; }
+    .form-input:focus { border-color: #f26522; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn-cancel { padding: 10px 20px; border-radius: 20px; border: none; background: #f5f5f5; color: #555; font-size: 13px; cursor: pointer; }
+    .btn-save { padding: 10px 24px; border-radius: 20px; border: none; background: #f26522; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-save:hover { background: #d9561e; }
+
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f5f5f5; } ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">ep</div>
+    <div class="logo-text">
+      <span class="eprof">eprof</span>
+      <span class="logo-badge">EDUCAÇÃO</span>
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Página inicial</a>
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Minhas aulas</a>
+    <a href="turmas.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Minhas turmas</a>
+    <a href="horario.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="8" y1="10" x2="8" y2="20"/><line x1="16" y1="10" x2="16" y2="20"/></svg>Gerir horário</a>
+    <a href="planejamento.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planejamento</a>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comunicação</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Acervo digital</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Suporte</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>Configurações</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <div>
+        <div class="topbar-title">Gerir Horários</div>
+        <div class="topbar-sub">Colégio Municipal de Porto Seguro</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div style="text-align:right"><div class="user-name">Yuri Derevtsoff</div><div class="user-role">Professor</div></div>
+      <div class="avatar">YD</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <select class="filter-select" id="selectTipo" onchange="atualizarTurmas()">
+      <option value="infantil">Ed. Infantil</option>
+      <option value="regular">Ensino Regular</option>
+    </select>
+    <select class="filter-select" id="selectTurno">
+      <option>Integral</option>
+      <option>Matutino</option>
+      <option>Vespertino</option>
+    </select>
+    <select class="filter-select" id="selectTurma">
+      <option>Berçário – Grupo 1</option>
+      <option>CN I – Grupo 1</option>
+      <option>CN II – Grupo 2</option>
+      <option>CN III – Grupo 2</option>
+      <option>PN I – Grupo 3</option>
+      <option>PN II – Grupo 4</option>
+    </select>
+    <button class="add-btn" onclick="openModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Adicionar horários
+    </button>
+  </div>
+
+  <div class="content">
+    <div class="table-card">
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th>Horário</th>
+            <th>Segunda-feira</th>
+            <th>Terça-feira</th>
+            <th>Quarta-feira</th>
+            <th>Quinta-feira</th>
+            <th>Sexta-feira</th>
+            <th style="width:40px;"></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr id="emptyRow">
+            <td colspan="7" class="empty-state">Nenhum horário criado ainda</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Adicionar horário na grade -->
+<div class="modal-overlay hidden" id="modalAdicionar">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Adicionar horário</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Horário inicial</label>
+        <input type="time" class="form-input" id="inputInicio" value="07:30"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Horário final</label>
+        <input type="time" class="form-input" id="inputFim" value="08:00"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="salvarHorario()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Adicionar aula no slot -->
+<div class="modal-overlay hidden" id="modalSlot">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Adicionar</span>
+      <button class="modal-close" onclick="closeModalSlot()">×</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
+      <div class="form-group">
+        <label class="form-label">Professor</label>
+        <select class="form-input" id="slotProfessor">
+          <option value="">Selecione...</option>
+          <option>Maria</option>
+          <option>Pedro</option>
+          <option>João</option>
+          <option>Caio</option>
+          <option>José</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rotina</label>
+        <select class="form-input" id="slotRotina">
+          <option value="">Selecione...</option>
+          <option>Acolhida</option>
+          <option>Desjejum</option>
+          <option>Roda de Conversa</option>
+          <option>Momento de Leitura</option>
+          <option>Lanche</option>
+          <option>Atividade Principal</option>
+          <option>Atividade motora direcionada e/ou livre</option>
+          <option>Arrumação da sala e organização para a saída</option>
+          <option>Banho</option>
+          <option>Almoço/higiene bucal</option>
+          <option>Sono</option>
+          <option>Jantar/higiene pessoal</option>
+          <option>Horário de tolerância</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModalSlot()">Cancelar</button>
+      <button class="btn-save" onclick="salvarSlot()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let horarios = [];
+
+function openModal() {
+  document.getElementById('modalAdicionar').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modalAdicionar').classList.add('hidden');
+}
+
+document.getElementById('modalAdicionar').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function salvarHorario() {
+  const ini = document.getElementById('inputInicio').value;
+  const fim = document.getElementById('inputFim').value;
+  if (!ini || !fim) return;
+  horarios.push({ ini, fim, dias: ['','','','',''] });
+  renderTabela();
+  closeModal();
+}
+
+const clockSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+const editSvg  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+const trashSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+
+function renderTabela() {
+  const tbody = document.getElementById('tableBody');
+  if (horarios.length === 0) {
+    tbody.innerHTML = '<tr id="emptyRow"><td colspan="7" class="empty-state">Nenhum horário criado ainda</td></tr>';
+    return;
+  }
+  tbody.innerHTML = horarios.map((h, i) => `
+    <tr>
+      <td>
+        <div class="hora-cell-wrap">
+          <div class="hora-times">
+            <div class="hora-time">${clockSvg} ${h.ini}</div>
+            <div class="hora-time">${clockSvg} ${h.fim}</div>
+          </div>
+          <div class="hora-actions">
+            <button class="icon-btn edit" onclick="editarHorario(${i})" title="Editar">${editSvg}</button>
+            <button class="icon-btn del"  onclick="removerHorario(${i})" title="Remover">${trashSvg}</button>
+          </div>
+        </div>
+      </td>
+      ${['Segunda','Terça','Quarta','Quinta','Sexta'].map((_, di) => {
+        const val = h.dias[di];
+        const turma = document.getElementById('selectTurma')?.value || '';
+        if (val) {
+          const [prof, rotina] = val.split(' · ');
+          return `<td>
+            <div class="slot-card" onclick="abrirSlot(${i},${di})">
+              <div class="slot-rotina">${rotina || ''}</div>
+              <div class="slot-turma">${turma}</div>
+              <div class="slot-prof">${prof || ''}</div>
+            </div>
+          </td>`;
+        }
+        return `<td><button class="add-slot-btn" onclick="abrirSlot(${i},${di})">Adicionar <span class="plus">+</span></button></td>`;
+      }).join('')}
+      <td></td>
+    </tr>`).join('');
+}
+
+// Slot atual sendo editado
+let slotAtual = { row: null, col: null };
+
+function abrirSlot(rowIdx, colIdx) {
+  slotAtual = { row: rowIdx, col: colIdx };
+  document.getElementById('slotProfessor').value = '';
+  document.getElementById('slotRotina').value = '';
+  // Pré-preencher se já existir
+  const val = horarios[rowIdx]?.dias[colIdx] || '';
+  if (val) {
+    const parts = val.split(' · ');
+    document.getElementById('slotProfessor').value = parts[0] || '';
+    document.getElementById('slotRotina').value = parts[1] || '';
+  }
+  document.getElementById('modalSlot').classList.remove('hidden');
+}
+
+function closeModalSlot() {
+  document.getElementById('modalSlot').classList.add('hidden');
+}
+
+document.getElementById('modalSlot').addEventListener('click', function(e) {
+  if (e.target === this) closeModalSlot();
+});
+
+function salvarSlot() {
+  const prof   = document.getElementById('slotProfessor').value;
+  const rotina = document.getElementById('slotRotina').value;
+  if (!prof && !rotina) { closeModalSlot(); return; }
+  const { row, col } = slotAtual;
+  horarios[row].dias[col] = [prof, rotina].filter(Boolean).join(' · ');
+  renderTabela();
+  closeModalSlot();
+}
+
+function editarHorario(i) {
+  const h = horarios[i];
+  document.getElementById('inputInicio').value = h.ini;
+  document.getElementById('inputFim').value = h.fim;
+  // Salvar sobrescreve o mesmo índice
+  document.querySelector('.btn-save').onclick = function() {
+    horarios[i].ini = document.getElementById('inputInicio').value;
+    horarios[i].fim = document.getElementById('inputFim').value;
+    renderTabela();
+    closeModal();
+    document.querySelector('.btn-save').onclick = salvarHorario;
+  };
+  openModal();
+}
+
+function removerHorario(i) {
+  horarios.splice(i, 1);
+  renderTabela();
+}
+
+function atualizarTurmas() {
+  const tipo = document.getElementById('selectTipo').value;
+  const select = document.getElementById('selectTurma');
+  if (tipo === 'infantil') {
+    select.innerHTML = `
+      <option>Berçário – Grupo 1</option>
+      <option>CN I – Grupo 1</option>
+      <option>CN II – Grupo 2</option>
+      <option>CN III – Grupo 2</option>
+      <option>PN I – Grupo 3</option>
+      <option>PN II – Grupo 4</option>`;
+  } else {
+    select.innerHTML = `
+      <option>1° ano A</option>
+      <option>2° ano A</option>
+      <option>3° ano A</option>`;
+  }
+}
+</script>
+</body>
+</html>
