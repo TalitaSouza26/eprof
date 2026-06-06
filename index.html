@@ -601,21 +601,17 @@ document.querySelectorAll('.class-card').forEach(card => {
   const diaNome = DIA_NOMES[diaNum] || '';
 
   // Lê dados do card
-  const disc  = card.querySelector('.card-tag')?.textContent.trim() || '';
   const turma = card.querySelector('.card-title')?.textContent.trim() || '';
   const infos = card.querySelectorAll('.card-info');
   const hora  = infos[1]?.textContent.trim() || '';
-  const tipo  = card.querySelector('.tag-blue') ? 'infantil' : 'regular';
+  const tipo  = (card.getAttribute('style') || '').includes('1e4db7') ? 'infantil' : 'regular';
+  const disc  = tipo === 'infantil' ? turma : (card.querySelector('.card-tag')?.textContent.trim() || '');
   const serie = SERIE_MAP[turma] || turma;
 
   card.addEventListener('click', () => {
-    const p = new URLSearchParams({
-      disc, turma, hora, diaNum, diaNome,
-      mes: 'maio', ano: '2026',
-      escola: 'Colégio Municipal de Porto Seguro',
-      serie, tipo
-    });
-    location.href = 'aula.html?' + p.toString();
+    const dados = { disc, turma, hora, diaNum, diaNome, mes: 'maio', ano: '2026', escola: 'Colégio Municipal de Porto Seguro', serie, tipo };
+    localStorage.setItem('aulaAtual', JSON.stringify(dados));
+    location.href = 'aula.html';
   });
 });
 </script>
