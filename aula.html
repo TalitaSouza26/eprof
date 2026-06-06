@@ -262,7 +262,7 @@ function renderContent() {
               <span class="card-empty-label">Sem plano de aula<br>vinculado</span>
             `}
           </div>
-          <div class="card-action" onclick="abrirVincularPlano()">${planoVinculado ? 'Trocar plano ↺' : 'Adicionar +'}</div>
+          <div class="card-action" onclick="switchTab('plano')">${planoVinculado ? 'Trocar plano ↺' : 'Adicionar +'}</div>
         </div>
         <!-- Avaliação -->
         <div class="aula-card">
@@ -330,37 +330,103 @@ function renderContent() {
   }
 
   else if (currentTab === 'plano') {
-    el.innerHTML = planoVinculado ? `
-      <div class="plano-wrap">
-        <div style="background:#fff;border-radius:12px;border:1px solid #eee;padding:24px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div style="width:44px;height:44px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-              </div>
-              <div>
-                <div style="font-size:15px;font-weight:700;color:#222;">${planoVinculado.titulo}</div>
-                <div style="font-size:12px;color:#aaa;margin-top:2px;">${planoVinculado.data} · ${planoVinculado.serie}</div>
-              </div>
+    if (tipo === 'infantil') {
+      // Ed. Infantil: exibe grupo de planos semanais selecionáveis
+      const sel = planoVinculado;
+      const planosSemanais = TODOS_PLANOS.filter(p => p.tipo === 'semanal');
+      const cards = planosSemanais.map(p => {
+        const isSelected = sel && sel.id === p.id;
+        const shadowSel = '0 0 0 3px rgba(30,77,183,0.14)';
+        return `
+          <div onclick="vincularPlano(${p.id})" style="
+            background:#fff;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;
+            border:${isSelected ? '2px solid #1e4db7' : '1.5px solid #eee'};
+            box-shadow:${isSelected ? shadowSel : 'none'};
+            transition:box-shadow 0.15s,border-color 0.15s;"
+            onmouseover="if(!${isSelected})this.style.boxShadow='0 3px 12px rgba(0,0,0,0.09)'"
+            onmouseout="this.style.boxShadow='${isSelected ? shadowSel : 'none'}'">
+            ${isSelected ? `<span style="position:absolute;top:10px;right:10px;background:#1e4db7;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;z-index:1;pointer-events:none;">✓</span>` : ''}
+            <div style="height:5px;background:#1e4db7;"></div>
+            <div style="padding:14px 16px 10px;">
+              <div style="font-size:13px;font-weight:700;color:#222;line-height:1.3;margin-bottom:8px;padding-right:${isSelected ? '28px' : '0'};">${p.titulo}</div>
+              <span style="background:#eef2fb;color:#1e4db7;font-size:10px;font-weight:600;padding:2px 10px;border-radius:20px;display:inline-block;">Ed. Infantil</span>
+              ${p.campos.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">${p.campos.map(c=>`<span style="background:#eef2fb;color:#1e4db7;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;">${c}</span>`).join('')}</div>` : ''}
+              <div style="margin-top:8px;font-size:11px;color:#bbb;">${p.data} · ${p.serie}</div>
             </div>
-            <button class="btn-primary" onclick="abrirVincularPlano()" style="font-size:12px;padding:8px 16px;">Trocar plano ↺</button>
+            <div style="padding:0 14px 14px;">
+              <button style="width:100%;background:${isSelected ? '#1e4db7' : '#f5f5f5'};color:${isSelected ? '#fff' : '#777'};border:none;border-radius:8px;padding:8px 0;font-size:12px;font-weight:600;cursor:pointer;pointer-events:none;">
+                ${isSelected ? '✓ Selecionado' : 'Selecionar'}
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+
+      el.innerHTML = `
+        <div class="plano-wrap">
+          ${sel ? `
+            <div style="background:#eef2fb;border:1.5px solid #1e4db7;border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+              <div style="width:40px;height:40px;background:#1e4db7;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:11px;color:#1e4db7;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Plano vinculado a esta aula</div>
+                <div style="font-size:14px;font-weight:700;color:#222;">${sel.titulo}</div>
+                <div style="font-size:11px;color:#aaa;margin-top:2px;">${sel.data} · ${sel.serie}</div>
+              </div>
+              <button onclick="event.stopPropagation();planoVinculado=null;renderContent();" style="background:#fff;border:1.5px solid #1e4db7;color:#1e4db7;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;">Remover</button>
+            </div>
+          ` : ''}
+          <div style="background:#fff;border-radius:12px;border:1px solid #eee;overflow:hidden;">
+            <div style="padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:14px;font-weight:700;color:#222;">Planos de Aula Semanais</div>
+                <div style="font-size:12px;color:#aaa;margin-top:2px;">Clique em um plano para vinculá-lo a esta aula</div>
+              </div>
+              <a href="planejamento2.html" style="font-size:12px;color:#1e4db7;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;">
+                + Criar novo
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+              </a>
+            </div>
+            <div style="padding:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+              ${cards}
+            </div>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            ${planoVinculado.campos.length
-              ? planoVinculado.campos.map(c=>`<span style="background:#eef2fb;color:#1e4db7;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;">${c}</span>`).join('')
-              : `<span style="background:#fff0e8;color:#f26522;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;">${planoVinculado.disc}</span>`}
+        </div>`;
+
+    } else {
+      // Aula regular: comportamento original com modal de vincular
+      el.innerHTML = planoVinculado ? `
+        <div class="plano-wrap">
+          <div style="background:#fff;border-radius:12px;border:1px solid #eee;padding:24px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:15px;font-weight:700;color:#222;">${planoVinculado.titulo}</div>
+                  <div style="font-size:12px;color:#aaa;margin-top:2px;">${planoVinculado.data} · ${planoVinculado.serie}</div>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="abrirVincularPlano()" style="font-size:12px;padding:8px 16px;">Trocar plano ↺</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              ${planoVinculado.campos.length
+                ? planoVinculado.campos.map(c=>`<span style="background:#eef2fb;color:#1e4db7;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;">${c}</span>`).join('')
+                : `<span style="background:#fff0e8;color:#f26522;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;">${planoVinculado.disc}</span>`}
+            </div>
+            <p style="font-size:13px;color:#888;margin-top:14px;line-height:1.6;">${planoVinculado.desc}</p>
           </div>
-          <p style="font-size:13px;color:#888;margin-top:14px;line-height:1.6;">${planoVinculado.desc}</p>
-        </div>
-      </div>` : `
-      <div class="plano-wrap">
-        <div class="plano-empty">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-          <div class="plano-empty-title">Nenhum plano de aula vinculado</div>
-          <div class="plano-empty-sub">Vincule um plano compatível com esta aula</div>
-          <button class="btn-primary" onclick="abrirVincularPlano()">+ Vincular plano de aula</button>
-        </div>
-      </div>`;
+        </div>` : `
+        <div class="plano-wrap">
+          <div class="plano-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+            <div class="plano-empty-title">Nenhum plano de aula vinculado</div>
+            <div class="plano-empty-sub">Vincule um plano compatível com esta aula</div>
+            <button class="btn-primary" onclick="abrirVincularPlano()">+ Vincular plano de aula</button>
+          </div>
+        </div>`;
+    }
   }
 
   else if (currentTab === 'avaliacao') {
