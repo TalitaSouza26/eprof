@@ -14,6 +14,7 @@
     .logo-icon { width: 36px; height: 36px; background: #f26522; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; }
     .logo-text .eprof { font-weight: 700; font-size: 14px; color: #f26522; }
     .logo-badge { background: #f26522; color: #fff; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; margin-top: 1px; width: fit-content; }
+    .logo-img { width: 104px; height: auto; display: block; }
     .nav { flex: 1; padding: 8px 0; }
     .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; color: #666; cursor: pointer; font-size: 13px; transition: background 0.15s; text-decoration: none; }
     .nav-item:hover { background: #fef5f0; color: #f26522; }
@@ -127,10 +128,12 @@
     .ia-option-title { font-size: 15px; font-weight: 700; color: #222; }
     .ia-option-desc  { font-size: 12px; color: #aaa; line-height: 1.5; }
     /* form individual */
-    .modal-form { background: #fff; border-radius: 16px; width: 580px; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
-    .modal-form-header { padding: 22px 24px 16px; border-bottom: 1px solid #f0f0f0; }
+    /* Cabeçalho e rodapé fixos; só o corpo rola — importante agora que o
+       bloco de Ed. Infantil cresceu com os 5 dias da semana. */
+    .modal-form { background: #fff; border-radius: 16px; width: 580px; max-height: 90vh; box-shadow: 0 8px 40px rgba(0,0,0,0.18); display: flex; flex-direction: column; }
+    .modal-form-header { padding: 22px 24px 16px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
     .modal-form-title { font-size: 18px; font-weight: 700; color: #222; }
-    .modal-form-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 18px; }
+    .modal-form-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; flex: 1; min-height: 0; }
     .form-label { font-size: 13px; font-weight: 600; color: #1e4db7; margin-bottom: 6px; display: block; }
     .form-input { width: 100%; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #333; outline: none; font-family: inherit; transition: border-color 0.15s; }
     .form-input:focus { border-color: #1e4db7; }
@@ -146,41 +149,42 @@
     .visib-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .visib-btn { border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; transition: border-color 0.15s, color 0.15s; background: #fff; }
     .visib-btn.selected { border-color: #1e4db7; color: #1e4db7; }
-    .modal-form-footer { padding: 0 24px 24px; }
+    .modal-form-footer { padding: 16px 24px 24px; flex-shrink: 0; border-top: 1px solid #f0f0f0; }
     .btn-criar-plano { width: 100%; background: #f26522; color: #fff; border: none; border-radius: 10px; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; }
     .btn-criar-plano:hover { background: #e05010; }
+    .btn-criar-plano.azul { background: #1e4db7; }
+    .btn-criar-plano.azul:hover { background: #163a8c; }
+    .btn-criar-plano:disabled { background: #dfe3e9; color: #fff; cursor: not-allowed; }
+    .btn-criar-plano:disabled:hover { background: #dfe3e9; }
+
+    /* Formulário único: tudo espera a escolha do nível de ensino */
+    .oculto { display: none !important; }
+    .modal-form-body.bloqueado .campo-dep { opacity: 0.45; pointer-events: none; }
+    .fp-aviso { display: flex; align-items: center; gap: 8px; background: #f7f8fa; border: 1px dashed #dfe3e9; border-radius: 10px; padding: 11px 13px; font-size: 12.5px; color: #8a929c; }
+    .fp-aviso svg { flex-shrink: 0; }
     .campo-s-card { border: 1.5px solid #eee; border-radius: 12px; padding: 16px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; }
     .campo-s-card:hover { border-color: #1e4db7; background: #f5f8ff; }
     .campo-s-card.selected { border-color: #1e4db7; background: #eef2fb; }
     .campo-s-nome { font-size: 11px; color: #555; line-height: 1.3; }
     .campo-s-card.selected .campo-s-nome { color: #1e4db7; font-weight: 600; }
-
-    /* Bolinhas de progresso semanal */
-    .fs-dot { width: 10px; height: 10px; border-radius: 50%; transition: background 0.2s; }
-    .fs-dot.done  { background: #1e4db7; }
-    .fs-dot.atual { background: #1e4db7; box-shadow: 0 0 0 3px #c7d6f5; }
-    .fs-dot.vazio { background: #dde3ef; }
   </style>
+  <link rel="stylesheet" href="theme.css" />
 </head>
 <body>
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-icon">ep</div>
-    <div class="logo-text">
-      <span class="eprof">eprof</span>
-      <span class="logo-badge">EDUCAÇÃO</span>
-    </div>
+    <img src="logo.png" alt="eprof" class="logo-img" />
+    <span class="portal-tag">Portal do Professor</span>
   </div>
   <nav class="nav">
     <a href="index.html"        class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Página inicial</a>
     <a href="index.html"        class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Minhas aulas</a>
     <a href="turmas.html"       class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Minhas turmas</a>
     <a href="horario.html"      class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="8" y1="10" x2="8" y2="20"/><line x1="16" y1="10" x2="16" y2="20"/></svg>Gerir horário</a>
-    <a href="planejamento.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>Planejamento</a>
     <a href="planejamento2.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planejamento2</a>
-    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comunicação</div>
+    <a href="comunicacao.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comunicação</a>
     <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Acervo digital</div>
     <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Suporte</div>
     <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>Configurações</div>
@@ -238,7 +242,7 @@
       <option>Escuta, fala e pensamentos</option>
       <option>Traços, sons, cores e formas</option>
     </select>
-    <button class="btn-criar" onclick="document.getElementById('modalEscolha').classList.remove('hidden')">+ Criar plano de aula</button>
+    <button class="btn-criar" onclick="abrirCriarPlano()">+ Criar plano de aula</button>
   </div>
 
   <!-- CONTENT -->
@@ -263,19 +267,19 @@
       <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</button>
     </div>
     <div class="modal-escolha-body">
-      <div class="escolha-card disc" onclick="abrirIndividual()">
-        <div class="escolha-icon orange">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        </div>
-        <div class="escolha-title">Plano por disciplina</div>
-        <div class="escolha-desc">Crie um planejamento específico para uma disciplina</div>
-      </div>
-      <div class="escolha-card semanal" onclick="abrirPeriodoSemanal()">
+      <div class="escolha-card semanal" onclick="abrirInfantilDireto()">
         <div class="escolha-icon blue">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg>
         </div>
-        <div class="escolha-title">Plano semanal</div>
-        <div class="escolha-desc">Crie um planejamento para toda a semana de atividades</div>
+        <div class="escolha-title">Educação Infantil</div>
+        <div class="escolha-desc">Crie o plano semanal por campos de experiência</div>
+      </div>
+      <div class="escolha-card disc" onclick="abrirPorSerie()">
+        <div class="escolha-icon orange">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="escolha-title">Por série</div>
+        <div class="escolha-desc">Crie um plano de aula para uma série, com IA ou manual</div>
       </div>
     </div>
   </div>
@@ -311,26 +315,31 @@
   </div>
 </div>
 
-<!-- MODAL 4: Formulário individual -->
-<div class="modal-overlay hidden" id="modalFormPlano" onclick="if(event.target===this)this.classList.add('hidden')">
+<!-- MODAL 4: Formulário único — o nível de ensino define o conteúdo -->
+<div class="modal-overlay hidden" id="modalFormPlano" onclick="if(event.target===this)fecharTudo()">
   <div class="modal-form">
     <div class="modal-form-header">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:40px;height:40px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div id="fpIcone" style="width:40px;height:40px;background:#fff0e8;border-radius:10px;display:flex;align-items:center;justify-content:center;transition:background .15s;">
+            <svg id="fpIconeSvg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           </div>
-          <div class="modal-form-title">Criar plano de aula</div>
+          <div>
+            <div class="modal-form-title">Criar plano de aula</div>
+            <div id="fpSubtitulo" style="font-size:12px;color:#aaa;margin-top:2px;">Comece escolhendo o nível de ensino</div>
+          </div>
         </div>
-        <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;margin-top:-4px;">×</button>
+        <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;margin-top:-4px;">&times;</button>
       </div>
     </div>
-    <div class="modal-form-body">
-      <div><label class="form-label">Título</label><input class="form-input" type="text" placeholder="Qual será o título do plano de aula?" /></div>
+
+    <div class="modal-form-body bloqueado" id="fpBody">
+
+      <!-- Nível de ensino: única coisa habilitada de partida -->
       <div class="form-row">
         <div>
           <label class="form-label">Nível de ensino</label>
-          <select class="form-select" id="nivelEnsino2" onchange="atualizarSeries2()">
+          <select class="form-select" id="nivelEnsino2" onchange="onNivelChange()">
             <option value="">Selecione uma opção</option>
             <option value="ei">Educação Infantil</option>
             <option value="ef1">Ensino Fundamental I</option>
@@ -338,138 +347,113 @@
             <option value="em">Ensino Médio</option>
           </select>
         </div>
-        <div>
+        <div class="campo-dep">
           <label class="form-label">Série ou ano</label>
-          <select class="form-select" id="serieAno2"><option value="">Selecione uma opção</option></select>
+          <select class="form-select" id="serieAno2" disabled><option value="">Selecione uma opção</option></select>
         </div>
       </div>
-      <div><label class="form-label">Disciplina</label>
-        <select class="form-select">
-          <option value="">Selecione uma opção</option>
-          <option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option>
-          <option>História</option><option>Geografia</option><option>Arte</option>
-          <option>Educação Física</option><option>Inglês</option>
-        </select>
-      </div>
-      <div><label class="form-label">Assunto ou tema</label><input class="form-input" type="text" placeholder="Qual será o tema central da aula?" /></div>
-      <div><label class="form-label">Metodologia de ensino</label>
-        <select class="form-select">
-          <option value="">Selecione uma opção</option>
-          <option>Ativa</option><option>Expositiva</option><option>Modelo 5E</option>
-          <option>Socioemocional</option><option>Técnica</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">Duração da aula</label>
-        <div class="duracao-group">
-          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>50 min</div>
-          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>100 min</div>
-          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>150 min</div>
-          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>200 min</div>
-          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>250 min</div>
-          <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>300 min</div>
-        </div>
-      </div>
-      <div>
-        <label class="form-label">Deseja compartilhar no Acervo Digital?</label>
-        <div class="visib-group">
-          <div class="visib-btn" id="acervoP2" onclick="selAcervo('publico')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Tornar público</div>
-          <div class="visib-btn" id="acervoPr2" onclick="selAcervo('privado')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Manter privado</div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-form-footer">
-      <button class="btn-criar-plano" onclick="fecharTudo()">Criar plano de aula <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-    </div>
-  </div>
-</div>
 
-<!-- MODAL 5: Formulário semanal (Ed. Infantil) -->
-<div class="modal-overlay hidden" id="modalFormSemanal" onclick="if(event.target===this)this.classList.add('hidden')">
-  <div class="modal-form">
-    <div class="modal-form-header">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <div style="flex:1;">
-          <div class="modal-form-title">Criar Plano de Aula</div>
-          <!-- Badge do dia -->
-          <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">
-            <div style="display:flex;align-items:center;gap:7px;background:#eef2fb;border-radius:10px;padding:8px 14px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <div>
-                <div id="formSemanalDiaNome" style="font-size:13px;font-weight:700;color:#1e4db7;line-height:1.2;"></div>
-                <div id="formSemanalDiaData" style="font-size:11px;color:#6a87d0;margin-top:1px;"></div>
-              </div>
-            </div>
-            <!-- Progresso: bolinhas + texto -->
-            <div style="display:flex;flex-direction:column;gap:5px;">
-              <div style="display:flex;gap:5px;">
-                <div class="fs-dot vazio"></div>
-                <div class="fs-dot vazio"></div>
-                <div class="fs-dot vazio"></div>
-                <div class="fs-dot vazio"></div>
-                <div class="fs-dot vazio"></div>
-              </div>
-              <div id="formSemanalProgresso" style="font-size:11px;color:#aaa;"></div>
-            </div>
-          </div>
-        </div>
-        <button onclick="fecharTudo()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;margin-top:-4px;">×</button>
+      <div class="fp-aviso" id="fpAviso">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Selecione o nível de ensino para liberar os demais campos.
       </div>
-    </div>
-    <div class="modal-form-body">
-      <!-- Título -->
-      <div>
+
+      <div class="campo-dep">
         <label class="form-label">Título do plano</label>
-        <input class="form-input" type="text" placeholder="Ex: Brincando com o corpo" />
+        <input class="form-input" type="text" id="fpTitulo" placeholder="Qual será o título do plano de aula?" disabled />
       </div>
-      <!-- Campos de Experiência -->
-      <div>
-        <label class="form-label">Campos de Experiência</label>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🏃</span><span class="campo-s-nome">Corpo, gestos e movimentos</span></div>
-          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">👥</span><span class="campo-s-nome">O eu, o outro e o nós</span></div>
-          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🎨</span><span class="campo-s-nome">Traços, sons, cores e formas</span></div>
-          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">💬</span><span class="campo-s-nome">Escuta, fala, pensamentos e imaginação</span></div>
-          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🔢</span><span class="campo-s-nome">Espaços, tempos, quantidades, relações, transformações</span></div>
-          <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🌍</span><span class="campo-s-nome">Culturas Regionais</span></div>
-        </div>
-      </div>
-      <!-- Tema -->
-      <div>
-        <label class="form-label">Tema</label>
-        <input class="form-input" type="text" placeholder="Ex: Conhecendo meu corpo" />
-      </div>
-      <!-- Metodologia -->
-      <div>
-        <label class="form-label">Metodologia</label>
-        <select class="form-select">
-          <option value="">Selecione uma metodologia</option>
-          <option>Metodologia Ativa</option><option>Expositiva</option><option>Modelo 5E</option>
-          <option>Socioemocional</option><option>Técnica</option><option>Projetos</option>
-        </select>
-      </div>
-      <!-- Recursos -->
-      <div>
-        <label class="form-label">Recursos didáticos</label>
-        <textarea class="form-textarea" placeholder="Descreva os materiais e recursos necessários"></textarea>
-      </div>
-      <!-- Visibilidade -->
-      <div>
-        <label class="form-label">Visibilidade</label>
-        <div class="visib-group">
-          <div class="visib-btn selected" id="visibPS" onclick="selVisibS('publico')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Público
-          </div>
-          <div class="visib-btn" id="visibPrS" onclick="selVisibS('privado')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Privado
+
+      <!-- ===== Educação Infantil: campos de experiência ===== -->
+      <div id="blocoInfantil" class="oculto" style="display:flex;flex-direction:column;gap:18px;">
+        <div>
+          <label class="form-label">Campos de Experiência</label>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+            <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🏃</span><span class="campo-s-nome">Corpo, gestos e movimentos</span></div>
+            <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">👥</span><span class="campo-s-nome">O eu, o outro e o nós</span></div>
+            <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🎨</span><span class="campo-s-nome">Traços, sons, cores e formas</span></div>
+            <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">💬</span><span class="campo-s-nome">Escuta, fala, pensamentos e imaginação</span></div>
+            <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🔢</span><span class="campo-s-nome">Espaços, tempos, quantidades, relações, transformações</span></div>
+            <div class="campo-s-card" onclick="this.classList.toggle('selected')"><span style="font-size:28px">🌍</span><span class="campo-s-nome">Culturas Regionais</span></div>
           </div>
         </div>
+        <div>
+          <label class="form-label">Tema</label>
+          <input class="form-input" type="text" id="fpTemaInfantil" placeholder="Ex: Conhecendo meu corpo" />
+        </div>
+        <div>
+          <label class="form-label">Metodologia</label>
+          <select class="form-select" id="fpMetodologiaInfantil">
+            <option value="">Selecione uma metodologia</option>
+            <option>Metodologia Ativa</option><option>Expositiva</option><option>Modelo 5E</option>
+            <option>Socioemocional</option><option>Técnica</option><option>Projetos</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Recursos didáticos</label>
+          <textarea class="form-textarea" id="fpRecursosInfantil" placeholder="Descreva os materiais e recursos necessários"></textarea>
+        </div>
+        <div>
+          <label class="form-label">Visibilidade</label>
+          <div class="visib-group">
+            <div class="visib-btn selected" id="visibPS" onclick="selVisibS('publico')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Público
+            </div>
+            <div class="visib-btn" id="visibPrS" onclick="selVisibS('privado')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Privado
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- ===== Fundamental / Médio: disciplina ===== -->
+      <div id="blocoRegular" class="oculto" style="display:flex;flex-direction:column;gap:18px;">
+        <div>
+          <label class="form-label">Disciplina</label>
+          <select class="form-select">
+            <option value="">Selecione uma opção</option>
+            <option>Matemática</option><option>Língua Portuguesa</option><option>Ciências</option>
+            <option>História</option><option>Geografia</option><option>Arte</option>
+            <option>Educação Física</option><option>Inglês</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Assunto ou tema</label>
+          <input class="form-input" type="text" placeholder="Qual será o tema central da aula?" />
+        </div>
+        <div>
+          <label class="form-label">Metodologia de ensino</label>
+          <select class="form-select">
+            <option value="">Selecione uma opção</option>
+            <option>Ativa</option><option>Expositiva</option><option>Modelo 5E</option>
+            <option>Socioemocional</option><option>Técnica</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Duração da aula</label>
+          <div class="duracao-group">
+            <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>50 min</div>
+            <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>100 min</div>
+            <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>150 min</div>
+            <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>200 min</div>
+            <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>250 min</div>
+            <div class="duracao-btn" onclick="selDur(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>300 min</div>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Deseja compartilhar no Acervo Digital?</label>
+          <div class="visib-group">
+            <div class="visib-btn" id="acervoP2" onclick="selAcervo('publico')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Tornar público</div>
+            <div class="visib-btn" id="acervoPr2" onclick="selAcervo('privado')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Manter privado</div>
+          </div>
+        </div>
+      </div>
+
     </div>
+
     <div class="modal-form-footer">
-      <button class="btn-criar-plano" onclick="fecharTudo()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <button class="btn-criar-plano" id="fpSalvar" onclick="salvarPlanoFormulario()" disabled>
         Criar plano de aula
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
     </div>
   </div>
@@ -598,53 +582,140 @@ function getProximoDiaSemanal() {
 }
 
 function fecharTudo() {
-  ['modalEscolha','modalIaManual','modalFormPlano','modalFormSemanal'].forEach(id =>
-    document.getElementById(id).classList.add('hidden'));
+  ['modalEscolha','modalIaManual','modalFormPlano'].forEach(id =>
+    document.getElementById(id)?.classList.add('hidden'));
 }
 
-function abrirPeriodoSemanal() {
-  _fluxoAtual = 'semanal';
+// Entrada pelo botão "+ Criar plano de aula": pergunta primeiro qual
+// caminho seguir. Educação Infantil vai direto pro formulário; Por série
+// ainda passa pela escolha IA/Manual antes.
+function abrirCriarPlano() {
+  document.getElementById('modalEscolha').classList.remove('hidden');
+}
+
+function abrirPorSerie() {
   document.getElementById('modalEscolha').classList.add('hidden');
   document.getElementById('modalIaManual').classList.remove('hidden');
 }
 
-let _fluxoAtual = 'individual'; // 'individual' | 'semanal'
-let _diaSelecionado = '';
-
-function abrirIndividual() {
-  _fluxoAtual = 'individual';
-  document.getElementById('modalEscolha').classList.add('hidden');
-  document.getElementById('modalIaManual').classList.remove('hidden');
+// zera os campos do bloco de Ed. Infantil — sem isto, um segundo plano
+// herdaria os campos do plano criado antes
+function limparCamposInfantil() {
+  document.getElementById('fpTitulo').value = '';
+  document.getElementById('fpTemaInfantil').value = '';
+  document.getElementById('fpMetodologiaInfantil').value = '';
+  document.getElementById('fpRecursosInfantil').value = '';
+  document.querySelectorAll('#blocoInfantil .campo-s-card.selected').forEach(c => c.classList.remove('selected'));
+  selVisibS('publico');
 }
 
+// Escolhido IA ou manual (fluxo "Por série"), abre o formulário zerado: o
+// nível de ensino é a primeira escolha e é ela que define o resto da modal.
 function abrirFormPlano() {
   document.getElementById('modalIaManual').classList.add('hidden');
-  if (_fluxoAtual === 'semanal') {
-    const proximo = getProximoDiaSemanal();
-    const criados = proximo.criados;
-    const total   = SEMANA_AULAS.length;
+  document.getElementById('nivelEnsino2').value = '';
+  limparCamposInfantil();
+  onNivelChange();
+  document.getElementById('modalFormPlano').classList.remove('hidden');
+}
 
-    // Atualiza o header da modal com dia + progresso
-    document.getElementById('formSemanalDiaNome').textContent = proximo.dia;
-    document.getElementById('formSemanalDiaData').textContent = proximo.data;
-    document.getElementById('formSemanalProgresso').textContent = `Plano ${criados + 1} de ${total} da semana`;
+// Educação Infantil: pula a escolha IA/Manual e o passo de nível — já
+// abre o formulário com os campos por experiência liberados direto.
+function abrirInfantilDireto() {
+  document.getElementById('modalEscolha').classList.add('hidden');
+  document.getElementById('nivelEnsino2').value = 'ei';
+  limparCamposInfantil();
+  onNivelChange();
+  document.getElementById('modalFormPlano').classList.remove('hidden');
+}
 
-    // Preenche as bolinhas de progresso
-    document.querySelectorAll('.fs-dot').forEach((dot, i) => {
-      dot.classList.toggle('done',  i < criados);
-      dot.classList.toggle('atual', i === criados);
-      dot.classList.toggle('vazio', i > criados);
-    });
+function onNivelChange() {
+  const nivel    = document.getElementById('nivelEnsino2').value;
+  const infantil = nivel === 'ei';
+  const body     = document.getElementById('fpBody');
 
-    document.getElementById('modalFormSemanal').classList.remove('hidden');
-  } else {
-    document.getElementById('modalFormPlano').classList.remove('hidden');
-  }
+  // trava tudo enquanto não houver nível escolhido
+  body.classList.toggle('bloqueado', !nivel);
+  body.querySelectorAll('input, select, textarea').forEach(c => {
+    if (c.id !== 'nivelEnsino2') c.disabled = !nivel;
+  });
+  document.getElementById('fpSalvar').disabled = !nivel;
+  document.getElementById('fpAviso').classList.toggle('oculto', !!nivel);
+
+  // o corpo da modal muda conforme o nível
+  document.getElementById('blocoInfantil').classList.toggle('oculto', !infantil);
+  document.getElementById('blocoRegular').classList.toggle('oculto', !nivel || infantil);
+
+  atualizarSeries2();
+
+  // laranja = regular, azul = infantil (mesma convenção do resto do app)
+  const cor = infantil ? '#1e4db7' : '#f26522';
+  document.getElementById('fpIcone').style.background = infantil ? '#eef2fb' : '#fff0e8';
+  document.getElementById('fpIconeSvg').setAttribute('stroke', cor);
+  document.getElementById('fpSalvar').classList.toggle('azul', infantil);
+  document.getElementById('fpSubtitulo').textContent =
+    !nivel   ? 'Comece escolhendo o nível de ensino'
+    : infantil ? 'Plano por campos de experiência'
+               : 'Plano por disciplina';
 }
 
 function selVisibS(v) {
   document.getElementById('visibPS').classList.toggle('selected', v === 'publico');
   document.getElementById('visibPrS').classList.toggle('selected', v === 'privado');
+}
+
+function formatarDataHoje() {
+  return new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+    .replace(/^(\d+) de /, '$1 de ');
+}
+
+// Ed. Infantil: monta o plano da semana e abre o documento, já com a
+// mesma base de seções do plano por disciplina (Habilidades, Objetivos,
+// Recursos, Metodologia, Avaliação, Adaptações) — preenchidas com o que
+// a modal já coletou, vazias-mas-presentes onde ainda não há conteúdo.
+// "Adicionar nova seção" continua livre para qualquer coisa a mais,
+// como o detalhamento dia a dia, se o professor quiser.
+function salvarPlanoInfantil() {
+  const titulo  = document.getElementById('fpTitulo').value.trim();
+  const tema    = document.getElementById('fpTemaInfantil').value.trim();
+  const serie   = document.getElementById('serieAno2').value;
+  const metodo  = document.getElementById('fpMetodologiaInfantil').value;
+  const recursos = document.getElementById('fpRecursosInfantil').value.trim();
+  const campos  = [...document.querySelectorAll('#blocoInfantil .campo-s-card.selected .campo-s-nome')]
+    .map(el => el.textContent.trim());
+  const visib   = document.getElementById('visibPS').classList.contains('selected') ? 'Público' : 'Privado';
+
+  const secoes = [
+    { titulo: 'Habilidades da BNCC',      texto: '',       placeholder: 'Quais habilidades da BNCC serão trabalhadas nesta semana?' },
+    { titulo: 'Objetivos de Aprendizagem', texto: '',       placeholder: 'O que se espera que as crianças aprendam ou desenvolvam?' },
+    { titulo: 'Recursos Necessários',      texto: recursos, placeholder: 'Descreva os materiais e recursos necessários' },
+    { titulo: 'Metodologia',               texto: '',       placeholder: 'Como as atividades serão conduzidas ao longo da semana?' },
+    { titulo: 'Avaliação',                 texto: '',       placeholder: 'Como a aprendizagem será observada e avaliada?' },
+    { titulo: 'Adaptações',                texto: '',       placeholder: 'Adaptações para crianças com necessidades específicas' },
+  ];
+
+  const plano = {
+    titulo: titulo || tema || 'Plano semanal',
+    tema,
+    serie: serie ? `Ed. Infantil – ${serie}` : 'Ed. Infantil',
+    metodologia: metodo,
+    campos,
+    visib,
+    dataCriacao: formatarDataHoje(),
+    secoes,
+  };
+
+  localStorage.setItem('planoSemanalAtual', JSON.stringify(plano));
+  location.href = 'documento-plano.html';
+}
+
+// Ed. Infantil já abre o documento da semana; Fundamental/Médio segue
+// o comportamento atual (a página de documento por disciplina é um
+// próximo passo, fora do escopo de agora).
+function salvarPlanoFormulario() {
+  const infantil = document.getElementById('nivelEnsino2').value === 'ei';
+  if (infantil) salvarPlanoInfantil();
+  else fecharTudo();
 }
 
 const SERIES2 = { ei:['Berçário','Maternal I','Maternal II','Pré I (CN III)','Pré II (CN IV)'], ef1:['1° ano','2° ano','3° ano','4° ano','5° ano'], ef2:['6° ano','7° ano','8° ano','9° ano'], em:['1° ano','2° ano','3° ano'] };

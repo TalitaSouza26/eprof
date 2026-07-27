@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eProf - Comunicação</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; display: flex; height: 100vh; overflow: hidden; font-size: 13px; color: #333; }
+
+    /* SIDEBAR */
+    .sidebar { width: 168px; min-width: 168px; background: #fff; display: flex; flex-direction: column; border-right: 1px solid #eee; padding-bottom: 12px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; padding: 16px 16px 12px; border-bottom: 1px solid #f0f0f0; }
+    .logo-img { width: 104px; height: auto; display: block; }
+    .nav { flex: 1; padding: 8px 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; color: #666; cursor: pointer; font-size: 13px; transition: background 0.15s; text-decoration: none; }
+    .nav-item:hover { background: #fef5f0; color: #f26522; }
+    .nav-item.active { background: #fef5f0; color: #f26522; font-weight: 600; border-right: 3px solid #f26522; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-bottom { padding: 8px 16px; border-top: 1px solid #f0f0f0; }
+    .logout { display: flex; align-items: center; gap: 8px; color: #888; cursor: pointer; font-size: 13px; padding: 6px 0; }
+
+    /* MAIN */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* TOPBAR */
+    .topbar { background: #fff; border-bottom: 1px solid #eee; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-title { font-size: 17px; font-weight: 700; color: #222; }
+    .topbar-sub { font-size: 12px; color: #888; margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #f26522; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; }
+    .user-name { font-weight: 600; font-size: 13px; color: #222; }
+    .user-role { font-size: 11px; color: #888; text-align: right; }
+
+    /* TABS BAR */
+    .tabs-bar { background: #fff; border-bottom: 1px solid #eee; padding: 0 24px; display: flex; align-items: center; height: 48px; flex-shrink: 0; }
+    .tab { display: flex; align-items: center; gap: 7px; padding: 0 16px; height: 100%; font-size: 13px; color: #94A3B8; cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; white-space: nowrap; }
+    .tab:hover { color: #222; }
+    .tab.active { color: #f26522; border-bottom-color: #f26522; font-weight: 600; }
+    .tab svg { width: 14px; height: 14px; }
+    .tab-badge { font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 20px; color: #fff; background: #f26522; line-height: 1.6; }
+    .tab-badge.bl { background: #1e4db7; }
+
+    /* CONTENT */
+    .co-content { flex: 1; display: flex; overflow: hidden; }
+    .pane { display: none; flex: 1; overflow: hidden; }
+    .pane.active { display: flex; }
+
+    /* SPLIT: lista + detalhe */
+    .split { display: grid; grid-template-columns: 300px 1fr; width: 100%; overflow: hidden; }
+
+    .list-col { border-right: 1px solid #eee; background: #fff; display: flex; flex-direction: column; overflow: hidden; }
+    .list-top { padding: 13px 16px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .list-label { font-size: 14px; font-weight: 700; color: #222; }
+    .btn-nova { display: flex; align-items: center; gap: 5px; background: #f26522; color: #fff; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background .15s; white-space: nowrap; }
+    .btn-nova:hover { background: #d9561e; }
+    .btn-nova svg { width: 12px; height: 12px; }
+    .search-row { padding: 9px 13px; border-bottom: 1px solid #eee; flex-shrink: 0; position: relative; }
+    .search-row input { width: 100%; padding: 8px 10px 8px 32px; border: 1px solid #ddd; border-radius: 8px; font-size: 12.5px; color: #333; outline: none; background: #fafbfd; }
+    .search-row input:focus { border-color: #f26522; }
+    .search-row svg { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: #aaa; }
+    .msgs { overflow-y: auto; flex: 1; }
+
+    /* Mensagem item */
+    .msg { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: background .15s; position: relative; }
+    .msg:hover { background: #fafbfd; }
+    .msg.sel { background: #fef0eb; }
+    .msg-av { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .msg-info { flex: 1; min-width: 0; }
+    .msg-r1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; gap: 6px; }
+    .msg-from { font-size: 12px; font-weight: 600; color: #374151; }
+    .msg-time { font-size: 11px; color: #cbd5e1; flex-shrink: 0; }
+    .msg-subj { font-size: 13px; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .msg.unread .msg-subj { font-weight: 700; color: #222; }
+    .msg-prev { font-size: 11.5px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .unread-dot { position: absolute; right: 12px; top: 14px; width: 8px; height: 8px; border-radius: 50%; background: #f26522; }
+
+    /* Detalhe */
+    .detail-col { display: flex; flex-direction: column; overflow: hidden; background: #f5f6fa; }
+    .detail-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+    .detail-empty svg { width: 44px; height: 44px; color: #e2e8f0; }
+    .detail-empty p { font-size: 13px; color: #cbd5e1; }
+    .detail-body { flex: 1; overflow-y: auto; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+
+    .dcard { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px; }
+    .d-subj { font-size: 17px; font-weight: 700; color: #222; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f5f5f5; }
+    .d-meta { display: flex; flex-direction: column; gap: 7px; }
+    .d-row { display: flex; gap: 12px; font-size: 13px; }
+    .d-lbl { color: #94a3b8; width: 44px; font-size: 12px; flex-shrink: 0; padding-top: 1px; }
+    .d-val { color: #374151; }
+
+    .d-body { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px; font-size: 14px; color: #374151; line-height: 1.75; }
+    .d-anexo { display: flex; align-items: center; gap: 10px; background: #fafbfd; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-top: 14px; cursor: pointer; }
+    .d-anexo:hover { background: #e8eefa; }
+    .d-anexo svg { width: 15px; height: 15px; color: #1e4db7; flex-shrink: 0; }
+    .d-anexo-name { font-size: 12.5px; color: #1e4db7; font-weight: 600; }
+    .d-anexo-size { font-size: 11px; color: #94a3b8; margin-left: auto; }
+
+    .d-reply { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 16px; }
+    .d-reply-lbl { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
+    .d-reply-lbl svg { width: 13px; height: 13px; }
+    .d-reply textarea { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #333; resize: none; height: 80px; outline: none; font-family: inherit; }
+    .d-reply textarea:focus { border-color: #f26522; }
+    .d-reply-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+    .btn-att { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #94a3b8; background: none; border: none; cursor: pointer; }
+    .btn-att svg { width: 14px; height: 14px; }
+    .btn-send { display: flex; align-items: center; gap: 6px; background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
+    .btn-send:hover { background: #d9561e; }
+    .btn-send svg { width: 14px; height: 14px; }
+
+    /* Avisos */
+    .avisos-pane { flex: 1; overflow-y: auto; padding: 24px; background: #f5f6fa; }
+    .aviso { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px; margin-bottom: 14px; max-width: 720px; margin-left: auto; margin-right: auto; }
+    .aviso-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .aviso-chip { display: flex; align-items: center; gap: 5px; background: #e8eefa; color: #1e4db7; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+    .aviso-chip svg { width: 12px; height: 12px; }
+    .aviso-dt { font-size: 11px; color: #cbd5e1; }
+    .aviso-title { font-size: 15px; font-weight: 700; color: #222; margin-bottom: 8px; }
+    .aviso-text { font-size: 13px; color: #64748b; line-height: 1.7; }
+    .aviso-dest { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #94a3b8; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f5f5f5; }
+    .aviso-dest svg { width: 12px; height: 12px; }
+
+    /* MODAL: Nova mensagem */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: #fff; border-radius: 16px; width: 460px; max-height: 90vh; box-shadow: 0 8px 40px rgba(0,0,0,0.16); display: flex; flex-direction: column; }
+    .modal-header { display: flex; align-items: center; gap: 10px; padding: 18px 22px; border-bottom: 1px solid #eee; flex-shrink: 0; }
+    .modal-icon { width: 34px; height: 34px; border-radius: 9px; background: #fef0eb; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .modal-icon svg { width: 16px; height: 16px; color: #f26522; }
+    .modal-title { font-size: 15px; font-weight: 700; color: #222; flex: 1; }
+    .modal-close { width: 28px; height: 28px; border-radius: 50%; border: none; background: #f5f5f5; cursor: pointer; font-size: 16px; color: #666; display: flex; align-items: center; justify-content: center; line-height: 1; flex-shrink: 0; }
+    .modal-close:hover { background: #eee; }
+    .modal-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 12px; font-weight: 600; color: #555; }
+    .form-input, .form-select { width: 100%; border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #333; outline: none; font-family: inherit; transition: border-color 0.15s; background: #fff; }
+    .form-input:focus, .form-select:focus { border-color: #f26522; }
+    .form-textarea { width: 100%; border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #333; outline: none; font-family: inherit; resize: none; height: 100px; transition: border-color 0.15s; }
+    .form-textarea:focus { border-color: #f26522; }
+    .dest-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .dtbtn { padding: 9px; border-radius: 8px; border: 1.5px solid #ddd; font-size: 12.5px; cursor: pointer; background: #fff; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s; }
+    .dtbtn svg { width: 13px; height: 13px; }
+    .dtbtn.on { border-color: #f26522; background: #fef0eb; color: #f26522; font-weight: 600; }
+
+    /* Menu customizado de destinatário — mesma aparência do <select>, mas
+       a lista tem altura máxima própria e rola (o popup nativo não permite). */
+    .csel { position: relative; }
+    .csel-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #333; background: #fff; cursor: pointer; font-family: inherit; text-align: left; }
+    .csel-btn:hover, .csel-btn.open { border-color: #f26522; }
+    .csel-btn .placeholder { color: #94a3b8; }
+    .csel-chevron { width: 13px; height: 13px; color: #94a3b8; flex-shrink: 0; transition: transform .15s; }
+    .csel-btn.open .csel-chevron { transform: rotate(180deg); }
+    .csel-list { display: none; position: absolute; left: 0; right: 0; top: calc(100% + 4px); background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.14); max-height: 220px; overflow-y: auto; z-index: 20; }
+    .csel-list.open { display: block; }
+    .csel-opt { padding: 9px 12px; font-size: 13px; color: #333; cursor: pointer; }
+    .csel-opt:hover { background: #fafbfd; }
+    .csel-opt.sel { background: #fef0eb; color: #f26522; font-weight: 600; }
+    .modal-footer { padding: 14px 22px; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .btn-att-sm { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #94a3b8; background: none; border: none; cursor: pointer; }
+    .btn-att-sm svg { width: 14px; height: 14px; }
+    .btn-enviar { display: flex; align-items: center; gap: 6px; background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
+    .btn-enviar:hover { background: #d9561e; }
+    .btn-enviar svg { width: 14px; height: 14px; }
+
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f5f5f5; } ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+  </style>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="eprof" class="logo-img" />
+    <span class="portal-tag">Portal do Professor</span>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Página inicial</a>
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Minhas aulas</a>
+    <a href="turmas.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Minhas turmas</a>
+    <a href="horario.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="8" y1="10" x2="8" y2="20"/><line x1="16" y1="10" x2="16" y2="20"/></svg>Gerir horário</a>
+    <a href="planejamento2.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planejamento2</a>
+    <a href="comunicacao.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comunicação</a>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Acervo digital</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Suporte</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>Configurações</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <div>
+        <div class="topbar-title">Comunicação</div>
+        <div class="topbar-sub">Município de Porto Seguro</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div style="text-align:right"><div class="user-name">Yuri Derevtsoff</div><div class="user-role">Professor</div></div>
+      <div class="avatar">YD</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-bar">
+    <div class="tab active" data-tab="entrada" onclick="switchTab('entrada')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.63 19.79 19.79 0 01.22 1.18 2 2 0 012.18 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09"/></svg>
+      Caixa de entrada
+      <span class="tab-badge" id="inboxBadge">3</span>
+    </div>
+    <div class="tab" data-tab="enviados" onclick="switchTab('enviados')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Enviados
+    </div>
+    <div class="tab" data-tab="avisos" onclick="switchTab('avisos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+      Avisos do eProf
+      <span class="tab-badge bl">2</span>
+    </div>
+  </div>
+
+  <div class="co-content">
+
+    <!-- CAIXA DE ENTRADA -->
+    <div class="pane active" id="pane-entrada">
+      <div class="split">
+        <div class="list-col">
+          <div class="list-top">
+            <span class="list-label">Caixa de entrada</span>
+            <button class="btn-nova" onclick="openModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nova mensagem
+            </button>
+          </div>
+          <div class="search-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" placeholder="Buscar mensagens...">
+          </div>
+          <div class="msgs" id="inboxList"></div>
+        </div>
+
+        <div class="detail-col">
+          <div class="detail-body" id="inboxDetail"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENVIADOS -->
+    <div class="pane" id="pane-enviados">
+      <div class="split">
+        <div class="list-col">
+          <div class="list-top">
+            <span class="list-label">Enviados</span>
+            <button class="btn-nova" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova mensagem</button>
+          </div>
+          <div class="search-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" placeholder="Buscar mensagens...">
+          </div>
+          <div class="msgs" id="sentList"></div>
+        </div>
+        <div class="detail-col" id="sentDetailCol">
+          <div class="detail-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            <p>Selecione uma mensagem para visualizar</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AVISOS -->
+    <div class="pane" id="pane-avisos" style="overflow-y:auto">
+      <div class="avisos-pane">
+        <div class="aviso">
+          <div class="aviso-top">
+            <div class="aviso-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>Aviso oficial — eProf</div>
+            <span class="aviso-dt">14 de maio de 2026</span>
+          </div>
+          <div class="aviso-title">🚀 Nova funcionalidade: Educação Infantil disponível</div>
+          <div class="aviso-text">O módulo de Educação Infantil já está disponível para todos os professores com turmas de Ed. Infantil. Acesse Minhas Aulas e use o switcher no topo para alternar entre Ensino Regular e Ed. Infantil. Em caso de dúvidas, acesse o Suporte.</div>
+          <div class="aviso-dest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg>Direcionado para: Todos os professores</div>
+        </div>
+        <div class="aviso">
+          <div class="aviso-top">
+            <div class="aviso-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>Aviso oficial — eProf</div>
+            <span class="aviso-dt">10 de maio de 2026</span>
+          </div>
+          <div class="aviso-title">🔧 Manutenção programada — domingo 18/05</div>
+          <div class="aviso-text">O eProf ficará indisponível no domingo, 18 de maio, das 02h00 às 05h00 para manutenção programada. Pedimos que salve qualquer trabalho em andamento antes deste período.</div>
+          <div class="aviso-dest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg>Direcionado para: Todos os usuários</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL NOVA MENSAGEM -->
+<div class="modal-overlay hidden" id="overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+      <span class="modal-title">Nova mensagem</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tipo de destinatário</label>
+        <div class="dest-toggle">
+          <button class="dtbtn on" id="dt-p" onclick="setDest('pessoa')" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>Pessoa específica</button>
+          <button class="dtbtn" id="dt-g" onclick="setDest('grupo')" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Grupo ou turma</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Para</label>
+        <!-- A lista nativa do <select> não aceita max-height/scroll customizado
+             (o navegador decide a altura do popup) — com 17 opções, precisa
+             de um menu próprio pra caber numa altura fixa e rolar. -->
+        <div class="csel" id="dest-csel">
+          <button type="button" class="csel-btn" id="dest-btn" onclick="toggleDestList(event)">
+            <span id="dest-label">Selecione o destinatário</span>
+            <svg class="csel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="csel-list" id="dest-list"></div>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Assunto</label><input class="form-input" type="text" id="novaAssunto" placeholder="Digite o assunto da mensagem"></div>
+      <div class="form-group"><label class="form-label">Mensagem</label><textarea class="form-textarea" id="novaMensagemTexto" placeholder="Escreva sua mensagem aqui..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-att-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>Anexar arquivo</button>
+      <button class="btn-enviar" onclick="enviarMensagem()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Enviar mensagem</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function esc(v) { return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function switchTab(id) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pane-' + id).classList.add('active');
+  document.querySelector(`.tab[data-tab="${id}"]`).classList.add('active');
+}
+function openModal() { document.getElementById('overlay').classList.remove('hidden'); }
+function closeModal() { document.getElementById('overlay').classList.add('hidden'); }
+function closeModalOutside(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+
+// ======== CAIXA DE ENTRADA ========
+// Dado em memória (não há backend neste protótipo): clicar numa mensagem
+// troca o conteúdo do detalhe e marca como lida; enviar uma mensagem nova
+// (mais abaixo) empilha um item aqui em Enviados.
+const INBOX = [
+  { id:1, nome:'Diretora Sandra', inicial:'D', cor:'#1e4db7', hora:'09:32', lida:false, selecionada:true,
+    assunto:'Reunião pedagógica — sexta-feira',
+    preview:'Professores, informo que haverá reunião pedagógica...',
+    de:'Diretora Sandra · sandra@eprof.com.br', para:'Todos os professores do Colégio Municipal', data:'14 de maio de 2026 às 09:32',
+    corpo:`<p>Olá professores,</p><br>
+      <p>Informo que haverá reunião pedagógica na próxima <strong>sexta-feira, 16 de maio</strong>, às <strong>14h00</strong>, na sala de reuniões da escola.</p><br>
+      <p>A pauta será:</p>
+      <p>— Resultados do 1º bimestre<br>— Planejamento do 2º bimestre<br>— Informes gerais da direção</p><br>
+      <p>Presença obrigatória para todos os docentes.</p><br>
+      <p>Atenciosamente,<br><strong>Diretora Sandra</strong></p>`,
+    anexo:{ nome:'pauta_reuniao_maio2026.pdf', tamanho:'124 KB' } },
+
+  { id:2, nome:'Coord. Mariana', inicial:'C', cor:'#059669', hora:'08:15', lida:false, selecionada:false,
+    assunto:'Atualização dos planos de aula',
+    preview:'Favor atualizar os planos de aula até quinta-feira...',
+    de:'Coord. Mariana · mariana@eprof.com.br', para:'Todos os professores do Colégio Municipal', data:'14 de maio de 2026 às 08:15',
+    corpo:`<p>Olá professores,</p><br>
+      <p>Favor atualizar os planos de aula das suas turmas até <strong>quinta-feira, 14 de maio</strong>, diretamente pelo eProf.</p><br>
+      <p>Os planos do 2º e do 3º ano ainda estão pendentes de conclusão.</p><br>
+      <p>Qualquer dúvida, estou à disposição.</p><br>
+      <p>Atenciosamente,<br><strong>Coord. Mariana</strong></p>`,
+    anexo:null },
+
+  { id:3, nome:'Responsável — Ana Lima', inicial:'R', cor:'#f59e0b', hora:'Ontem', lida:true, selecionada:false,
+    assunto:'Dúvida sobre frequência da minha filha',
+    preview:'Boa tarde professor, gostaria de saber sobre as faltas...',
+    de:'Responsável — Ana Lima · analima@email.com', para:'Você', data:'13 de maio de 2026 às 16:40',
+    corpo:`<p>Boa tarde professor,</p><br>
+      <p>Gostaria de saber sobre as faltas da minha filha Alessandra nesta semana. Ela tem uma consulta médica agendada e preciso saber se pode ser dispensada na sexta-feira.</p><br>
+      <p>Aguardo retorno.</p><br>
+      <p>Obrigada,<br><strong>Ana Lima</strong></p>`,
+    anexo:null },
+
+  { id:4, nome:'Coord. Mariana', inicial:'C', cor:'#8b5cf6', hora:'13/05', lida:true, selecionada:false,
+    assunto:'Calendário de avaliações — 2º bimestre',
+    preview:'Segue em anexo o calendário de avaliações...',
+    de:'Coord. Mariana · mariana@eprof.com.br', para:'Todos os professores do Colégio Municipal', data:'13 de maio de 2026 às 11:20',
+    corpo:`<p>Olá professores,</p><br>
+      <p>Segue em anexo o calendário de avaliações do 2º bimestre.</p><br>
+      <p>Por favor, confiram as datas das suas disciplinas e sinalizem qualquer conflito até o fim da semana.</p><br>
+      <p>Atenciosamente,<br><strong>Coord. Mariana</strong></p>`,
+    anexo:{ nome:'calendario_avaliacoes_2bim.pdf', tamanho:'89 KB' } },
+
+  { id:5, nome:'Diretora Sandra', inicial:'D', cor:'#f26522', hora:'12/05', lida:false, selecionada:false,
+    assunto:'Comunicado importante — Semana da família',
+    preview:'Prezados professores, a semana da família está agendada...',
+    de:'Diretora Sandra · sandra@eprof.com.br', para:'Todos os professores do Colégio Municipal', data:'12 de maio de 2026 às 10:05',
+    corpo:`<p>Prezados professores,</p><br>
+      <p>A semana da família está agendada para os dias <strong>25 a 29 de maio</strong>.</p><br>
+      <p>Pedimos que organizem uma atividade com a turma para o evento e enviem a proposta até o dia 20 de maio.</p><br>
+      <p>Contamos com a participação de todos.</p><br>
+      <p>Atenciosamente,<br><strong>Diretora Sandra</strong></p>`,
+    anexo:null },
+];
+
+function renderInbox() {
+  document.getElementById('inboxList').innerHTML = INBOX.map(m => `
+    <div class="msg ${m.lida ? '' : 'unread'} ${m.selecionada ? 'sel' : ''}" onclick="selecionarInbox(${m.id})">
+      ${m.lida ? '' : '<div class="unread-dot"></div>'}
+      <div class="msg-av" style="background:${m.cor}">${m.inicial}</div>
+      <div class="msg-info">
+        <div class="msg-r1"><span class="msg-from">${esc(m.nome)}</span><span class="msg-time">${esc(m.hora)}</span></div>
+        <div class="msg-subj">${esc(m.assunto)}</div>
+        <div class="msg-prev">${esc(m.preview)}</div>
+      </div>
+    </div>`).join('');
+  const naoLidas = INBOX.filter(m => !m.lida).length;
+  const badge = document.getElementById('inboxBadge');
+  badge.textContent = naoLidas;
+  badge.style.display = naoLidas > 0 ? '' : 'none';
+}
+
+function renderDetalheInbox(m) {
+  const anexoHtml = m.anexo ? `
+    <div class="d-anexo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+      <span class="d-anexo-name">${esc(m.anexo.nome)}</span>
+      <span class="d-anexo-size">${esc(m.anexo.tamanho)}</span>
+    </div>` : '';
+
+  document.getElementById('inboxDetail').innerHTML = `
+    <div class="dcard">
+      <div class="d-subj">${esc(m.assunto)}</div>
+      <div class="d-meta">
+        <div class="d-row"><span class="d-lbl">De</span><span class="d-val">${esc(m.de)}</span></div>
+        <div class="d-row"><span class="d-lbl">Para</span><span class="d-val">${esc(m.para)}</span></div>
+        <div class="d-row"><span class="d-lbl">Data</span><span class="d-val">${esc(m.data)}</span></div>
+      </div>
+    </div>
+    <div class="d-body">
+      ${m.corpo}
+      ${anexoHtml}
+    </div>
+    <div class="d-reply">
+      <div class="d-reply-lbl">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/></svg>
+        Responder para ${esc(m.nome)}
+      </div>
+      <textarea placeholder="Escreva sua resposta..."></textarea>
+      <div class="d-reply-foot">
+        <button class="btn-att"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>Anexar arquivo</button>
+        <button class="btn-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Enviar resposta</button>
+      </div>
+    </div>`;
+}
+
+function selecionarInbox(id) {
+  INBOX.forEach(m => { m.selecionada = (m.id === id); if (m.id === id) m.lida = true; });
+  renderInbox();
+  renderDetalheInbox(INBOX.find(m => m.id === id));
+}
+
+// ======== ENVIADOS ========
+const SENT = [
+  { id:1, paraNome:'Responsável — Ana Lima', inicial:'R', cor:'#f59e0b', hora:'13/05', selecionada:false,
+    assunto:'Re: Dúvida sobre frequência da minha filha',
+    preview:'Boa tarde! A Alessandra esteve presente em todas as aulas...',
+    data:'13 de maio de 2026 às 17:20',
+    corpo:'<p>Boa tarde! A Alessandra esteve presente em todas as aulas desta semana. Pode ficar tranquila, vou registrar a dispensa de sexta-feira assim que a senhora confirmar a consulta.</p>' },
+  { id:2, paraNome:'Coord. Mariana', inicial:'C', cor:'#059669', hora:'12/05', selecionada:false,
+    assunto:'Dúvida sobre calendário de provas',
+    preview:'Olá Mariana, gostaria de confirmar se a prova do 2º ano...',
+    data:'12 de maio de 2026 às 14:05',
+    corpo:'<p>Olá Mariana, gostaria de confirmar se a prova do 2º ano A será aplicada antes ou depois da semana da família.</p>' },
+  { id:3, paraNome:'Turma 2º ano A (todos)', inicial:'T', cor:'#6366f1', hora:'10/05', selecionada:false,
+    assunto:'Lembrete — trazer material na quinta',
+    preview:'Prezados responsáveis, lembramos que na quinta-feira...',
+    data:'10 de maio de 2026 às 09:00',
+    corpo:'<p>Prezados responsáveis, lembramos que na quinta-feira a turma precisará trazer material de artes para a atividade prática.</p>' },
+];
+let _sentSeq = SENT.length;
+
+function renderSent() {
+  document.getElementById('sentList').innerHTML = SENT.map(m => `
+    <div class="msg ${m.selecionada ? 'sel' : ''}" onclick="selecionarSent(${m.id})">
+      <div class="msg-av" style="background:${m.cor}">${m.inicial}</div>
+      <div class="msg-info">
+        <div class="msg-r1"><span class="msg-from">Para: ${esc(m.paraNome)}</span><span class="msg-time">${esc(m.hora)}</span></div>
+        <div class="msg-subj">${esc(m.assunto)}</div>
+        <div class="msg-prev">${esc(m.preview)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderDetalheSent(m) {
+  document.getElementById('sentDetailCol').innerHTML = `
+    <div class="detail-body">
+      <div class="dcard">
+        <div class="d-subj">${esc(m.assunto)}</div>
+        <div class="d-meta">
+          <div class="d-row"><span class="d-lbl">Para</span><span class="d-val">${esc(m.paraNome)}</span></div>
+          <div class="d-row"><span class="d-lbl">Data</span><span class="d-val">${esc(m.data)}</span></div>
+        </div>
+      </div>
+      <div class="d-body">${m.corpo}</div>
+    </div>`;
+}
+
+function selecionarSent(id) {
+  SENT.forEach(m => m.selecionada = (m.id === id));
+  renderSent();
+  renderDetalheSent(SENT.find(m => m.id === id));
+}
+
+// tira o título (Diretora/Prof./Coord. etc.) do nome pra sobrar uma
+// inicial plausível no avatar; se não reconhecer o formato, usa a
+// primeira letra do texto inteiro (cobre "Turma...", "Toda a escola"...)
+function inicialDe(nome) {
+  const semTitulo = nome.replace(/^(Diretora|Vice-diretora|Vice-diretor|Diretor|Coord\.|Secretária|Secretário|Prof\.|Profa\.|Professora|Professor)\s+/i, '');
+  return (semTitulo || nome).trim().charAt(0).toUpperCase();
+}
+// Corpo da escola com acesso ao sistema: 1 diretor, 1 vice-diretor,
+// 1 secretário, 1 coordenador e os professores da unidade — mantido
+// numa lista só (em vez de duplicar o HTML das options em dois lugares)
+// para a próxima pessoa a entrar ou sair não exigir editar dois pontos.
+const EQUIPE_ESCOLA = [
+  'Diretora Sandra',
+  'Vice-diretora Renata',
+  'Coord. Mariana',
+  'Secretária Beatriz',
+  'Prof. Rodrigo Alves',
+  'Profa. Camila Duarte',
+  'Prof. Eduardo Santos',
+  'Profa. Fernanda Rocha',
+  'Prof. Gabriel Nascimento',
+  'Profa. Helena Martins',
+  'Prof. Igor Barbosa',
+  'Profa. Juliana Castro',
+  'Prof. Lucas Pereira',
+  'Profa. Patrícia Costa',
+  'Professora Ana Lima',
+  'Professor Carlos Silva',
+];
+
+const GRUPOS = [
+  'Turma 2º ano A — todos os responsáveis',
+  'Turma 3º ano A — todos os responsáveis',
+  'Todos os professores da escola',
+  'Toda a escola',
+];
+
+let _destPlaceholder = 'Selecione o destinatário';
+
+function setDest(tipo) {
+  document.getElementById('dt-p').classList.toggle('on', tipo === 'pessoa');
+  document.getElementById('dt-g').classList.toggle('on', tipo === 'grupo');
+
+  _destPlaceholder = tipo === 'grupo' ? 'Selecione o grupo' : 'Selecione o destinatário';
+  const itens = tipo === 'grupo' ? GRUPOS : EQUIPE_ESCOLA;
+
+  document.getElementById('dest-list').innerHTML = itens
+    .map(nome => `<div class="csel-opt" onclick="selecionarDest('${nome.replace(/'/g, "\\'")}')">${nome}</div>`)
+    .join('');
+
+  const label = document.getElementById('dest-label');
+  label.textContent = _destPlaceholder;
+  label.classList.add('placeholder');
+  fecharDestList();
+}
+
+function toggleDestList(e) {
+  e.stopPropagation();
+  document.getElementById('dest-btn').classList.toggle('open');
+  document.getElementById('dest-list').classList.toggle('open');
+}
+function fecharDestList() {
+  document.getElementById('dest-btn').classList.remove('open');
+  document.getElementById('dest-list').classList.remove('open');
+}
+function selecionarDest(nome) {
+  const label = document.getElementById('dest-label');
+  label.textContent = nome;
+  label.classList.remove('placeholder');
+  document.querySelectorAll('#dest-list .csel-opt').forEach(o => o.classList.toggle('sel', o.textContent === nome));
+  fecharDestList();
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#dest-csel')) fecharDestList();
+});
+
+// ======== ENVIAR MENSAGEM ========
+const CORES_ENVIO = ['#1e4db7', '#059669', '#f59e0b', '#8b5cf6', '#f26522', '#6366f1'];
+
+function enviarMensagem() {
+  const label = document.getElementById('dest-label');
+  const destino = label.classList.contains('placeholder') ? '' : label.textContent;
+  const assunto = document.getElementById('novaAssunto').value.trim();
+  const texto = document.getElementById('novaMensagemTexto').value.trim();
+
+  if (!destino || !assunto || !texto) {
+    alert('Selecione o destinatário e preencha assunto e mensagem antes de enviar.');
+    return;
+  }
+
+  const id = ++_sentSeq;
+  SENT.unshift({
+    id,
+    paraNome: destino,
+    inicial: inicialDe(destino),
+    cor: CORES_ENVIO[(id - 1) % CORES_ENVIO.length],
+    hora: 'Agora',
+    selecionada: true,
+    assunto,
+    preview: texto.length > 60 ? texto.slice(0, 60) + '...' : texto,
+    data: 'Agora mesmo',
+    corpo: `<p>${esc(texto).replace(/\n/g, '<br>')}</p>`,
+  });
+  SENT.forEach(m => { if (m.id !== id) m.selecionada = false; });
+
+  renderSent();
+  renderDetalheSent(SENT.find(m => m.id === id));
+  fecharModalELimpar();
+  switchTab('enviados');
+}
+
+function fecharModalELimpar() {
+  document.getElementById('novaAssunto').value = '';
+  document.getElementById('novaMensagemTexto').value = '';
+  setDest('pessoa');
+  closeModal();
+}
+
+// ======== INIT ========
+renderInbox();
+renderDetalheInbox(INBOX.find(m => m.selecionada));
+renderSent();
+setDest('pessoa');
+</script>
+</body>
+</html>

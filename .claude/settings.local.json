@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:pepper-aged-06763302.figma.site)"
+      "WebFetch(domain:pepper-aged-06763302.figma.site)",
+      "Bash(python -)",
+      "Read(//c/Users/taaje/Downloads/**)",
+      "Bash(awk '{ if \\(length\\($0\\) > 500\\) print NR\": \"length\\($0\\)\" chars\" }' \"eprof_portal_aluno \\(4\\).html\")",
+      "Bash(awk 'NR>=574 && NR<=760 { if \\(length\\($0\\)>400\\) printf \"%d: [LINHA LONGA %d chars] %.180s...\\\\n\", NR, length\\($0\\), $0; else print NR\": \"$0 }' \"eprof_portal_aluno \\(4\\).html\")",
+      "Bash(npm --version)",
+      "Bash(grep -oE \"^\\\\s*\\\\.[a-zA-Z][a-zA-Z0-9_ ,.:>\\(\\)-]*\\\\{\")",
+      "Bash(cd \"C:/Users/taaje/Downloads/eprof-20260720T054014Z-1-001/eprof\" && cp \"C:/Users/taaje/Downloads/imagens eprof/eProf 01 1.png\" logo.png && ls -la logo.png logo.svg)",
+      "Bash(grep -v \"^.*--$\")",
+      "Bash(awk 'NR>=696 && NR<=740' planejamento.html)",
+      "Bash(pandoc -t markdown \"C:/Users/taaje/Downloads/Anexo 1- Proposta planejamento.docx\" -o proposta.md)",
+      "Bash(git rev-list *)",
+      "Bash(git add *)"
     ]
   }
 }
