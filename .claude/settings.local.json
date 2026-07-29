@@ -13,7 +13,10 @@
       "Bash(awk 'NR>=696 && NR<=740' planejamento.html)",
       "Bash(pandoc -t markdown \"C:/Users/taaje/Downloads/Anexo 1- Proposta planejamento.docx\" -o proposta.md)",
       "Bash(git rev-list *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git fetch *)"
     ]
   }
 }
