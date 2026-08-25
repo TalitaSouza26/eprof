@@ -254,6 +254,77 @@
     .rel-textarea { width: 100%; min-height: 340px; padding: 14px; border: 1.5px solid #ddd; border-radius: 10px; font-size: 13px; color: #333; font-family: 'Segoe UI', Arial, sans-serif; resize: vertical; line-height: 1.6; outline: none; transition: border-color 0.15s; }
     .rel-textarea:focus { border-color: #1e4db7; }
     .rel-char-count { font-size: 11px; color: #aaa; text-align: right; margin-top: 6px; }
+    /* ===== NOTAS ===== */
+    .notas-wrap { width:100%; }
+    .notas-headbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+    .notas-title { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; color:#222; }
+    .notas-title svg { width:20px; height:20px; color:#f26522; }
+    .notas-actions { display:flex; align-items:center; gap:12px; }
+    .nt-select { padding:8px 14px; border:1px solid #ddd; border-radius:8px; font-size:13px; color:#333; background:#fff; cursor:pointer; outline:none; }
+    .nt-select:focus { border-color:#f26522; }
+    .btn-lancar { display:inline-flex; align-items:center; gap:7px; background:#f26522; color:#fff; border:none; border-radius:8px; padding:9px 18px; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
+    .btn-lancar:hover { background:#d9561e; }
+    .btn-lancar svg { width:14px; height:14px; }
+    .btn-ajuda { display:inline-flex; align-items:center; gap:7px; background:#fff; color:#f26522; border:1.5px solid #f6c6a9; border-radius:8px; padding:8px 15px; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
+    .btn-ajuda:hover { background:#fef5f0; }
+    .btn-ajuda svg { width:15px; height:15px; }
+    .ajuda-nt { font-size:13.5px; color:#4b5563; line-height:1.55; }
+    .ajuda-lead { margin:0 0 18px; color:#374151; }
+    .ajuda-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+    .ajuda-card { border:1px solid #eee; border-radius:12px; padding:14px; }
+    .ajuda-card.qual { background:transparent; border-color:#f7d9c6; }
+    .ajuda-card.quant { background:transparent; border-color:#cdd8f2; }
+    .ajuda-card-h { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .ajuda-tag { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:3px 10px; border-radius:20px; color:#fff; }
+    .ajuda-tag.qual { background:#f26522; } .ajuda-tag.quant { background:#1e4db7; }
+    .ajuda-card-max { font-size:11px; color:#94a3b8; font-weight:600; }
+    .ajuda-chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .ajuda-chip { display:inline-flex; align-items:baseline; gap:5px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:5px 9px; font-size:12px; color:#94a3b8; }
+    .ajuda-chip b { color:#334155; font-weight:700; font-size:12.5px; }
+    .ajuda-formula { background:#f8f9fb; border:1px solid #e6e8ec; border-radius:12px; padding:12px 14px; margin-bottom:16px; }
+    .ajuda-f-lbl { display:block; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#64748b; margin-bottom:5px; }
+    .ajuda-f-exp { font-size:14px; color:#475569; font-weight:400; }
+    .ajuda-f-exp .q { color:#f26522; font-weight:600; } .ajuda-f-exp .z { color:#1e4db7; font-weight:600; } .ajuda-f-exp .r { color:#e05050; font-weight:600; }
+    .ajuda-f-exp .op { color:#94a3b8; font-weight:400; margin:0 2px; }
+    .ajuda-max-pill { background:#fff; border:1px solid #e2e6eb; border-radius:6px; padding:1px 7px; font-size:12.5px; color:#64748b; font-weight:500; }
+    .ajuda-regras { list-style:none; margin:0 0 16px; padding:0; display:flex; flex-direction:column; gap:11px; }
+    .ajuda-regras li { display:flex; gap:11px; align-items:flex-start; }
+    .ajuda-dot { width:9px; height:9px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+    .ajuda-dot.soma { background:#f26522; } .ajuda-dot.rec { background:#1e4db7; } .ajuda-dot.ok { background:#f26522; }
+    .ajuda-final { background:#f4f7ff; border:1px solid #cdd8f2; border-radius:12px; padding:13px 15px; }
+    .ajuda-final-h { display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:#1e4db7; margin-bottom:5px; }
+    .ajuda-final-h svg { width:15px; height:15px; }
+    .ajuda-final p { margin:0; font-size:13px; }
+    .ajuda-obs { display:flex; gap:9px; align-items:flex-start; margin-top:14px; font-size:12px; color:#94a3b8; line-height:1.5; }
+    .ajuda-obs svg { width:14px; height:14px; flex-shrink:0; margin-top:2px; }
+    .ajuda-obs b { color:#64748b; font-weight:600; }
+    .link-voltar { display:inline-flex; align-items:center; gap:8px; color:#1e4db7; font-size:14px; font-weight:500; cursor:pointer; background:none; border:none; padding:0; }
+    .link-voltar:hover { text-decoration:underline; }
+    .nt-table { width:100%; background:#fff; border:1px solid #eee; border-radius:12px; overflow-x:auto; }
+    .nt-grid { min-width:820px; }
+    .nt-head, .nt-row { display:grid; align-items:center; gap:8px; }
+    .nt-head { padding:14px 20px; border-bottom:1px solid #eee; }
+    .nt-row { padding:11px 20px; border-bottom:1px solid #f5f5f5; }
+    .nt-row:last-child { border-bottom:none; }
+    .nt-ch { text-align:center; line-height:1.25; }
+    .nt-ch .peso { display:block; color:#9aa4b2; font-size:11px; }
+    .nt-ch .nome { display:block; font-size:12px; font-weight:600; color:#333; }
+    .nt-ch.qual .nome { color:#f26522; } .nt-ch.quant .nome { color:#1e4db7; }
+    .nt-ch.left { text-align:left; color:#8a94a3; font-size:12px; font-weight:400; }
+    .nt-aluno { display:flex; align-items:center; gap:10px; font-size:13px; color:#333; }
+    .nt-av { width:28px; height:28px; border-radius:50%; background:#dbe4f5; color:#3b5aa6; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+    .nt-inp { width:100%; text-align:center; border:1px solid #ddd; border-radius:8px; padding:8px 2px; font-size:13px; font-weight:600; outline:none; background:#fff; }
+    .nt-inp.qual { color:#f26522; border-color:#f6c6a9; }
+    .nt-inp.quant { color:#1e4db7; border-color:#b7c4e8; }
+    .nt-inp.rec { color:#e05050; border-color:#f0b4b4; }
+    .nt-inp.qual:focus { border-color:#f26522; } .nt-inp.quant:focus { border-color:#1e4db7; } .nt-inp.rec:focus { border-color:#e05050; }
+    .nt-inp.rec-off { background:#f7e7e3; border-color:#eed3cb; color:transparent; cursor:not-allowed; }
+    .nt-soma { text-align:center; background:#eef0f4; border-radius:8px; padding:8px 2px; font-size:13px; font-weight:700; color:#5b6472; }
+    .nt-media { text-align:center; background:#efe9ff; border-radius:8px; padding:8px 2px; font-size:13px; font-weight:700; color:#7c4dff; }
+    .nt-media.ok { color:#1e4db7; } .nt-media.low { color:#e05050; }
+    .nt-cell { text-align:center; font-size:13px; color:#444; }
+    .nt-bcell { text-align:center; font-size:13px; font-weight:600; }
+    .nt-bcell.ok { color:#1e4db7; } .nt-bcell.low { color:#e05050; } .nt-bcell.empty { color:#c7ccd4; font-weight:400; }
   </style>
   <link rel="stylesheet" href="theme.css" />
 </head>
@@ -326,6 +397,63 @@
     </div>
     <div class="modal-body">
       <div class="turma-list" id="turmaListModal"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Como funciona o lançamento de notas -->
+<div class="modal-overlay hidden" id="modalAjudaNotas">
+  <div class="modal" style="width:680px;max-width:calc(100vw - 40px);">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div class="modal-title">Como funciona o lançamento de notas</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modalAjudaNotas')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="ajuda-nt">
+        <p class="ajuda-lead">A nota de cada bimestre combina avaliações qualitativas e quantitativas. Veja como cada parte entra no cálculo:</p>
+
+        <div class="ajuda-cards">
+          <div class="ajuda-card qual">
+            <div class="ajuda-card-h"><span class="ajuda-tag qual">Qualitativo</span><span class="ajuda-card-max">até 6,0</span></div>
+            <div class="ajuda-chips">
+              <span class="ajuda-chip"><b>AP</b> 1,0</span>
+              <span class="ajuda-chip"><b>PI</b> 1,0</span>
+              <span class="ajuda-chip"><b>PT</b> 2,0</span>
+              <span class="ajuda-chip"><b>PA</b> 2,0</span>
+            </div>
+          </div>
+          <div class="ajuda-card quant">
+            <div class="ajuda-card-h"><span class="ajuda-tag quant">Quantitativo</span><span class="ajuda-card-max">até 4,0</span></div>
+            <div class="ajuda-chips">
+              <span class="ajuda-chip"><b>Teste</b> 2,0</span>
+              <span class="ajuda-chip"><b>Prova</b> 2,0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ajuda-formula">
+          <span class="ajuda-f-lbl">Média do bimestre</span>
+          <div class="ajuda-f-exp"><span class="op">É a soma do</span> <span class="q">qualitativo</span> <span class="op">com a maior nota entre</span> <span class="z">quantitativo</span> <span class="op">e</span> <span class="r">Rec Paralela</span></div>
+        </div>
+
+        <ul class="ajuda-regras">
+          <li><span class="ajuda-dot soma"></span><div>Quando a <b>Soma fica abaixo de 6,0</b>, abre a Recuperação Paralela.</div></li>
+          <li><span class="ajuda-dot rec"></span><div>A <b>Rec Paralela</b> vale até <b>4,0</b> e substitui a nota quantitativa quando for maior.</div></li>
+          <li><span class="ajuda-dot ok"></span><div>O aluno é <b>aprovado a partir de 6,0</b>.</div></li>
+        </ul>
+
+        <div class="ajuda-final">
+          <div class="ajuda-final-h">Recuperação Final</div>
+          <p>Acontece só no <b>4º bimestre</b>, quando a <b>Média Final</b> fica abaixo de 6,0. Vai de <b>0 a 10</b> e <b>substitui a Média Final</b>.</p>
+        </div>
+
+        <div class="ajuda-obs">
+          <span>Os critérios de avaliação — pesos, recuperação e cálculo da média — são definidos pela <b>Secretaria de Educação</b>. O eProf apenas segue e aplica essas regras.</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1132,12 +1260,170 @@ function renderTabs() {
 
 function switchTab(tab) {
   currentTab = tab;
+  if (tab === 'notas') notasView = 'geral';
   document.querySelectorAll('.tab').forEach(el => {
     el.classList.toggle('active', el.textContent.trim().toLowerCase().startsWith(tab === 'criancas' ? 'crian' : tab.charAt(0)));
   });
   // re-render tabs to update active properly
   renderTabs();
   renderContent();
+}
+
+// ============ NOTAS ============
+const NOTA_MAX = { ap:1, pi:1, pt:2, pa:2, teste:2, prova:2 };
+const REC_MAX = 4, MEDIA_APROV = 6;
+const BIM_LBL = { 1:'1º Bimestre', 2:'2º Bimestre', 3:'3º Bimestre', 4:'4º Bimestre' };
+let notasState = null;
+let notasLancado = { 1:true, 2:true, 3:true, 4:true };
+let notasView = 'geral';   // 'geral' ou 1..4
+let notasBimSel = 1;
+
+const fmtN = v => Number(v).toFixed(2).replace('.', ',');
+function qualBim(n){ return n.ap+n.pi+n.pt+n.pa; }        // qualitativo (máx 6)
+function quantBim(n){ return n.teste+n.prova; }            // quantitativo (máx 4)
+function somaBim(n){ return qualBim(n)+quantBim(n); }      // soma bruta (máx 10)
+function recAberta(n){ return somaBim(n) < MEDIA_APROV; }  // abre a rec paralela quando a soma < 6
+// Média = qualitativo + o MAIOR entre (quantitativo, recuperação paralela)
+function mediaBim(n){ const rec = recAberta(n) ? Math.min(n.rec, REC_MAX) : 0; return qualBim(n) + Math.max(quantBim(n), rec); }
+function mediaFinalRaw(idx){ let sum=0,cnt=0; for(let b=1;b<=4;b++){ if(notasLancado[b]){ sum+=mediaBim(notasState[idx][b]); cnt++; } } return cnt? sum/cnt : null; }
+// Recuperação final: só no 4º bimestre, e só se a média final ficou < 6. Substitui a média final (0 a 10).
+function recFinalAberta(idx){ const todos = notasLancado[1]&&notasLancado[2]&&notasLancado[3]&&notasLancado[4]; const mf=mediaFinalRaw(idx); return todos && mf!=null && mf < MEDIA_APROV; }
+function mediaFinalEfetiva(idx){ const mf=mediaFinalRaw(idx); if(recFinalAberta(idx) && notasState[idx].recFinal>0) return notasState[idx].recFinal; return mf; }
+function iniciaisNt(nome){ return nome.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase(); }
+
+function initNotas() {
+  if (notasState) return;
+  notasState = {};
+  // valores de exemplo nos 4 bimestres (determinístico)
+  ALUNOS_MOCK.forEach((a, idx) => {
+    notasState[idx] = { recFinal:0 };
+    for (let b = 1; b <= 4; b++) {
+      const k = (idx + b) % 5;
+      const n = { ap: k>0?1:0, pi: k>1?1:0, pt: k>2?2:(k>0?1:0), pa: k>3?2:0, teste: k>2?2:1, prova: k>3?2:(k>1?1:0), rec:0 };
+      if (somaBim(n) < MEDIA_APROV) n.rec = Math.min(REC_MAX, 4 - (idx % 3));
+      notasState[idx][b] = n;
+    }
+  });
+}
+
+function renderNotas(el){
+  initNotas();
+  el.innerHTML = (notasView === 'geral') ? notasGeralHTML() : notasLancHTML(notasView);
+}
+
+function notasGeralHTML(){
+  const g = '1.8fr repeat(4,1fr) 1.1fr 1fr';
+  const rows = ALUNOS_MOCK.map((a, idx) => {
+    const cells = [1,2,3,4].map(b => {
+      if (!notasLancado[b]) return `<div class="nt-bcell empty">—</div>`;
+      const m = mediaBim(notasState[idx][b]);
+      return `<div class="nt-bcell ${m>=MEDIA_APROV?'ok':'low'}">${fmtN(m)}</div>`;
+    }).join('');
+    const mfEf = mediaFinalEfetiva(idx);
+    const mfCell = mfEf==null ? `<div class="nt-bcell empty" id="mf-${idx}">—</div>`
+      : `<div class="nt-bcell ${mfEf>=MEDIA_APROV?'ok':'low'}" id="mf-${idx}">≈ ${fmtN(mfEf)}</div>`;
+    const recFinalCell = recFinalAberta(idx)
+      ? `<input class="nt-inp rec" id="recfinal-${idx}" type="text" inputmode="decimal" placeholder="0,00" value="${notasState[idx].recFinal>0?fmtN(notasState[idx].recFinal):''}" oninput="onRecFinalInput(${idx},this)" onchange="this.value=notasState[${idx}].recFinal>0?fmtN(notasState[${idx}].recFinal):''">`
+      : `<div class="nt-cell">—</div>`;
+    return `<div class="nt-row" style="grid-template-columns:${g};">
+      <div class="nt-aluno"><div class="nt-av">${iniciaisNt(a.nome)}</div>${a.nome}</div>
+      ${cells}${mfCell}${recFinalCell}
+    </div>`;
+  }).join('');
+  return `<div class="notas-wrap">
+    <div class="notas-headbar">
+      <div class="notas-title">${svg('doc')} Visão geral das notas</div>
+      <div class="notas-actions">
+        <select class="nt-select" onchange="notasBimSel=+this.value">
+          ${[1,2,3,4].map(b=>`<option value="${b}" ${b===notasBimSel?'selected':''}>${BIM_LBL[b]}</option>`).join('')}
+        </select>
+        <button class="btn-lancar" onclick="abrirLancamento(notasBimSel)">Lançar notas ${svg('doc')}</button>
+        <button class="btn-ajuda" onclick="openModal('modalAjudaNotas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Como funciona?</button>
+      </div>
+    </div>
+    <div class="nt-table"><div class="nt-grid">
+      <div class="nt-head" style="grid-template-columns:${g};">
+        <div class="nt-ch left">Nome do aluno</div>
+        <div class="nt-ch"><span class="nome">I Bim.</span></div>
+        <div class="nt-ch"><span class="nome">II Bim.</span></div>
+        <div class="nt-ch"><span class="nome">III Bim.</span></div>
+        <div class="nt-ch"><span class="nome">IV Bim.</span></div>
+        <div class="nt-ch"><span class="nome">Média Final</span></div>
+        <div class="nt-ch"><span class="nome">Rec Final</span></div>
+      </div>
+      ${rows}
+    </div></div>
+  </div>`;
+}
+
+function notasLancHTML(bim){
+  const cols = [['ap','AP','qual'],['pi','PI','qual'],['pt','PT','qual'],['pa','PA','qual'],['teste','Teste','quant'],['prova','Prova','quant']];
+  const g = '1.8fr repeat(6,1fr) 0.9fr 1fr 0.9fr';
+  const head = `<div class="nt-head" style="grid-template-columns:${g};">
+    <div class="nt-ch left">Nome do aluno</div>
+    ${cols.map(([k,lbl,cls])=>`<div class="nt-ch ${cls}"><span class="peso">${fmtN(NOTA_MAX[k])}</span><span class="nome">${lbl}</span></div>`).join('')}
+    <div class="nt-ch"><span class="nome">Soma</span></div>
+    <div class="nt-ch"><span class="peso">${fmtN(REC_MAX)}</span><span class="nome">Rec Paralela</span></div>
+    <div class="nt-ch"><span class="nome">Média</span></div>
+  </div>`;
+  const rows = ALUNOS_MOCK.map((a, idx) => {
+    const n = notasState[idx][bim]; const s = somaBim(n); const off = !recAberta(n); const m = mediaBim(n);
+    const inputs = cols.map(([k,lbl,cls])=>`<input class="nt-inp ${cls}" type="text" inputmode="decimal" value="${fmtN(n[k])}" oninput="onNotaInput(${idx},${bim},'${k}',this)" onchange="this.value=fmtN(notasState[${idx}][${bim}]['${k}'])">`).join('');
+    return `<div class="nt-row" style="grid-template-columns:${g};">
+      <div class="nt-aluno"><div class="nt-av">${iniciaisNt(a.nome)}</div>${a.nome}</div>
+      ${inputs}
+      <div class="nt-soma" id="soma-${idx}">${fmtN(s)}</div>
+      <input class="nt-inp rec ${off?'rec-off':''}" id="rec-${idx}" type="text" inputmode="decimal" value="${off?'':fmtN(Math.min(n.rec,REC_MAX))}" ${off?'disabled':''} oninput="onRecInput(${idx},${bim},this)" onchange="if(!this.disabled)this.value=fmtN(notasState[${idx}][${bim}].rec)">
+      <div class="nt-media ${m>=MEDIA_APROV?'ok':'low'}" id="media-${idx}">${fmtN(m)}</div>
+    </div>`;
+  }).join('');
+  return `<div class="notas-wrap">
+    <div class="notas-headbar">
+      <button class="link-voltar" onclick="voltarGeral()">← Voltar para visão geral das notas</button>
+      <div class="notas-actions">
+        <select class="nt-select" onchange="abrirLancamento(+this.value)">
+          ${[1,2,3,4].map(b=>`<option value="${b}" ${b===bim?'selected':''}>${BIM_LBL[b]}</option>`).join('')}
+        </select>
+        <button class="btn-lancar" onclick="lancarBim(${bim})">Lançar notas ${svg('doc')}</button>
+        <button class="btn-ajuda" onclick="openModal('modalAjudaNotas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Como funciona?</button>
+      </div>
+    </div>
+    <div class="nt-table"><div class="nt-grid">${head}${rows}</div></div>
+  </div>`;
+}
+
+function abrirLancamento(bim){ notasBimSel=bim; notasView=bim; renderContent(); }
+function voltarGeral(){ notasView='geral'; renderContent(); }
+function lancarBim(bim){ notasLancado[bim]=true; notasView='geral'; renderContent(); }
+
+function onNotaInput(idx, bim, campo, inp){
+  let v = parseFloat(String(inp.value).replace(',','.')); if(isNaN(v)||v<0) v=0;
+  const max = NOTA_MAX[campo]; if(v>max) v=max;
+  notasState[idx][bim][campo] = v;
+  atualizarLinhaNotas(idx, bim, false);
+}
+function onRecInput(idx, bim, inp){
+  let v = parseFloat(String(inp.value).replace(',','.')); if(isNaN(v)||v<0) v=0;
+  if(v>REC_MAX) v=REC_MAX;
+  notasState[idx][bim].rec = v;
+  atualizarLinhaNotas(idx, bim, true);
+}
+function atualizarLinhaNotas(idx, bim, fromRec){
+  const n = notasState[idx][bim]; const s = somaBim(n);
+  document.getElementById('soma-'+idx).textContent = fmtN(s);
+  const rec = document.getElementById('rec-'+idx);
+  if (!recAberta(n)){ rec.disabled=true; rec.value=''; rec.classList.add('rec-off'); n.rec=0; }
+  else { rec.disabled=false; rec.classList.remove('rec-off'); if(n.rec>REC_MAX){ n.rec=REC_MAX; } if(!fromRec) rec.value=fmtN(Math.min(n.rec,REC_MAX)); }
+  const m = mediaBim(n);
+  const mc = document.getElementById('media-'+idx); mc.textContent = fmtN(m); mc.className = 'nt-media '+(m>=MEDIA_APROV?'ok':'low');
+}
+function onRecFinalInput(idx, inp){
+  let v = parseFloat(String(inp.value).replace(',','.')); if(isNaN(v)||v<0) v=0;
+  if(v>10) v=10;
+  notasState[idx].recFinal = v;
+  const mfEf = mediaFinalEfetiva(idx);
+  const cell = document.getElementById('mf-'+idx);
+  if (cell){ cell.textContent = mfEf==null?'—':('≈ '+fmtN(mfEf)); cell.className = 'nt-bcell '+(mfEf==null?'empty':(mfEf>=MEDIA_APROV?'ok':'low')); }
 }
 
 function renderContent() {
@@ -1219,6 +1505,8 @@ function renderContent() {
             </div>`).join('')}
         </div>
       </div>`;
+  } else if (currentTab === 'notas') {
+    renderNotas(el);
   } else if (currentTab === 'criancas') {
     const temFicha = t.tag && !!getFichaParaTurma(t.tag);
     el.innerHTML = `
