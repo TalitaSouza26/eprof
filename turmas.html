@@ -349,6 +349,36 @@
       .ajuda-cards { grid-template-columns: 1fr; gap: 10px; }
       .ajuda-lead { margin-bottom: 14px; }
     }
+    /* ===== Menu mobile (hambúrguer + drawer) ===== */
+    .hamburger { display: none; align-items: center; justify-content: center; width: 34px; height: 34px; border: none; background: none; cursor: pointer; color: #444; padding: 0; margin-right: 2px; flex-shrink: 0; }
+    .hamburger svg { width: 22px; height: 22px; }
+    .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 150; }
+    .topbar-logo { display: none; }
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 200; transform: translateX(-100%); transition: transform 0.25s ease; box-shadow: 2px 0 16px rgba(0,0,0,0.15); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-backdrop.open { display: block; }
+      .main { display: block; overflow-y: auto; }
+      .topbar { position: sticky; top: 0; z-index: 50; padding: 10px 14px; }
+      .topbar-left > svg, .topbar-left > div { display: none; }
+      .topbar-logo { display: block; position: absolute; left: 50%; transform: translateX(-50%); height: 26px; }
+      .topbar-right .user-name, .topbar-right .user-role { display: none; }
+      .detalhe-bar { padding: 8px 14px; }
+      .info-bar { margin: 12px 14px 0; padding: 14px; border: 1px solid #eee; border-radius: 14px; }
+      .info-bar-top { flex-direction: column; gap: 12px; }
+      .progress-bar-wrap { padding: 12px 0 2px; }
+      .tabs { margin: 12px 14px 0; padding: 5px; border: 1px solid #eee; border-radius: 12px; justify-content: space-between; overflow-x: auto; scrollbar-width: none; }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tab { padding: 8px 10px; }
+      .tab-label { display: none; }
+      .content { padding: 14px; flex-direction: column; gap: 12px; overflow: visible; }
+      .det-bottom { grid-template-columns: 1fr !important; }
+      .notas-headbar { flex-direction: column; align-items: stretch; gap: 12px; }
+      .notas-actions { flex-wrap: wrap; }
+      .notas-actions .nt-select { flex: 1 1 100%; }
+      .notas-actions .btn-lancar, .notas-actions .btn-ajuda { flex: 1; justify-content: center; }
+    }
   </style>
   <link rel="stylesheet" href="theme.css" />
 </head>
@@ -374,10 +404,13 @@
     <div class="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
   </div>
 </aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
 <div class="main">
   <div class="topbar">
+    <img src="logo.png" class="topbar-logo" alt="eprof" />
     <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
       <div>
         <div class="topbar-title">Minhas turmas</div>
@@ -1282,7 +1315,7 @@ function renderTabs() {
     ? [['inicio','Início',svg('home')],['criancas','Alunos',svg('users')],['aulas','Aulas',svg('cal')],['ocorrencias','Ocorrências',svg('warn')],['acervo','Acervo',svg('folder')]]
     : [['inicio','Início',svg('home')],['alunos','Alunos',svg('users')],['aulas','Aulas',svg('cal')],['ocorrencias','Ocorrências',svg('warn')],['notas','Notas',svg('doc')],['acervo','Acervo',svg('folder')]];
   document.getElementById('tabsBar').innerHTML = tabs.map(([id,label,icon]) =>
-    `<div class="tab ${id===currentTab?'active':''}" onclick="switchTab('${id}')">${icon} ${label}</div>`
+    `<div class="tab ${id===currentTab?'active':''}" onclick="switchTab('${id}')">${icon} <span class="tab-label">${label}</span></div>`
   ).join('');
 }
 
@@ -1563,6 +1596,10 @@ function renderContent() {
 }
 
 // ============ MODAIS ============
+function toggleSidebar() {
+  document.querySelector('.sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
 function openModal(id) {
   if (id === 'modalSelecionar') renderModalList();
   document.getElementById(id).classList.remove('hidden');
