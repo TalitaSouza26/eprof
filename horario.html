@@ -260,19 +260,23 @@
 </div>
 
 <script>
-// Desjejum já preenchido de segunda a sexta (07:30 – 08:00)
+// Horário integral (07:30–17:30) — grade oficial da creche, de segunda a sexta
 let horarios = [
-  {
-    ini: '07:30',
-    fim: '08:00',
-    dias: [
-      'Maria · Desjejum',
-      'Maria · Desjejum',
-      'Maria · Desjejum',
-      'Maria · Desjejum',
-      'Maria · Desjejum'
-    ]
-  }
+  { ini: '07:30', fim: '08:00', dias: Array(5).fill('Maria · Acolhida') },
+  { ini: '08:00', fim: '08:20', dias: Array(5).fill('Maria · Desjejum') },
+  { ini: '08:20', fim: '08:40', dias: Array(5).fill('Maria · Roda de Conversa') },
+  { ini: '08:40', fim: '09:00', dias: Array(5).fill('Maria · Momento de Leitura') },
+  { ini: '09:00', fim: '09:40', dias: Array(5).fill('Maria · Atividade Principal') },
+  { ini: '09:40', fim: '10:30', dias: Array(5).fill('Maria · Atividade motora direcionada e/ou livre') },
+  { ini: '10:30', fim: '11:30', dias: Array(5).fill('Maria · Banho') },
+  { ini: '11:30', fim: '12:30', dias: Array(5).fill('Maria · Almoço / higiene bucal') },
+  { ini: '12:30', fim: '13:30', dias: Array(5).fill('Maria · Sono') },
+  { ini: '13:30', fim: '14:00', dias: Array(5).fill('Maria · Lanche') },
+  { ini: '14:00', fim: '15:00', dias: Array(5).fill('Maria · Atividade motora direcionada e/ou livre') },
+  { ini: '15:00', fim: '16:00', dias: Array(5).fill('Maria · Atividade Principal') },
+  { ini: '16:00', fim: '16:50', dias: Array(5).fill('Maria · Jantar / higiene pessoal') },
+  { ini: '16:50', fim: '17:00', dias: Array(5).fill('Maria · Arrumação da sala e organização para a saída') },
+  { ini: '17:00', fim: '17:30', dias: Array(5).fill('Maria · Horário de tolerância') }
 ];
 
 function openModal() {
