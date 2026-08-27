@@ -336,15 +336,16 @@
     <div class="modal-form-body bloqueado" id="fpBody">
 
       <!-- Nível de ensino: única coisa habilitada de partida -->
-      <div class="form-row">
+      <div class="form-row" id="rowNivel">
         <div>
           <label class="form-label">Nível de ensino</label>
           <select class="form-select" id="nivelEnsino2" onchange="onNivelChange()">
             <option value="">Selecione uma opção</option>
-            <option value="ei">Educação Infantil</option>
+            <option value="ei" hidden>Educação Infantil</option>
             <option value="ef1">Ensino Fundamental I</option>
             <option value="ef2">Ensino Fundamental II</option>
-            <option value="em">Ensino Médio</option>
+            <option value="eja1">EJA I</option>
+            <option value="eja2">EJA II</option>
           </select>
         </div>
         <div class="campo-dep">
@@ -612,9 +613,14 @@ function limparCamposInfantil() {
 // nível de ensino é a primeira escolha e é ela que define o resto da modal.
 function abrirFormPlano() {
   document.getElementById('modalIaManual').classList.add('hidden');
-  document.getElementById('nivelEnsino2').value = '';
+  // caminho "Por série": abre o formulário completo já destravado, com um
+  // nível pré-selecionado (editável) — em vez do passo travado inicial
+  document.getElementById('nivelEnsino2').value = 'ef1';
   limparCamposInfantil();
   onNivelChange();
+  // caminho "Por série": o seletor de nível é editável
+  document.getElementById('rowNivel').classList.remove('oculto');
+  document.getElementById('nivelEnsino2').disabled = false;
   document.getElementById('modalFormPlano').classList.remove('hidden');
 }
 
@@ -625,6 +631,9 @@ function abrirInfantilDireto() {
   document.getElementById('nivelEnsino2').value = 'ei';
   limparCamposInfantil();
   onNivelChange();
+  // Ed. Infantil: mostra "Educação Infantil" mas sem permitir trocar o nível
+  document.getElementById('rowNivel').classList.remove('oculto');
+  document.getElementById('nivelEnsino2').disabled = true;
   document.getElementById('modalFormPlano').classList.remove('hidden');
 }
 
@@ -717,7 +726,7 @@ function salvarPlanoFormulario() {
   else fecharTudo();
 }
 
-const SERIES2 = { ei:['Berçário','Maternal I','Maternal II','Pré I (CN III)','Pré II (CN IV)'], ef1:['1° ano','2° ano','3° ano','4° ano','5° ano'], ef2:['6° ano','7° ano','8° ano','9° ano'], em:['1° ano','2° ano','3° ano'] };
+const SERIES2 = { ei:['Berçário','Maternal I','Maternal II','Pré I (CN III)','Pré II (CN IV)'], ef1:['1° ano','2° ano','3° ano','4° ano','5° ano'], ef2:['6° ano','7° ano','8° ano','9° ano'], eja1:['1ª etapa','2ª etapa','3ª etapa','4ª etapa'], eja2:['5ª etapa','6ª etapa','7ª etapa','8ª etapa'] };
 function atualizarSeries2() {
   const nivel = document.getElementById('nivelEnsino2').value;
   const sel = document.getElementById('serieAno2');
