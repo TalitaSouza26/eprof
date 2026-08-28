@@ -431,8 +431,9 @@ function renderContent() {
   }
 
   else if (currentTab === 'plano') {
-    // Infantil → mostra grupo semanal por dias da semana
-    if (tipo === 'infantil') {
+    // Grade de planos semanais removida do Plano de aula — infantil e regular
+    // usam a mesma visão de vincular plano individual.
+    if (false) {
       const DIAS_LABEL = ['SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA'];
       const DIAS_NUM   = ['25','26','27','28','29'];
       const planos = TODOS_PLANOS.filter(p => p.tipo === 'semanal');
@@ -646,13 +647,9 @@ const TODOS_PLANOS = [
   // Individuais — Ensino Regular
   { id:1, titulo:'Introdução às formas geométricas',            desc:'Explorando figuras geométricas e suas propriedades...', disc:'Matemática',        serie:'Fundamental I – 2° ano', data:'25 de maio de 2026', tipo:'individual', campos:[] },
   { id:2, titulo:'Contação de histórias – Folclore brasileiro', desc:'Narrativas populares e o folclore brasileiro na...',    disc:'Língua Portuguesa',  serie:'Fundamental I – 3° ano', data:'27 de maio de 2026', tipo:'individual', campos:[] },
-  { id:3, titulo:'Experimentos de física – Densidade',          desc:'Experimentos práticos sobre densidade dos materiais...',disc:'Ciências',            serie:'Fundamental I – 2° ano', data:'29 de maio de 2026', tipo:'individual', campos:[] },
   // Semanais — Ed. Infantil
   { id:4, titulo:'Explorando texturas',   desc:'Atividades sensoriais com diferentes texturas e materiais...', disc:'CN III', serie:'Ed. Infantil – CN III', data:'25 de maio de 2026', tipo:'semanal', campos:['Corpo, gestos e movimentos','Traços, sons, cores e formas'] },
   { id:5, titulo:'Histórias e fantasias', desc:'Narrativas imaginárias e contação de histórias em grupo...',   disc:'CN III', serie:'Ed. Infantil – CN III', data:'26 de maio de 2026', tipo:'semanal', campos:['Escuta, fala, pensamentos e imaginação','O eu, o outro e o nós'] },
-  { id:6, titulo:'Brincando com o corpo', desc:'Movimentos, ritmo e consciência corporal através de jogos...', disc:'CN III', serie:'Ed. Infantil – CN III', data:'27 de maio de 2026', tipo:'semanal', campos:['Corpo, gestos e movimentos','O eu, o outro e o nós'] },
-  { id:7, titulo:'Descobrindo cores',     desc:'Experimentação com tintas, pigmentos e misturas de cores...', disc:'CN III', serie:'Ed. Infantil – CN III', data:'28 de maio de 2026', tipo:'semanal', campos:['Traços, sons, cores e formas','Escuta, fala, pensamentos e imaginação'] },
-  { id:8, titulo:'Música e movimento',    desc:'Ritmo, dança e expressão musical com instrumentos simples...',disc:'CN III', serie:'Ed. Infantil – CN III', data:'29 de maio de 2026', tipo:'semanal', campos:['Corpo, gestos e movimentos','Traços, sons, cores e formas'] },
 ];
 
 let planoVinculado = null;
@@ -661,10 +658,11 @@ function abrirVincularPlano() {
   const isInfantil = tipo === 'infantil';
   const isBlueModal = isInfantil;
 
-  // filtra planos compatíveis
+  // Planos compatíveis: infantil mostra os planos semanais criados; regular,
+  // os planos individuais da disciplina da aula.
   const planos = TODOS_PLANOS.filter(p => {
-    if (isInfantil) return p.campos.some(c => c.toLowerCase().includes(disc.toLowerCase()) || disc.toLowerCase().includes(c.toLowerCase()));
-    else return p.disc.toLowerCase() === disc.toLowerCase();
+    if (isInfantil) return p.tipo === 'semanal';
+    return p.disc.toLowerCase() === disc.toLowerCase();
   });
 
   // tag de filtro

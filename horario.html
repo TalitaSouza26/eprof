@@ -146,7 +146,7 @@
       <option value="infantil">Ed. Infantil</option>
       <option value="regular">Ensino Regular</option>
     </select>
-    <select class="filter-select" id="selectTurno">
+    <select class="filter-select" id="selectTurno" onchange="trocarTurno()">
       <option>Integral</option>
       <option>Matutino</option>
       <option>Vespertino</option>
@@ -260,24 +260,51 @@
 </div>
 
 <script>
-// Horário integral (07:30–17:30) — grade oficial da creche, de segunda a sexta
-let horarios = [
-  { ini: '07:30', fim: '08:00', dias: Array(5).fill('Maria · Acolhida') },
-  { ini: '08:00', fim: '08:20', dias: Array(5).fill('Maria · Desjejum') },
-  { ini: '08:20', fim: '08:40', dias: Array(5).fill('Maria · Roda de Conversa') },
-  { ini: '08:40', fim: '09:00', dias: Array(5).fill('Maria · Momento de Leitura') },
-  { ini: '09:00', fim: '09:40', dias: Array(5).fill('Maria · Atividade Principal') },
-  { ini: '09:40', fim: '10:30', dias: Array(5).fill('Maria · Atividade motora direcionada e/ou livre') },
-  { ini: '10:30', fim: '11:30', dias: Array(5).fill('Maria · Banho') },
-  { ini: '11:30', fim: '12:30', dias: Array(5).fill('Maria · Almoço / higiene bucal') },
-  { ini: '12:30', fim: '13:30', dias: Array(5).fill('Maria · Sono') },
-  { ini: '13:30', fim: '14:00', dias: Array(5).fill('Maria · Lanche') },
-  { ini: '14:00', fim: '15:00', dias: Array(5).fill('Maria · Atividade motora direcionada e/ou livre') },
-  { ini: '15:00', fim: '16:00', dias: Array(5).fill('Maria · Atividade Principal') },
-  { ini: '16:00', fim: '16:50', dias: Array(5).fill('Maria · Jantar / higiene pessoal') },
-  { ini: '16:50', fim: '17:00', dias: Array(5).fill('Maria · Arrumação da sala e organização para a saída') },
-  { ini: '17:00', fim: '17:30', dias: Array(5).fill('Maria · Horário de tolerância') }
-];
+// Cada turno tem uma grade de tempos diferente (Integral vai o dia todo;
+// Matutino e Vespertino são meio período).
+const _t = nome => Array(5).fill('Maria · ' + nome);
+const GRADES = {
+  'Integral': [
+    { ini:'07:30', fim:'08:00', dias:_t('Acolhida') },
+    { ini:'08:00', fim:'08:20', dias:_t('Desjejum') },
+    { ini:'08:20', fim:'08:40', dias:_t('Roda de Conversa') },
+    { ini:'08:40', fim:'09:00', dias:_t('Momento de Leitura') },
+    { ini:'09:00', fim:'09:40', dias:_t('Atividade Principal') },
+    { ini:'09:40', fim:'10:30', dias:_t('Atividade motora direcionada e/ou livre') },
+    { ini:'10:30', fim:'11:30', dias:_t('Banho') },
+    { ini:'11:30', fim:'12:30', dias:_t('Almoço / higiene bucal') },
+    { ini:'12:30', fim:'13:30', dias:_t('Sono') },
+    { ini:'13:30', fim:'14:00', dias:_t('Lanche') },
+    { ini:'14:00', fim:'15:00', dias:_t('Atividade motora direcionada e/ou livre') },
+    { ini:'15:00', fim:'16:00', dias:_t('Atividade Principal') },
+    { ini:'16:00', fim:'16:50', dias:_t('Jantar / higiene pessoal') },
+    { ini:'16:50', fim:'17:00', dias:_t('Arrumação da sala e organização para a saída') },
+    { ini:'17:00', fim:'17:30', dias:_t('Horário de tolerância') }
+  ],
+  'Matutino': [
+    { ini:'07:30', fim:'08:00', dias:_t('Acolhida') },
+    { ini:'08:00', fim:'08:20', dias:_t('Desjejum') },
+    { ini:'08:20', fim:'09:00', dias:_t('Roda de Conversa') },
+    { ini:'09:00', fim:'09:30', dias:_t('Momento de Leitura') },
+    { ini:'09:30', fim:'09:50', dias:_t('Lanche') },
+    { ini:'09:50', fim:'10:40', dias:_t('Atividade Principal') },
+    { ini:'10:40', fim:'11:20', dias:_t('Atividade motora direcionada e/ou livre') },
+    { ini:'11:20', fim:'11:30', dias:_t('Arrumação da sala e organização para a saída') }
+  ],
+  'Vespertino': [
+    { ini:'13:00', fim:'13:30', dias:_t('Acolhida') },
+    { ini:'13:30', fim:'13:50', dias:_t('Lanche') },
+    { ini:'13:50', fim:'14:30', dias:_t('Roda de Conversa') },
+    { ini:'14:30', fim:'15:00', dias:_t('Momento de Leitura') },
+    { ini:'15:00', fim:'15:50', dias:_t('Atividade Principal') },
+    { ini:'15:50', fim:'16:30', dias:_t('Atividade motora direcionada e/ou livre') },
+    { ini:'16:30', fim:'17:20', dias:_t('Jantar / higiene pessoal') },
+    { ini:'17:20', fim:'17:30', dias:_t('Arrumação da sala e organização para a saída') }
+  ]
+};
+function cloneGrade(turno){ return (GRADES[turno] || []).map(h => ({ ini:h.ini, fim:h.fim, dias:[...h.dias] })); }
+function trocarTurno(){ horarios = cloneGrade(document.getElementById('selectTurno').value); renderTabela(); }
+let horarios = cloneGrade('Integral');
 
 function openModal() {
   document.getElementById('modalAdicionar').classList.remove('hidden');
@@ -441,7 +468,7 @@ function atualizarTurmas() {
 // A turma aparece em cada slot, então redesenha ao trocar de turma
 document.getElementById('selectTurma').addEventListener('change', renderTabela);
 
-renderTabela();
+trocarTurno();
 </script>
 </body>
 </html>
