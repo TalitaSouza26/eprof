@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>eProf - Minhas aulas 2</title>
+  <title>eProf - Minhas aulas 3</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; display: flex; height: 100vh; overflow: hidden; font-size: 13px; color: #333; }
@@ -242,14 +242,14 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Minhas aulas
     </a>
-    <div class="nav-item active">
+    <a href="minhas-aulas2.html" class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Minhas aulas2
-    </div>
-    <a href="minhas-aulas3.html" class="nav-item">
+    </a>
+    <div class="nav-item active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Minhas aulas3
-    </a>
+    </div>
     <a href="turmas.html" class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
       Minhas turmas
@@ -298,7 +298,7 @@
       <button class="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <svg class="icon-cal" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f26522" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       <div>
-        <div class="topbar-title">Minhas aulas 2</div>
+        <div class="topbar-title">Minhas aulas 3</div>
         <div class="topbar-sub">Município de Porto Seguro</div>
       </div>
     </div>
@@ -364,6 +364,31 @@
     .ac-ext{flex:0 0 auto;margin-left:auto;color:var(--laranja,#ED6939);}
     .ac-ext svg{width:22px;height:22px;}
     .aula-vazia{padding:44px 20px;text-align:center;color:#8a94a6;font-size:15px;border:1px dashed var(--borda,#e8eaee);border-radius:16px;}
+    .aulas-grid .aula-vazia{grid-column:1/-1;}
+    .dia-head3{margin:0 0 18px;}
+    .dia-head3 .dh-dow{font-size:24px;font-weight:800;color:#12223a;line-height:1.1;}
+    .dia-head3 .dh-sub{font-size:14px;color:#8a94a6;margin-top:4px;}
+    .aulas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding-bottom:40px;}
+    .aula-card3{position:relative;display:flex;flex-direction:column;gap:12px;border:1px solid var(--borda,#e8eaee);border-radius:16px;padding:18px 20px 18px 22px;background:#fff;cursor:pointer;transition:.15s;}
+    .aula-card3:hover{box-shadow:0 6px 18px rgba(20,40,80,.09);border-color:#d9dee6;}
+    .aula-card3::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--laranja,#ED6939);}
+    .aula-card3.inf::before{background:#12509A;}
+    .aula-card3.inf .disc-tag{background:#e7effa;color:#12509A;}
+    .ac3-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+    .ac3-ext{color:var(--laranja,#ED6939);flex:0 0 auto;}
+    .ac3-ext svg{width:20px;height:20px;}
+    .ac3-mid{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
+    .ac3-turma{font-size:20px;font-weight:800;color:#12223a;}
+    .ac3-hora{display:flex;align-items:center;gap:7px;color:#4b5563;font-size:14px;white-space:nowrap;}
+    .ac3-hora svg{width:16px;height:16px;color:#8a94a6;flex:0 0 auto;}
+    .ac3-escola{display:flex;align-items:center;gap:8px;color:#4b5563;font-size:14px;}
+    .ac3-escola svg{width:17px;height:17px;color:#8a94a6;flex:0 0 auto;}
+    .ac3-div{height:1px;background:var(--borda,#e8eaee);margin:2px 0;}
+    .ac3-status{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .ac3-plano{display:flex;align-items:center;gap:8px;color:#8a94a6;font-size:14px;}
+    .ac3-plano svg{width:16px;height:16px;flex:0 0 auto;}
+    .ac3-plano.ok{color:#1a9d54;}
+    @media(max-width:1080px){.aulas-grid{grid-template-columns:1fr;}}
 
     @media(max-width:860px){
       .aula-card{flex-wrap:wrap;gap:14px;}
@@ -406,13 +431,13 @@
   </div>
 
   <!-- CABEÇALHO DO DIA -->
-  <div class="dia-head">
-    <h2 id="diaTitulo"></h2>
-    <span class="badge-aulas" id="badgeAulas"></span>
+  <div class="dia-head3">
+    <div class="dh-dow" id="diaDow"></div>
+    <div class="dh-sub" id="diaSub"></div>
   </div>
 
   <!-- AULAS DO DIA SELECIONADO -->
-  <div class="aulas-list" id="aulasList"></div>
+  <div class="aulas-grid" id="aulasList"></div>
   </div>
 
 </div>
@@ -517,32 +542,31 @@ function cardHtml(a){
   const ic=DISC_IC[a.tag]||(inf?IC_SUN:IC_BOOK);
   const chamada=a.chamada==='validada'
     ? '<div class="st-chamada">'+IC_CHECK+'Chamada validada</div>'
-    : (a.chamada==='pendente' ? '<div class="st-chamada pend">'+IC_WARN+'Chamada pendente</div>' : '');
+    : (a.chamada==='pendente' ? '<div class="st-chamada pend">'+IC_WARN+'Chamada pendente</div>' : '<div></div>');
   const planoTxt=a.planoNome || ('Planejamento '+(inf?'semanal ':'')+'vinculado');
   const plano=a.plano
-    ? '<div class="plano-pill ok">'+IC_FILE+planoTxt+'</div>'
-    : '<div class="plano-pill">'+IC_WARN+'Nenhum plano '+(inf?'semanal ':'de aula ')+'vinculado</div>';
-  return '<div class="aula-card'+(inf?' inf':'')+'">'
-    +'<div class="ac-disc"><span class="disc-tag">'+ic+tagTxt+'</span><div class="ac-turma">'+a.turma+'</div></div>'
-    +'<div class="ac-local"><div class="ac-info">'+IC_BLD+a.escola+'</div><div class="ac-info">'+IC_CLK+a.hora+'</div></div>'
-    +'<div class="ac-status">'+chamada+plano+'</div>'
-    +'<div class="ac-ext">'+IC_EXT+'</div>'
+    ? '<div class="ac3-plano ok">'+IC_FILE+planoTxt+'</div>'
+    : '<div class="ac3-plano">'+IC_WARN+'Nenhum plano '+(inf?'semanal ':'de aula ')+'vinculado</div>';
+  return '<div class="aula-card3'+(inf?' inf':'')+'">'
+    +'<div class="ac3-top"><span class="disc-tag">'+ic+tagTxt+'</span><span class="ac3-ext">'+IC_EXT+'</span></div>'
+    +'<div class="ac3-mid"><div class="ac3-turma">'+a.turma+'</div><div class="ac3-hora">'+IC_CLK+a.hora+'</div></div>'
+    +'<div class="ac3-escola">'+IC_BLD+a.escola+'</div>'
+    +'<div class="ac3-div"></div>'
+    +'<div class="ac3-status">'+chamada+plano+'</div>'
     +'</div>';
 }
 
 function renderDia(){
   const lista=aulasDe(selDate).filter(a=>a.tipo===tipoView);
-  document.getElementById('diaTitulo').textContent = cap(DOW_FULL[selDate.getDay()])+', '+selDate.getDate()+' de '+MESES[selDate.getMonth()].toLowerCase();
-  const badge=document.getElementById('badgeAulas');
-  badge.textContent = lista.length+(lista.length===1?' aula':' aulas');
-  badge.style.display = lista.length?'':'none';
+  document.getElementById('diaDow').textContent = cap(DOW_FULL[selDate.getDay()]);
+  document.getElementById('diaSub').textContent = selDate.getDate()+' de '+MESES[selDate.getMonth()].toLowerCase()+' · '+lista.length+(lista.length===1?' aula':' aulas');
   const cont=document.getElementById('aulasList');
   if(!lista.length){
     cont.innerHTML='<div class="aula-vazia">Nenhuma aula '+(tipoView==='infantil'?'de Educação Infantil':'de Ensino Regular')+' neste dia.</div>';
     return;
   }
   cont.innerHTML=lista.map(cardHtml).join('');
-  cont.querySelectorAll('.aula-card').forEach((card,i)=>{
+  cont.querySelectorAll('.aula-card3').forEach((card,i)=>{
     card.addEventListener('click',()=>abrirAula(lista[i]));
   });
 }
