@@ -334,16 +334,16 @@
     .badge-aulas{background:#fdece3;color:var(--laranja,#ED6939);font-weight:700;font-size:13px;padding:5px 13px;border-radius:20px;}
 
     .aulas-list{display:flex;flex-direction:column;gap:14px;padding-bottom:40px;}
-    .aula-card{position:relative;display:flex;align-items:center;gap:20px;border:1px solid var(--borda,#e8eaee);border-radius:16px;padding:20px 22px 20px 26px;background:#fff;cursor:pointer;transition:.15s;}
+    .aula-card{position:relative;display:flex;align-items:flex-start;gap:20px;border:1px solid var(--borda,#e8eaee);border-radius:16px;padding:20px 22px 20px 26px;background:#fff;cursor:pointer;transition:.15s;}
     .aula-card:hover{box-shadow:0 6px 18px rgba(20,40,80,.09);border-color:#d9dee6;}
     .aula-card::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--laranja,#ED6939);}
     .aula-card.inf::before{background:#12509A;}
-    .ac-disc{flex:0 0 210px;min-width:0;}
+    .ac-disc{flex:0 1 320px;min-width:240px;}
     .disc-tag{display:inline-flex;align-items:center;gap:7px;background:#fdece3;color:var(--laranja,#ED6939);font-weight:600;font-size:14px;padding:6px 12px;border-radius:9px;}
     .aula-card.inf .disc-tag{background:#e7effa;color:#12509A;}
     .disc-tag svg{width:16px;height:16px;flex:0 0 auto;}
     .ac-turma{font-size:22px;font-weight:800;color:#12223a;margin-top:12px;}
-    .ac-local{flex:0 1 300px;min-width:190px;display:flex;flex-direction:column;gap:11px;}
+    .ac-local{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
     .ac-info{display:flex;align-items:center;gap:9px;color:#4b5563;font-size:15px;}
     .ac-info svg{width:18px;height:18px;color:#8a94a6;flex:0 0 auto;}
     .ac-status{flex:0 0 auto;display:flex;flex-direction:column;gap:11px;}
@@ -550,8 +550,9 @@ function cardHtml(a){
     ? '<div class="plano-pill ok">'+IC_FILE+planoTxt+'</div>'
     : '<div class="plano-pill">'+IC_WARN+'Nenhum plano '+(inf?'semanal ':'de aula ')+'vinculado</div>';
   return '<div class="aula-card'+(inf?' inf':'')+'">'
-    +'<div class="ac-disc"><span class="disc-tag">'+ic+tagTxt+'</span><div class="ac-turma">'+a.turma+'</div></div>'
-    +'<div class="ac-local"><div class="ac-info">'+IC_BLD+a.escola+'</div><div class="ac-info">'+IC_CLK+a.hora+'</div></div>'
+    +'<div class="ac-disc"><span class="disc-tag">'+ic+tagTxt+'</span><div class="ac-turma">'+a.turma+'</div>'
+      +'<div class="ac-local"><div class="ac-info">'+IC_BLD+a.escola+'</div><div class="ac-info">'+IC_CLK+a.hora+'</div></div>'
+    +'</div>'
     +'<div class="ac-status">'+chamada+plano+'</div>'
     +'<div class="ac-ext">'+IC_EXT+'</div>'
     +'</div>';
@@ -601,6 +602,9 @@ function renderPreview(a){
   const ic=DISC_IC[a.tag]||(inf?IC_SUN:IC_BOOK);
   const tagTxt=inf?(a.tag||'Ed. Infantil'):a.tag;
   const serie=SERIE_MAP[a.turma]||a.turma;
+  const chamada=a.chamada==='pendente'
+    ? '<div class="pv-line warn">'+IC_WARN+'Chamada pendente</div>'
+    : '<div class="pv-line ok">'+IC_CHECK+'Chamada validada</div>';
   pv.innerHTML =
     '<div class="pv-card'+(inf?' inf':'')+'">'
       +'<span class="disc-tag">'+ic+tagTxt+'</span>'
@@ -608,6 +612,7 @@ function renderPreview(a){
       +'<div class="pv-serie">'+serie+'</div>'
       +'<div class="pv-info">'+IC_BLD+a.escola+'</div>'
       +'<div class="pv-info">'+IC_CLK+a.hora+'</div>'
+      +chamada
       +'<div class="pv-div"></div>'
       +'<div class="pv-sec">Alunos · '+ALUNOS.length+'</div>'
       +'<div class="pv-alunos">'+ALUNOS.map(n=>'<div class="pv-aluno"><span class="pv-av">'+n.charAt(0)+'</span>'+n+'</div>').join('')+'</div>'
