@@ -364,31 +364,38 @@
     .ac-ext{flex:0 0 auto;margin-left:auto;color:var(--laranja,#ED6939);}
     .ac-ext svg{width:22px;height:22px;}
     .aula-vazia{padding:44px 20px;text-align:center;color:#8a94a6;font-size:15px;border:1px dashed var(--borda,#e8eaee);border-radius:16px;}
-    .aulas-grid .aula-vazia{grid-column:1/-1;}
-    .dia-head3{margin:0 0 18px;}
-    .dia-head3 .dh-dow{font-size:24px;font-weight:800;color:#12223a;line-height:1.1;}
-    .dia-head3 .dh-sub{font-size:14px;color:#8a94a6;margin-top:4px;}
-    .aulas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding-bottom:40px;}
-    .aula-card3{position:relative;display:flex;flex-direction:column;gap:12px;border:1px solid var(--borda,#e8eaee);border-radius:16px;padding:18px 20px 18px 22px;background:#fff;cursor:pointer;transition:.15s;}
-    .aula-card3:hover{box-shadow:0 6px 18px rgba(20,40,80,.09);border-color:#d9dee6;}
-    .aula-card3::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--laranja,#ED6939);}
-    .aula-card3.inf::before{background:#12509A;}
-    .aula-card3.inf .disc-tag{background:#e7effa;color:#12509A;}
-    .ac3-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-    .ac3-ext{color:var(--laranja,#ED6939);flex:0 0 auto;}
-    .ac3-ext svg{width:20px;height:20px;}
-    .ac3-mid{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
-    .ac3-turma{font-size:20px;font-weight:800;color:#12223a;}
-    .ac3-hora{display:flex;align-items:center;gap:7px;color:#4b5563;font-size:14px;white-space:nowrap;}
-    .ac3-hora svg{width:16px;height:16px;color:#8a94a6;flex:0 0 auto;}
-    .ac3-escola{display:flex;align-items:center;gap:8px;color:#4b5563;font-size:14px;}
-    .ac3-escola svg{width:17px;height:17px;color:#8a94a6;flex:0 0 auto;}
-    .ac3-div{height:1px;background:var(--borda,#e8eaee);margin:2px 0;}
-    .ac3-status{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-    .ac3-plano{display:flex;align-items:center;gap:8px;color:#8a94a6;font-size:14px;}
-    .ac3-plano svg{width:16px;height:16px;flex:0 0 auto;}
-    .ac3-plano.ok{color:#1a9d54;}
-    @media(max-width:1080px){.aulas-grid{grid-template-columns:1fr;}}
+    .aulas-layout{display:flex;gap:20px;align-items:stretch;padding-bottom:40px;}
+    .aulas-col{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:14px;}
+    .aulas-col .aula-card{flex-wrap:wrap;}
+    .aula-card.sel{border-color:var(--laranja,#ED6939);box-shadow:0 0 0 1px var(--laranja,#ED6939) inset;}
+    .aula-card.inf.sel{border-color:#12509A;box-shadow:0 0 0 1px #12509A inset;}
+    .preview-col{flex:0 0 350px;position:relative;}
+    .pv-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8a94a6;margin:0 2px 10px;}
+    .pv-empty{position:absolute;inset:0;border:1px dashed var(--borda,#e8eaee);border-radius:16px;padding:40px 20px;text-align:center;color:#8a94a6;font-size:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+    .pv-empty svg{width:26px;height:26px;color:#c2c8d2;}
+    .pv-card{position:absolute;inset:0;border:1px solid var(--borda,#e8eaee);border-radius:16px;padding:20px 20px 20px 22px;background:#fff;box-shadow:0 6px 20px rgba(20,40,80,.06);display:flex;flex-direction:column;}
+    .pv-card::before{content:'';position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0;background:var(--laranja,#ED6939);}
+    .pv-card.inf::before{background:#12509A;}
+    .pv-card.inf .disc-tag{background:#e7effa;color:#12509A;}
+    .pv-turma{font-size:17px;font-weight:800;color:#12223a;margin-top:9px;}
+    .pv-serie{font-size:12px;color:#8a94a6;margin-top:1px;margin-bottom:10px;}
+    .pv-info{display:flex;align-items:center;gap:8px;color:#4b5563;font-size:13px;margin-bottom:6px;}
+    .pv-info svg{width:15px;height:15px;color:#8a94a6;flex:0 0 auto;}
+    .pv-line{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;}
+    .pv-line svg{width:15px;height:15px;flex:0 0 auto;}
+    .pv-line.ok{color:#1a9d54;} .pv-line.warn{color:#c07a00;}
+    .pv-div{height:1px;background:var(--borda,#e8eaee);margin:12px 0;}
+    .pv-sec{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#8a94a6;margin-bottom:8px;}
+    .pv-plano{display:flex;align-items:center;gap:8px;font-size:13px;color:#6b7280;margin-bottom:14px;}
+    .pv-plano svg{width:15px;height:15px;flex:0 0 auto;}
+    .pv-plano.ok{color:#1a9d54;}
+    .pv-alunos{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow-y:auto;margin-bottom:16px;padding-right:2px;}
+    .pv-aluno{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:13px;color:#333;border-bottom:1px solid #f4f5f7;}
+    .pv-aluno:last-child{border-bottom:0;}
+    .pv-av{width:26px;height:26px;border-radius:50%;background:#dde3ef;color:#5a6a8a;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+    .pv-btn{width:100%;border:0;background:var(--laranja,#ED6939);color:#fff;font-weight:700;font-size:14px;padding:12px;border-radius:11px;cursor:pointer;font-family:inherit;}
+    .pv-btn:hover{background:#d95c2f;}
+    @media(max-width:900px){ .aulas-layout{flex-direction:column;align-items:stretch;} .preview-col{flex:1 1 auto;width:100%;position:static;} .pv-card{position:static;} .pv-empty{position:static;} .pv-alunos{flex:0 0 auto;max-height:260px;} }
 
     @media(max-width:860px){
       .aula-card{flex-wrap:wrap;gap:14px;}
@@ -431,13 +438,16 @@
   </div>
 
   <!-- CABEÇALHO DO DIA -->
-  <div class="dia-head3">
-    <div class="dh-dow" id="diaDow"></div>
-    <div class="dh-sub" id="diaSub"></div>
+  <div class="dia-head">
+    <h2 id="diaTitulo"></h2>
+    <span class="badge-aulas" id="badgeAulas"></span>
   </div>
 
   <!-- AULAS DO DIA SELECIONADO -->
-  <div class="aulas-grid" id="aulasList"></div>
+  <div class="aulas-layout">
+    <div class="aulas-col" id="aulasList"></div>
+    <aside class="preview-col" id="previewCol"></aside>
+  </div>
   </div>
 
 </div>
@@ -542,33 +552,69 @@ function cardHtml(a){
   const ic=DISC_IC[a.tag]||(inf?IC_SUN:IC_BOOK);
   const chamada=a.chamada==='validada'
     ? '<div class="st-chamada">'+IC_CHECK+'Chamada validada</div>'
-    : (a.chamada==='pendente' ? '<div class="st-chamada pend">'+IC_WARN+'Chamada pendente</div>' : '<div></div>');
+    : (a.chamada==='pendente' ? '<div class="st-chamada pend">'+IC_WARN+'Chamada pendente</div>' : '');
   const planoTxt=a.planoNome || ('Planejamento '+(inf?'semanal ':'')+'vinculado');
   const plano=a.plano
-    ? '<div class="ac3-plano ok">'+IC_FILE+planoTxt+'</div>'
-    : '<div class="ac3-plano">'+IC_WARN+'Nenhum plano '+(inf?'semanal ':'de aula ')+'vinculado</div>';
-  return '<div class="aula-card3'+(inf?' inf':'')+'">'
-    +'<div class="ac3-top"><span class="disc-tag">'+ic+tagTxt+'</span><span class="ac3-ext">'+IC_EXT+'</span></div>'
-    +'<div class="ac3-mid"><div class="ac3-turma">'+a.turma+'</div><div class="ac3-hora">'+IC_CLK+a.hora+'</div></div>'
-    +'<div class="ac3-escola">'+IC_BLD+a.escola+'</div>'
-    +'<div class="ac3-div"></div>'
-    +'<div class="ac3-status">'+chamada+plano+'</div>'
+    ? '<div class="plano-pill ok">'+IC_FILE+planoTxt+'</div>'
+    : '<div class="plano-pill">'+IC_WARN+'Nenhum plano '+(inf?'semanal ':'de aula ')+'vinculado</div>';
+  return '<div class="aula-card'+(inf?' inf':'')+'">'
+    +'<div class="ac-disc"><span class="disc-tag">'+ic+tagTxt+'</span><div class="ac-turma">'+a.turma+'</div></div>'
+    +'<div class="ac-local"><div class="ac-info">'+IC_BLD+a.escola+'</div><div class="ac-info">'+IC_CLK+a.hora+'</div></div>'
+    +'<div class="ac-status">'+chamada+plano+'</div>'
+    +'<div class="ac-ext">'+IC_EXT+'</div>'
     +'</div>';
 }
 
 function renderDia(){
   const lista=aulasDe(selDate).filter(a=>a.tipo===tipoView);
-  document.getElementById('diaDow').textContent = cap(DOW_FULL[selDate.getDay()]);
-  document.getElementById('diaSub').textContent = selDate.getDate()+' de '+MESES[selDate.getMonth()].toLowerCase()+' · '+lista.length+(lista.length===1?' aula':' aulas');
+  document.getElementById('diaTitulo').textContent = cap(DOW_FULL[selDate.getDay()])+', '+selDate.getDate()+' de '+MESES[selDate.getMonth()].toLowerCase();
+  const badge=document.getElementById('badgeAulas');
+  badge.textContent = lista.length+(lista.length===1?' aula':' aulas');
+  badge.style.display = lista.length?'':'none';
   const cont=document.getElementById('aulasList');
   if(!lista.length){
     cont.innerHTML='<div class="aula-vazia">Nenhuma aula '+(tipoView==='infantil'?'de Educação Infantil':'de Ensino Regular')+' neste dia.</div>';
+    renderPreview(null);
     return;
   }
   cont.innerHTML=lista.map(cardHtml).join('');
-  cont.querySelectorAll('.aula-card3').forEach((card,i)=>{
-    card.addEventListener('click',()=>abrirAula(lista[i]));
+  const cards=cont.querySelectorAll('.aula-card');
+  cards.forEach((card,i)=>{
+    card.addEventListener('click',()=>{
+      cards.forEach(c=>c.classList.remove('sel'));
+      card.classList.add('sel');
+      renderPreview(lista[i]);
+    });
   });
+  cards[0].classList.add('sel');
+  renderPreview(lista[0]);
+}
+
+const ALUNOS = ['Alice Ferreira','Bruno Almeida','Caio Lopes','Camila Rocha','Clóvis Souza','Davi Brito','Diego Nunes','Edmunda Santos','Elisa Martins','Felipe Costa','Gabriela Dias','Heitor Ramos','Isabela Cardoso','Januário Santos','Joana Soares','João Pedro','Júlia Moreira','Kauã Teixeira','Larissa Pinto','Marta Silva','Miguel Andrade','Natália Barbosa','Otávio Freitas','Paula Ribeiro','Quézia Lima','Renata Azevedo','Rodrygo Goes','Samuel Correia','Vitória Mendes'];
+
+function renderPreview(a){
+  const pv=document.getElementById('previewCol');
+  if(!a){
+    pv.innerHTML='<div class="pv-empty">'+IC_CLK+'<div>Selecione uma aula para ver o preview.</div></div>';
+    return;
+  }
+  const inf=a.tipo==='infantil';
+  const ic=DISC_IC[a.tag]||(inf?IC_SUN:IC_BOOK);
+  const tagTxt=inf?(a.tag||'Ed. Infantil'):a.tag;
+  const serie=SERIE_MAP[a.turma]||a.turma;
+  pv.innerHTML =
+    '<div class="pv-card'+(inf?' inf':'')+'">'
+      +'<span class="disc-tag">'+ic+tagTxt+'</span>'
+      +'<div class="pv-turma">'+a.turma+'</div>'
+      +'<div class="pv-serie">'+serie+'</div>'
+      +'<div class="pv-info">'+IC_BLD+a.escola+'</div>'
+      +'<div class="pv-info">'+IC_CLK+a.hora+'</div>'
+      +'<div class="pv-div"></div>'
+      +'<div class="pv-sec">Alunos · '+ALUNOS.length+'</div>'
+      +'<div class="pv-alunos">'+ALUNOS.map(n=>'<div class="pv-aluno"><span class="pv-av">'+n.charAt(0)+'</span>'+n+'</div>').join('')+'</div>'
+      +'<button class="pv-btn" id="pvOpen">Abrir aula completa</button>'
+    +'</div>';
+  document.getElementById('pvOpen').addEventListener('click',()=>abrirAula(a));
 }
 
 function abrirAula(a){
