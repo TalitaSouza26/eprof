@@ -436,10 +436,7 @@
   </div>
 
   <!-- AULAS DO DIA SELECIONADO -->
-  <div class="aulas-layout">
-    <div class="aulas-col" id="aulasList"></div>
-    <aside class="preview-col" id="previewCol"></aside>
-  </div>
+  <div class="aulas-col" id="aulasList"></div>
   </div>
 
 </div>
@@ -567,27 +564,12 @@ function renderDia(){
   const cont=document.getElementById('aulasList');
   if(!lista.length){
     cont.innerHTML='<div class="aula-vazia">Nenhuma aula '+(tipoView==='infantil'?'de Educação Infantil':'de Ensino Regular')+' neste dia.</div>';
-    renderPreview(null);
     return;
   }
   cont.innerHTML=lista.map(cardHtml).join('');
-  const cards=cont.querySelectorAll('.aula-card');
-  cards.forEach((card,i)=>{
-    card.addEventListener('click',()=>{
-      cards.forEach(c=>c.classList.remove('sel'));
-      card.classList.add('sel');
-      renderPreview(lista[i]);
-    });
-    // O ícone de abrir leva direto para a aula, sem abrir o preview
-    const ext=card.querySelector('.ac-ext');
-    if(ext){
-      ext.style.cursor='pointer';
-      ext.title='Abrir aula';
-      ext.addEventListener('click',(e)=>{ e.stopPropagation(); abrirAula(lista[i]); });
-    }
+  cont.querySelectorAll('.aula-card').forEach((card,i)=>{
+    card.addEventListener('click',()=>abrirAula(lista[i]));
   });
-  cards[0].classList.add('sel');
-  renderPreview(lista[0]);
 }
 
 const ALUNOS = ['Alice Ferreira','Bruno Almeida','Caio Lopes','Camila Rocha','Clóvis Souza','Davi Brito','Diego Nunes','Edmunda Santos','Elisa Martins','Felipe Costa','Gabriela Dias','Heitor Ramos','Isabela Cardoso','Januário Santos','Joana Soares','João Pedro','Júlia Moreira','Kauã Teixeira','Larissa Pinto','Marta Silva','Miguel Andrade','Natália Barbosa','Otávio Freitas','Paula Ribeiro','Quézia Lima','Renata Azevedo','Rodrygo Goes','Samuel Correia','Vitória Mendes'];
