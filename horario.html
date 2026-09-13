@@ -148,16 +148,16 @@
     </select>
     <select class="filter-select" id="selectTurno" onchange="trocarTurno()">
       <option>Integral</option>
-      <option>Matutino</option>
+      <option selected>Matutino</option>
       <option>Vespertino</option>
     </select>
     <select class="filter-select" id="selectTurma">
-      <option>Berçário – Grupo 1</option>
-      <option>CN I – Grupo 1</option>
-      <option>CN II – Grupo 2</option>
-      <option>CN III – Grupo 2</option>
-      <option>PN I – Grupo 3</option>
-      <option>PN II – Grupo 4</option>
+      <option>Berçário</option>
+      <option>CN I</option>
+      <option selected>CN II</option>
+      <option>CN III</option>
+      <option>PN I</option>
+      <option>PN II</option>
     </select>
     <button class="add-btn" onclick="abrirNovoHorario()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -304,7 +304,7 @@ const GRADES = {
 };
 function cloneGrade(turno){ return (GRADES[turno] || []).map(h => ({ ini:h.ini, fim:h.fim, dias:[...h.dias] })); }
 function trocarTurno(){ horarios = cloneGrade(document.getElementById('selectTurno').value); renderTabela(); }
-let horarios = cloneGrade('Integral');
+let horarios = [];  // começa vazio para o professor montar a grade
 
 function openModal() {
   document.getElementById('modalAdicionar').classList.remove('hidden');
@@ -451,12 +451,12 @@ function atualizarTurmas() {
   const select = document.getElementById('selectTurma');
   if (tipo === 'infantil') {
     select.innerHTML = `
-      <option>Berçário – Grupo 1</option>
-      <option>CN I – Grupo 1</option>
-      <option>CN II – Grupo 2</option>
-      <option>CN III – Grupo 2</option>
-      <option>PN I – Grupo 3</option>
-      <option>PN II – Grupo 4</option>`;
+      <option>Berçário</option>
+      <option>CN I</option>
+      <option>CN II</option>
+      <option>CN III</option>
+      <option>PN I</option>
+      <option>PN II</option>`;
   } else {
     select.innerHTML = `
       <option>1° ano A</option>
@@ -468,7 +468,9 @@ function atualizarTurmas() {
 // A turma aparece em cada slot, então redesenha ao trocar de turma
 document.getElementById('selectTurma').addEventListener('change', renderTabela);
 
-trocarTurno();
+// Começa com a grade vazia (Ed. Infantil · Matutino · CN II) para o
+// professor adicionar os horários. Trocar o turno carrega a grade-modelo.
+renderTabela();
 </script>
 </body>
 </html>
