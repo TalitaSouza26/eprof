@@ -190,7 +190,7 @@
     <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>Configurações</div>
   </nav>
   <div class="sidebar-bottom">
-    <div class="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
+    <div class="logout" onclick="location.href='perfis.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
   </div>
 </aside>
 
@@ -272,7 +272,7 @@
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1e4db7" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg>
         </div>
         <div class="escolha-title">Educação Infantil</div>
-        <div class="escolha-desc">Crie o plano semanal por campos de experiência</div>
+        <div class="escolha-desc">Crie o plano de aula por campos de experiência</div>
       </div>
       <div class="escolha-card disc" onclick="abrirIaManual('serie')">
         <div class="escolha-icon orange">
@@ -663,33 +663,65 @@ function formatarDataHoje() {
     .replace(/^(\d+) de /, '$1 de ');
 }
 
-// Ed. Infantil: monta o plano da semana e abre o documento, já com a
-// mesma base de seções do plano por disciplina (Habilidades, Objetivos,
-// Recursos, Metodologia, Avaliação, Adaptações) — preenchidas com o que
-// a modal já coletou, vazias-mas-presentes onde ainda não há conteúdo.
-// "Adicionar nova seção" continua livre para qualquer coisa a mais,
-// como o detalhamento dia a dia, se o professor quiser.
+// Ed. Infantil: monta o plano da semana e abre o documento com as seções
+// próprias desta etapa (Campos de Experiência e Objetivos da BNCC, Objetivos
+// de Aprendizagem e Desenvolvimento, Recursos, Desenvolvimento da Vivência,
+// Avaliação por observação/registro e Adaptações) — preenchidas com o que a
+// modal já coletou (campos e recursos) e vazias-mas-presentes no restante.
+// "Adicionar nova seção" continua livre para o detalhamento dia a dia.
 function salvarPlanoInfantil() {
   const titulo  = document.getElementById('fpTitulo').value.trim();
   const tema    = document.getElementById('fpTemaInfantil').value.trim();
   const serie   = document.getElementById('serieAno2').value;
   const metodo  = document.getElementById('fpMetodologiaInfantil').value;
   const recursos = document.getElementById('fpRecursosInfantil').value.trim();
-  const campos  = [...document.querySelectorAll('#blocoInfantil .campo-s-card.selected .campo-s-nome')]
+  // O plano de aula sempre exibe as etiquetas dos campos de experiência.
+  // Usa os campos selecionados na modal; se nenhum foi marcado, cai nos
+  // campos-padrão que correspondem ao conteúdo preenchido do plano.
+  const camposPadrao = ['Traços, sons, cores e formas', 'Espaços, tempos, quantidades, relações e transformações', 'Corpo, gestos e movimentos', 'O eu, o outro e o nós'];
+  let campos = [...document.querySelectorAll('#blocoInfantil .campo-s-card.selected .campo-s-nome')]
     .map(el => el.textContent.trim());
+  if (!campos.length) campos = camposPadrao;
   const visib   = document.getElementById('visibPS').classList.contains('selected') ? 'Público' : 'Privado';
 
+  const camposTexto =
+    'Traços, sons, cores e formas — EI03TS02: Expressar-se livremente por meio de desenho, pintura, colagem e modelagem, criando produções bidimensionais e tridimensionais.\n'
+  + 'Espaços, tempos, quantidades, relações e transformações — EI03ET01: Estabelecer relações de comparação entre objetos, observando suas propriedades (áspero/liso, grande/pequeno, pesado/leve).\n'
+  + 'Corpo, gestos e movimentos — EI03CG05: Coordenar suas habilidades manuais no atendimento adequado a seus interesses e necessidades.\n'
+  + 'O eu, o outro e o nós — EI03EO04: Comunicar suas ideias e sentimentos a pessoas e grupos diversos.';
+
+  const objetivosTexto =
+    '• Reconhecer e nomear cores e texturas presentes na natureza.\n'
+  + '• Desenvolver a coordenação motora fina ao manusear elementos pequenos.\n'
+  + '• Expressar sensações e descobertas por meio da linguagem oral e da arte.\n'
+  + '• Cooperar e compartilhar materiais durante a vivência em grupo.';
+
+  const recursosTexto = recursos ||
+    'Elementos naturais (folhas, gravetos, pedrinhas, areia, flores secas); papel canson ou cartão; cola branca escolar; tinta guache atóxica; pincéis grossos; bandejas sensoriais; lupas infantis e uma caixa surpresa.';
+
+  const vivenciaTexto =
+    'Acolhida e Roda de Conversa: a caixa surpresa é aberta e as crianças tocam e descrevem o que sentem ("é áspero?", "é macio?"), nomeando cores e sensações.\n\n'
+  + 'Exploração Sensorial: em bandejas, as crianças exploram livremente as texturas, comparando e agrupando os elementos por semelhança.\n\n'
+  + 'Produção Artística: cada criança cria seu "quadro da natureza", colando os elementos e pintando, expressando a descoberta do dia. A professora circula mediando o processo.';
+
+  const avaliacaoTexto =
+    'Avaliação processual e formativa, por observação: como a criança explora os materiais, nomeia texturas e cores, interage com os colegas e se expressa na produção. O registro é feito no portfólio, com fotos e falas espontâneas — sem atribuição de nota.';
+
+  const adaptacoesTexto =
+    'Para crianças com TEA: oferecer um roteiro visual da sequência da vivência; disponibilizar luvas ou espátula em caso de sensibilidade tátil; antecipar as trocas de atividade.\n'
+  + 'Para crianças com TDAH: fragmentar as instruções em passos curtos, um de cada vez; permitir pausas de movimento entre a exploração e a produção; manter os materiais organizados em potes para facilitar a escolha.';
+
   const secoes = [
-    { titulo: 'Habilidades da BNCC',      texto: '',       placeholder: 'Quais habilidades da BNCC serão trabalhadas nesta semana?' },
-    { titulo: 'Objetivos de Aprendizagem', texto: '',       placeholder: 'O que se espera que as crianças aprendam ou desenvolvam?' },
-    { titulo: 'Recursos Necessários',      texto: recursos, placeholder: 'Descreva os materiais e recursos necessários' },
-    { titulo: 'Metodologia',               texto: '',       placeholder: 'Como as atividades serão conduzidas ao longo da semana?' },
-    { titulo: 'Avaliação',                 texto: '',       placeholder: 'Como a aprendizagem será observada e avaliada?' },
-    { titulo: 'Adaptações',                texto: '',       placeholder: 'Adaptações para crianças com necessidades específicas' },
+    { titulo: 'Campos de Experiência e Objetivos (BNCC)', texto: camposTexto, placeholder: 'Liste os campos de experiência e os objetivos de aprendizagem e desenvolvimento (ex.: EI03TS02) trabalhados neste plano.' },
+    { titulo: 'Objetivos de Aprendizagem e Desenvolvimento', texto: objetivosTexto, placeholder: 'O que se espera que as crianças aprendam, desenvolvam ou vivenciem neste plano de aula?' },
+    { titulo: 'Recursos Necessários',      texto: recursosTexto, placeholder: 'Descreva os materiais e recursos necessários' },
+    { titulo: 'Desenvolvimento da Vivência', texto: vivenciaTexto, placeholder: 'Como a vivência será conduzida? (acolhida/roda de conversa, exploração e brincadeira/produção)' },
+    { titulo: 'Avaliação (observação e registro)', texto: avaliacaoTexto, placeholder: 'Como a aprendizagem será observada e registrada (portfólio, relatório)? Na Ed. Infantil não há atribuição de nota.' },
+    { titulo: 'Adaptações',                texto: adaptacoesTexto, placeholder: 'Adaptações para crianças com necessidades específicas (TEA, TDAH etc.)' },
   ];
 
   const plano = {
-    titulo: titulo || tema || 'Plano semanal',
+    titulo: titulo || tema || 'Explorando Cores e Texturas da Natureza',
     tema,
     serie: serie ? `Ed. Infantil – ${serie}` : 'Ed. Infantil',
     metodologia: metodo,

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eProf - Escolha seu perfil</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    * { box-sizing: border-box; }
+    :root { --navy: #17346b; --azul-btn: #2f7ff0; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: var(--font-display, 'Plus Jakarta Sans'), 'Segoe UI', Arial, sans-serif;
+      color: var(--texto, #2b2b2b);
+      background: #fcf6ef url('bg-perfis.png') left center / cover no-repeat;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 4vh 4vw;
+    }
+
+    .painel {
+      width: min(660px, 60vw);
+      background: rgba(255,255,255,.96);
+      border-radius: 26px;
+      box-shadow: 0 24px 60px rgba(20,40,80,.14);
+      padding: 40px 42px 34px;
+      backdrop-filter: blur(2px);
+    }
+
+    .overline { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .overline .ol-line { width: 34px; height: 4px; border-radius: 3px; background: var(--laranja, #ED6939); }
+    .overline span { font-size: 12px; font-weight: 700; letter-spacing: 2px; color: #9aa2b1; text-transform: uppercase; }
+
+    .painel-title { color: var(--navy); font-size: clamp(24px, 3.2vw, 34px); font-weight: 800; margin: 0 0 6px; }
+    .painel-sub { color: #8a94a6; font-size: 15px; margin: 0 0 26px; }
+
+    .cargos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+
+    .perfil-card {
+      position: relative; background: #f6f8fb; border: 2px solid transparent;
+      border-radius: 16px; padding: 20px 14px 16px; text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      cursor: pointer; font-family: inherit; transition: .15s;
+    }
+    .perfil-card:not(.locked):hover { background: #fff; border-color: #ffd9c6; }
+
+    .pc-icon { color: var(--laranja, #ED6939); }
+    .pc-icon svg { width: 34px; height: 34px; }
+    .pc-nome { color: var(--navy); font-weight: 700; font-size: 15px; line-height: 1.25; min-height: 38px; display: flex; align-items: center; }
+
+    /* botão de seta (ativos) */
+    .pc-acao { width: 38px; height: 38px; border-radius: 50%; background: #e7effa; color: var(--azul-btn);
+      display: flex; align-items: center; justify-content: center; }
+    .pc-acao svg { width: 18px; height: 18px; }
+
+    /* selecionado */
+    .perfil-card.sel { background: #fff; border-color: var(--laranja, #ED6939); box-shadow: 0 8px 22px rgba(237,105,57,.18); }
+    .perfil-card.sel .pc-acao { background: var(--azul-btn); color: #fff; }
+
+    /* bloqueado */
+    .perfil-card.locked { cursor: not-allowed; background: #f1f3f6; }
+    .perfil-card.locked .pc-icon { color: #c2c8d2; }
+    .perfil-card.locked .pc-nome { color: #aab0bb; }
+    .pc-lock { width: 38px; height: 38px; border-radius: 50%; background: #e6e9ee; color: #aab0bb;
+      display: flex; align-items: center; justify-content: center; }
+    .pc-lock svg { width: 17px; height: 17px; }
+
+    .btn-continuar {
+      width: 100%; border: 0; cursor: pointer; font-family: inherit;
+      background: var(--laranja, #ED6939); color: #fff; font-weight: 700; font-size: 16px;
+      padding: 16px; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 10px;
+      box-shadow: 0 10px 22px rgba(237,105,57,.32); transition: .15s;
+    }
+    .btn-continuar:hover { background: #d95c2f; }
+    .btn-continuar svg { width: 20px; height: 20px; }
+
+    @media (max-width: 900px) {
+      body { justify-content: center; padding: 24px; background-position: center; }
+      .painel { width: 100%; max-width: 560px; }
+    }
+    @media (max-width: 560px) {
+      .painel { padding: 28px 22px; }
+      .cargos-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="painel">
+    <div class="overline"><span>Acesso ao sistema</span></div>
+    <h1 class="painel-title">Escolha seu perfil de acesso</h1>
+    <p class="painel-sub">Selecione o tipo de acesso disponível para entrar no sistema.</p>
+
+    <div class="cargos-grid" id="grid"></div>
+
+    <button class="btn-continuar" id="btnContinuar">
+      Continuar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+
+<script>
+const ICONS = {
+  mala:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="2" y1="13" x2="22" y2="13"/></svg>',
+  capelo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2 6 2s6-1 6-2v-5"/><line x1="22" y1="10" x2="22" y2="15"/></svg>',
+  doc:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>',
+  grupo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  banco: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>',
+  coroa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 19h20"/><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-1.8 8H4.8z"/></svg>',
+};
+const IC_LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+const IC_CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+
+// estado: 'ativo' = cargos que o usuário ocupa | 'bloqueado' = indisponível
+const CARGOS = [
+  { nome: 'Auxiliar Administrativo', icon: 'mala',   estado: 'bloqueado' },
+  { nome: 'Professor(a)',            icon: 'capelo', estado: 'ativo' },
+  { nome: 'Secretário(a)',           icon: 'doc',    estado: 'ativo' },
+  { nome: 'Coordenador(a)',          icon: 'grupo',  estado: 'ativo' },
+  { nome: 'Vice-diretor(a)',         icon: 'banco',  estado: 'bloqueado' },
+  { nome: 'Diretor(a)',              icon: 'coroa',  estado: 'bloqueado' },
+];
+
+let selIdx = CARGOS.findIndex(c => c.estado === 'ativo'); // 1º cargo ativo
+const grid = document.getElementById('grid');
+
+function render() {
+  grid.innerHTML = CARGOS.map((c, i) => {
+    const locked = c.estado === 'bloqueado';
+    const cls = 'perfil-card' + (locked ? ' locked' : '') + (!locked && i === selIdx ? ' sel' : '');
+    const acao = locked
+      ? '<div class="pc-lock">' + IC_LOCK + '</div>'
+      : '<div class="pc-acao">' + IC_CHEV + '</div>';
+    return '<button type="button" class="' + cls + '" data-i="' + i + '"' + (locked ? ' disabled' : '') + '>'
+      + '<div class="pc-icon">' + ICONS[c.icon] + '</div>'
+      + '<div class="pc-nome">' + c.nome + '</div>'
+      + acao + '</button>';
+  }).join('');
+  grid.querySelectorAll('.perfil-card:not(.locked)').forEach(card => {
+    card.addEventListener('click', () => { selIdx = +card.dataset.i; render(); });
+  });
+}
+render();
+
+document.getElementById('btnContinuar').addEventListener('click', () => {
+  const cargo = CARGOS[selIdx] ? CARGOS[selIdx].nome : '';
+  try { localStorage.setItem('cargoAtivo', cargo); } catch (e) {}
+  location.href = 'index.html';
+});
+</script>
+
+</body>
+</html>
