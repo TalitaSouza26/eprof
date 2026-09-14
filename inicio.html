@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eProf - Página Inicial</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { display: flex; height: 100vh; overflow: hidden; font-family: 'Plus Jakarta Sans','Segoe UI',sans-serif; color: #1D1D1D; }
+
+    /* shell (o theme.css cuida das cores/tamanhos; aqui só o layout flex) */
+    .sidebar { display: flex; flex-direction: column; }
+    .sidebar-logo { display: flex; }
+    .nav-item, .logout { display: flex; align-items: center; cursor: pointer; }
+    .nav-item svg, .logout svg { flex-shrink: 0; }
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; }
+    .topbar-left, .topbar-right { display: flex; align-items: center; }
+    .avatar { display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+
+    /* ===== conteúdo da home ===== */
+    .home-content { flex: 1; overflow-y: auto; padding: 22px 28px 30px; background: #F4F6FA; }
+    .home-top { display: flex; gap: 20px; align-items: stretch; }
+
+    .card { background: #fff; border: 1px solid #E4E8EE; border-radius: 18px; }
+
+    /* --- Bubo IA --- */
+    .bubo-card { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 560px; }
+    .bubo-head { display: flex; align-items: center; gap: 14px; padding: 18px 24px; border-bottom: 1px solid #EDEFF3; }
+    .bubo-avatar { width: 52px; height: 52px; border-radius: 14px; background: #FDEEE8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .bubo-avatar svg { width: 34px; height: 34px; }
+    .bubo-name { font-size: 20px; font-weight: 800; color: #1D1D1D; }
+    .bubo-sub { font-size: 13px; color: #8A94A6; margin-top: 1px; }
+
+    .bubo-body { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; overflow: hidden; }
+    .doodle { position: absolute; color: #9AA6B8; opacity: .09; pointer-events: none; }
+    .bubo-inner { position: relative; z-index: 1; width: 100%; max-width: 760px; }
+    .bubo-title { text-align: center; color: #ED6939; font-size: 30px; font-weight: 700; margin-bottom: 30px; }
+    .bubo-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .bubo-chip { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #E4E8EE; border-radius: 14px; padding: 15px 18px; text-align: left; font-size: 14px; color: #33404F; cursor: pointer; font-family: inherit; transition: .15s; line-height: 1.3; }
+    .bubo-chip:hover { border-color: #ED6939; box-shadow: 0 4px 14px rgba(237,105,57,.10); }
+    .bubo-chip svg { width: 20px; height: 20px; color: #12509A; flex-shrink: 0; }
+
+    .bubo-input { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-top: 1px solid #EDEFF3; }
+    .bubo-input input { flex: 1; border: 1px solid #E4E8EE; border-radius: 12px; padding: 13px 16px; font-size: 14px; font-family: inherit; color: #1D1D1D; outline: none; }
+    .bubo-input input:focus { border-color: #12509A; box-shadow: 0 0 0 3px rgba(18,80,154,.10); }
+    .bubo-input input::placeholder { color: #9AA1AB; }
+    .bubo-send { width: 46px; height: 46px; border-radius: 50%; border: none; background: #ED6939; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .bubo-send:hover { background: #D4531F; }
+    .bubo-send svg { width: 20px; height: 20px; }
+
+    /* --- Aulas / Compromissos hoje --- */
+    .hoje-card { flex: 0 0 384px; display: flex; flex-direction: column; min-height: 560px; }
+    .hoje-tabs { display: flex; gap: 6px; padding: 12px; }
+    .hoje-tab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background: #F1F3F6; border-radius: 12px; padding: 12px; font-size: 13.5px; font-weight: 600; color: #8A94A6; cursor: pointer; font-family: inherit; }
+    .hoje-tab svg { width: 16px; height: 16px; }
+    .hoje-tab.active { background: #fff; color: #ED6939; box-shadow: 0 1px 3px rgba(29,29,29,.10); }
+
+    .hoje-list { flex: 1; overflow-y: auto; padding: 0 4px; }
+    .hoje-list::-webkit-scrollbar { width: 6px; }
+    .hoje-list::-webkit-scrollbar-thumb { background: #ED6939; border-radius: 3px; }
+    .hoje-aula { padding: 14px 16px; border-left: 4px solid #ED6939; border-bottom: 1px solid #EEF0F4; margin-left: 8px; }
+    .ha-tag { display: inline-block; background: #FDEEE8; color: #C0531F; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 8px; margin-bottom: 8px; }
+    .ha-turma { font-size: 17px; font-weight: 800; color: #12223A; margin-bottom: 8px; }
+    .ha-info { display: flex; align-items: center; gap: 8px; color: #5B6472; font-size: 13px; margin-bottom: 5px; }
+    .ha-info svg { width: 15px; height: 15px; color: #9AA1AB; flex-shrink: 0; }
+    .ha-plano { display: inline-flex; align-items: center; gap: 7px; background: #F1F3F6; color: #7A828F; font-size: 12.5px; padding: 6px 11px; border-radius: 8px; margin-top: 6px; }
+    .ha-plano svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    .hoje-footer { padding: 14px; border-top: 1px solid #EDEFF3; display: flex; justify-content: flex-end; }
+    .btn-aulas { display: inline-flex; align-items: center; gap: 9px; background: #ED6939; color: #fff; border: none; border-radius: 12px; padding: 12px 22px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .btn-aulas:hover { background: #D4531F; }
+    .btn-aulas svg { width: 18px; height: 18px; }
+
+    /* --- ferramentas (4 cards) --- */
+    .home-tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 20px; }
+    .tool-card { position: relative; display: flex; align-items: center; gap: 12px; background: #F4F5F8; border: 1px solid #E4E8EE; border-radius: 16px; padding: 20px 20px; overflow: hidden; cursor: pointer; text-decoration: none; color: inherit; transition: .15s; min-height: 132px; }
+    .tool-card:hover { border-color: #ED6939; box-shadow: 0 6px 18px rgba(20,40,80,.08); }
+    .tool-card.soon { cursor: default; }
+    .tc-left { flex: 1; min-width: 0; position: relative; z-index: 1; }
+    .tc-icon { width: 34px; height: 34px; color: #ED6939; margin-bottom: 10px; }
+    .tc-icon svg { width: 34px; height: 34px; }
+    .tc-title { font-size: 18px; font-weight: 800; color: #12223A; margin-bottom: 5px; }
+    .tc-desc { font-size: 12.5px; color: #7A828F; line-height: 1.4; }
+    .tc-illus { flex-shrink: 0; color: #ED6939; opacity: .9; }
+    .tc-illus svg { width: 70px; height: 70px; }
+    .tc-badge { position: absolute; top: 14px; left: 20px; background: #D8F3CC; color: #2E8B00; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; padding: 3px 9px; border-radius: 20px; z-index: 2; }
+    .tool-card.soon .tc-left { margin-top: 18px; }
+
+    @media (max-width: 1180px) {
+      .home-top { flex-direction: column; }
+      .hoje-card { flex: 1 1 auto; }
+      .home-tools { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .bubo-chips { grid-template-columns: 1fr; }
+      .home-tools { grid-template-columns: 1fr; }
+    }
+  </style>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="eprof" class="logo-img" />
+    <span class="portal-tag">Portal do Professor</span>
+  </div>
+  <nav class="nav">
+    <a href="inicio.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Página inicial</a>
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Minhas aulas</a>
+    <a href="turmas.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Minhas turmas</a>
+    <a href="horario.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="8" y1="10" x2="8" y2="20"/><line x1="16" y1="10" x2="16" y2="20"/></svg>Gerir horário</a>
+    <a href="planejamento2.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planejamento</a>
+    <a href="comunicacao.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comunicação</a>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Acervo digital</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Suporte</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>Configurações</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="logout" onclick="location.href='perfis.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg class="page-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ED6939" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <div>
+        <div class="topbar-title">Página Inicial</div>
+        <div class="topbar-sub">Educação Municipal de Porto Seguro</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B9805B" stroke-width="1.8"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0z"/><path d="M17 5h3v2a3 3 0 01-3 3M7 5H4v2a3 3 0 003 3"/></svg>
+      <div style="text-align:right"><div class="user-name">Yuri Derevtsoff</div><div class="user-role">Professor</div></div>
+    </div>
+  </div>
+
+  <div class="home-content">
+    <div class="home-top">
+
+      <!-- BUBO IA -->
+      <div class="card bubo-card">
+        <div class="bubo-head">
+          <div class="bubo-avatar">
+            <svg viewBox="0 0 64 64" fill="none" stroke="#ED6939" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18Q18 8 26 15"/><path d="M50 18Q46 8 38 15"/><circle cx="24" cy="30" r="9"/><circle cx="40" cy="30" r="9"/><circle cx="24" cy="30" r="2.5" fill="#ED6939"/><circle cx="40" cy="30" r="2.5" fill="#ED6939"/><path d="M29 40l3 4 3-4"/><path d="M14 34a18 18 0 0036 0"/></svg>
+          </div>
+          <div>
+            <div class="bubo-name">Bubo IA</div>
+            <div class="bubo-sub">Sua inteligência artificial especializada em educação</div>
+          </div>
+        </div>
+
+        <div class="bubo-body">
+          <!-- rabiscos de fundo -->
+          <svg class="doodle" style="top:10%;left:6%" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          <svg class="doodle" style="top:16%;right:8%" width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>
+          <svg class="doodle" style="bottom:14%;left:10%" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3v6l-5 9a2 2 0 002 3h12a2 2 0 002-3l-5-9V3"/><line x1="8" y1="3" x2="16" y2="3"/></svg>
+          <svg class="doodle" style="bottom:12%;right:10%" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
+          <svg class="doodle" style="top:44%;left:2%" width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+          <svg class="doodle" style="top:46%;right:3%" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2a10 10 0 000 20 2.5 2.5 0 002-4 2 2 0 011.7-3.2H18a4 4 0 004-4A10 10 0 0012 2z"/></svg>
+          <svg class="doodle" style="top:6%;left:44%" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          <svg class="doodle" style="bottom:6%;left:46%" width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12L3 7l9-5 9 5-9 5z"/></svg>
+
+          <div class="bubo-inner">
+            <h2 class="bubo-title">Como posso te ajudar hoje?</h2>
+            <div class="bubo-chips" id="chips"></div>
+          </div>
+        </div>
+
+        <div class="bubo-input">
+          <input id="buboInput" type="text" placeholder="Converse com o Bubo..." />
+          <button class="bubo-send" title="Enviar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- AULAS / COMPROMISSOS HOJE -->
+      <div class="card hoje-card">
+        <div class="hoje-tabs">
+          <button class="hoje-tab active" data-tab="aulas" onclick="setTab('aulas')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Aulas hoje
+          </button>
+          <button class="hoje-tab" data-tab="compromissos" onclick="setTab('compromissos')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Compromissos hoje
+          </button>
+        </div>
+        <div class="hoje-list" id="hojeList"></div>
+        <div class="hoje-footer">
+          <button class="btn-aulas" onclick="location.href='index.html'">
+            Ir para minhas aulas
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FERRAMENTAS -->
+    <div class="home-tools">
+      <a class="tool-card" href="index.html">
+        <div class="tc-left">
+          <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+          <div class="tc-title">Avaliações</div>
+          <div class="tc-desc">Crie provas alinhadas ao conteúdo que você lecionou</div>
+        </div>
+        <div class="tc-illus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></div>
+      </a>
+
+      <a class="tool-card" href="planejamento2.html">
+        <div class="tc-left">
+          <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+          <div class="tc-title">Planos de aula</div>
+          <div class="tc-desc">Elabore planos de aula personalizados para suas turmas</div>
+        </div>
+        <div class="tc-illus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="4" x2="9" y2="22"/><path d="M13 14h4M13 17h4"/></svg></div>
+      </a>
+
+      <div class="tool-card soon">
+        <span class="tc-badge">EM BREVE</span>
+        <div class="tc-left">
+          <div class="tc-title">Textos</div>
+          <div class="tc-desc">Gere textos personalizados com inteligência artificial</div>
+        </div>
+        <div class="tc-illus" style="color:#B9C0CC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></div>
+      </div>
+
+      <div class="tool-card soon">
+        <span class="tc-badge">EM BREVE</span>
+        <div class="tc-left">
+          <div class="tc-title">Apresentações</div>
+          <div class="tc-desc">Transforme qualquer tópico em uma apresentação</div>
+        </div>
+        <div class="tc-illus" style="color:#B9C0CC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h20v12H2z"/><path d="M12 15v6M8 21h8"/><path d="M6 11l3-3 2 2 4-4"/></svg></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUGESTOES = [
+  'Como lidar com a indisciplina de forma acolhedora?',
+  'Me ajude a mediar um conflito entre alunos na sala de aula',
+  'Como identificar sinais de ansiedade ou estresse nos meus alunos?',
+  'Como posso promover um ambiente mais seguro e respeitoso na turma?',
+  'Quais são as principais tendências de tecnologia na educação hoje?',
+  'Quais estratégias ajudam alunos com TDAH a manter a concentração?',
+];
+const IC_SPARK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>';
+document.getElementById('chips').innerHTML = SUGESTOES.map(s =>
+  '<button class="bubo-chip" onclick="usarSugestao(this)">' + IC_SPARK + '<span>' + s + '</span></button>'
+).join('');
+function usarSugestao(btn){
+  const inp = document.getElementById('buboInput');
+  inp.value = btn.querySelector('span').textContent;
+  inp.focus();
+}
+
+const IC_BLD  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22V4a2 2 0 012-2h8a2 2 0 012 2v18z"/><path d="M6 12H4a2 2 0 00-2 2v6a2 2 0 002 2h2"/><path d="M18 9h2a2 2 0 012 2v9a2 2 0 01-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg>';
+const IC_CLK  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+const IC_WARN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+
+const AULAS_HOJE = [
+  { disc:'Arte',            turma:'8° ano A', hora:'08:00 - 09:00', cor:'#ED6939' },
+  { disc:'Ciências',        turma:'3° ano A', hora:'13:20 - 13:40', cor:'#3DC200' },
+  { disc:'Arte',            turma:'1° ano A', hora:'13:30 - 13:50', cor:'#ED6939' },
+  { disc:'Geografia',       turma:'1° ano A', hora:'13:50 - 14:40', cor:'#ED6939' },
+  { disc:'Ensino Religioso',turma:'1° ano A', hora:'14:40 - 15:00', cor:'#ED6939' },
+];
+const ESCOLA = 'ESCOLA EPROF EDUCATION';
+
+function aulaHTML(a){
+  return '<div class="hoje-aula" style="border-left-color:' + a.cor + '">'
+    + '<span class="ha-tag">' + a.disc + '</span>'
+    + '<div class="ha-turma">' + a.turma + '</div>'
+    + '<div class="ha-info">' + IC_BLD + ESCOLA + '</div>'
+    + '<div class="ha-info">' + IC_CLK + a.hora + '</div>'
+    + '<div class="ha-plano">' + IC_WARN + 'Nenhum plano de aula vinculado</div>'
+    + '</div>';
+}
+
+function setTab(tab){
+  document.querySelectorAll('.hoje-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  const list = document.getElementById('hojeList');
+  if (tab === 'aulas') {
+    list.innerHTML = AULAS_HOJE.map(aulaHTML).join('');
+  } else {
+    list.innerHTML = '<div style="padding:48px 20px;text-align:center;color:#8A94A6;font-size:14px;">Nenhum compromisso para hoje.</div>';
+  }
+}
+setTab('aulas');
+</script>
+
+</body>
+</html>
