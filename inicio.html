@@ -280,10 +280,9 @@
     <div class="nov-left">
       <div class="nov-header">
         <h2>O que vem por aí 🚀</h2>
-        <p>Cada sugestão enviada pela rede é analisada pela nossa equipe. As melhorias abaixo partiram desse retorno. Acompanhe este espaço para ficar por dentro das próximas atualizações.</p>
+        <p>Cada sugestão enviada pela rede é analisada pela nossa equipe. As melhorias abaixo partiram desse retorno. Acompanhe através deste espaço as sugestões em desenvolvimento.</p>
       </div>
       <div class="nov-list" id="novList"></div>
-      <div class="nov-foot">Os itens confirmados estão em desenvolvimento e serão liberados gradualmente. Os demais seguem em análise pela equipe.</div>
     </div>
   </div>
 </div>
@@ -365,7 +364,6 @@ document.getElementById('novList').innerHTML = NOVIDADES.map(n =>
   '<div class="nov-item">'
   + '<div class="nov-ic">' + n.ic + '</div>'
   + '<div class="nov-body"><div class="nov-name">' + n.nome + '</div><div class="nov-desc">' + n.desc + '</div></div>'
-  + '<span class="nov-badge ' + n.cls + '">' + n.status + '</span>'
   + '</div>'
 ).join('');
 
