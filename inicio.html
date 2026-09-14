@@ -26,13 +26,15 @@
     /* ===== Modal "O que vem por aí" ===== */
     .nov-overlay { position: fixed; inset: 0; background: rgba(15,23,32,.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
     .nov-overlay.hidden { display: none; }
-    .nov-modal { position: relative; background: #fff; border-radius: 22px; width: min(540px, 94vw); max-height: 90vh; overflow-y: auto; padding: 82px 28px 26px; box-shadow: 0 30px 70px rgba(20,40,80,.30); }
-    .nov-bubo { position: absolute; top: -104px; left: 50%; transform: translateX(-50%); width: 184px; height: auto; pointer-events: none; filter: drop-shadow(0 10px 16px rgba(0,0,0,.18)); }
-    .nov-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 26px; line-height: 1; color: #9AA1AB; cursor: pointer; }
+    .nov-modal { position: relative; display: flex; background: #fff; border-radius: 22px; width: min(920px, 95vw); max-height: 88vh; overflow: hidden; box-shadow: 0 30px 70px rgba(20,40,80,.30); }
+    .nov-left { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 30px 28px 24px; overflow-y: auto; }
+    .nov-right { flex: 0 0 300px; background: #2a2a30; display: flex; align-items: flex-end; justify-content: center; padding: 0; overflow: hidden; }
+    .nov-right img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+    .nov-close { position: absolute; top: 16px; right: 18px; z-index: 2; background: none; border: none; font-size: 26px; line-height: 1; color: #9AA1AB; cursor: pointer; }
     .nov-close:hover { color: #1D1D1D; }
     .nov-header { text-align: center; margin-bottom: 22px; }
     .nov-header h2 { font-size: 22px; font-weight: 800; color: #12223A; }
-    .nov-header p { font-size: 13.5px; color: #8A94A6; margin-top: 4px; }
+    .nov-header p { font-size: 13.5px; color: #8A94A6; margin: 6px auto 0; max-width: 440px; line-height: 1.5; }
     .nov-list { display: flex; flex-direction: column; gap: 12px; }
     .nov-item { display: flex; align-items: flex-start; gap: 13px; padding: 14px; border: 1px solid #E4E8EE; border-radius: 14px; }
     .nov-ic { width: 40px; height: 40px; border-radius: 10px; background: #FDEEE8; color: #ED6939; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -41,10 +43,10 @@
     .nov-name { font-weight: 700; font-size: 14.5px; color: #12223A; margin-bottom: 2px; }
     .nov-desc { font-size: 12.5px; color: #7A828F; line-height: 1.45; }
     .nov-badge { font-size: 10.5px; font-weight: 800; letter-spacing: .03em; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
-    .nov-badge.breve { background: #FDEEE8; color: #C0531F; }
-    .nov-badge.dev { background: #EAF1FA; color: #12509A; }
-    .nov-badge.plan { background: #EEF0F4; color: #7A828F; }
+    .nov-badge.dev { background: #D8F3CC; color: #2E8B00; }
+    .nov-badge.analise { background: #FDF3D9; color: #B5790F; }
     .nov-foot { margin-top: 18px; text-align: center; font-size: 12.5px; font-style: italic; color: #8A94A6; }
+    @media (max-width: 680px) { .nov-modal { flex-direction: column; max-height: 92vh; overflow-y: auto; } .nov-right { flex: 0 0 auto; order: -1; padding: 16px; } .nov-right img { max-width: 150px; } .nov-left { overflow-y: visible; } }
 
     /* ===== conteúdo da home ===== */
     .home-content { flex: 1; overflow-y: auto; padding: 22px 28px 30px; background: #F4F6FA; }
@@ -276,14 +278,18 @@
 <!-- MODAL: O que vem por aí -->
 <div class="nov-overlay hidden" id="modalNovidades" onclick="if(event.target===this)fecharNovidades()">
   <div class="nov-modal">
-    <img src="BuboPainel.png" class="nov-bubo" alt="Bubo" />
     <button class="nov-close" onclick="fecharNovidades()" aria-label="Fechar">&times;</button>
-    <div class="nov-header">
-      <h2>O que vem por aí 🚀</h2>
-      <p>Novidades que estamos preparando para o eProf</p>
+    <div class="nov-left">
+      <div class="nov-header">
+        <h2>O que vem por aí 🚀</h2>
+        <p>Cada sugestão enviada pela rede é analisada pela nossa equipe. As melhorias abaixo partiram desse retorno. Acompanhe este espaço para ficar por dentro das próximas atualizações.</p>
+      </div>
+      <div class="nov-list" id="novList"></div>
+      <div class="nov-foot">Os itens confirmados estão em desenvolvimento e serão liberados gradualmente. Os demais seguem em análise pela equipe.</div>
     </div>
-    <div class="nov-list" id="novList"></div>
-    <div class="nov-foot">Itens em desenvolvimento. A liberação será feita gradualmente.</div>
+    <div class="nov-right">
+      <img src="bubovertical.png" alt="Bubo" />
+    </div>
   </div>
 </div>
 
@@ -346,19 +352,25 @@ const IC_NOTAS   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 const IC_PERM    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>';
 const IC_MOTIVO  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 6h10M11 12h10M11 18h10"/><path d="M3 6l1.4 1.4L6.2 4.6"/><path d="M3 12l1.4 1.4L6.2 10.6"/><path d="M3 18l1.4 1.4L6.2 16.6"/></svg>';
 const IC_HORARIO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="8" y1="10" x2="8" y2="20"/><line x1="16" y1="10" x2="16" y2="20"/></svg>';
+const IC_EDITOR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>';
+const IC_VISAO   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>';
 
+// cls: 'dev' (verde, em desenvolvimento) | 'analise' (amarelo, em análise)
 const NOVIDADES = [
-  { ic: IC_BOLETIM, nome: 'Boletim',                  desc: 'Vamos otimizar a entrega de notas: o boletim passará a ser emitido diretamente a partir dos registros já lançados no sistema.' },
-  { ic: IC_NOTAS,   nome: 'Anotações da coordenação', desc: 'Vamos ampliar o acompanhamento individual do estudante com um espaço de registro exclusivo da coordenação.' },
-  { ic: IC_PERM,    nome: 'Permissões da secretaria', desc: 'Vamos atualizar o perfil da secretaria, que passará a justificar faltas e a lançar as médias de alunos transferidos de outras escolas.' },
-  { ic: IC_MOTIVO,  nome: 'Motivos de justificativa', desc: 'Vamos revisar a lista de motivos de falta com a inclusão de "Doença sem atestado médico".' },
-  { ic: IC_HORARIO, nome: 'Gerir horários',           desc: 'Vamos ajustar a montagem da grade com a opção "Oficina", que dispensa a seleção de professor.' },
+  { ic: IC_BOLETIM, nome: 'Boletim',                  desc: 'Vamos otimizar a entrega de notas: o boletim passará a ser emitido diretamente a partir dos registros já lançados no sistema.', status: 'Em desenvolvimento', cls: 'dev' },
+  { ic: IC_NOTAS,   nome: 'Anotações da coordenação', desc: 'Vamos ampliar o acompanhamento individual do estudante com um espaço de registro exclusivo da coordenação.', status: 'Em desenvolvimento', cls: 'dev' },
+  { ic: IC_PERM,    nome: 'Permissões da secretaria', desc: 'Vamos atualizar o perfil da secretaria, que passará a justificar faltas e a lançar as médias de alunos transferidos de outras escolas.', status: 'Em desenvolvimento', cls: 'dev' },
+  { ic: IC_MOTIVO,  nome: 'Motivos de justificativa', desc: 'Vamos revisar a lista de motivos de falta com a inclusão de "Doença sem atestado médico".', status: 'Em desenvolvimento', cls: 'dev' },
+  { ic: IC_HORARIO, nome: 'Gerir horários',           desc: 'Vamos ajustar a montagem da grade com a opção "Oficina", que dispensa a seleção de professor.', status: 'Em desenvolvimento', cls: 'dev' },
+  { ic: IC_EDITOR,  nome: 'Editor do plano de aula',  desc: 'Estamos avaliando a ampliação dos recursos de formatação do campo de plano de aula, como negrito, itálico, listas, alinhamento e títulos.', status: 'Em análise', cls: 'analise' },
+  { ic: IC_VISAO,   nome: 'Visão consolidada de notas para a coordenação', desc: 'Estamos avaliando uma tela em que o coordenador visualize, de uma só vez, todos os alunos de uma turma com as respectivas matérias e notas.', status: 'Em análise', cls: 'analise' },
 ];
 
 document.getElementById('novList').innerHTML = NOVIDADES.map(n =>
   '<div class="nov-item">'
   + '<div class="nov-ic">' + n.ic + '</div>'
   + '<div class="nov-body"><div class="nov-name">' + n.nome + '</div><div class="nov-desc">' + n.desc + '</div></div>'
+  + '<span class="nov-badge ' + n.cls + '">' + n.status + '</span>'
   + '</div>'
 ).join('');
 
