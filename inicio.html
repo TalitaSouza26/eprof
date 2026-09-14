@@ -18,6 +18,34 @@
     .topbar-left, .topbar-right { display: flex; align-items: center; }
     .avatar { display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 
+    /* botão "O que vem por aí" */
+    .btn-novidades { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(90deg, #12509A 0%, #ED6939 100%); color: #fff; border: none; border-radius: 24px; padding: 8px 8px 8px 18px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .btn-novidades:hover { filter: brightness(1.05); }
+    .bn-q { width: 26px; height: 26px; border-radius: 50%; background: #fff; color: #ED6939; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+
+    /* ===== Modal "O que vem por aí" ===== */
+    .nov-overlay { position: fixed; inset: 0; background: rgba(15,23,32,.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+    .nov-overlay.hidden { display: none; }
+    .nov-modal { position: relative; background: #fff; border-radius: 22px; width: min(540px, 94vw); max-height: 90vh; overflow-y: auto; padding: 82px 28px 26px; box-shadow: 0 30px 70px rgba(20,40,80,.30); }
+    .nov-bubo { position: absolute; top: -104px; left: 50%; transform: translateX(-50%); width: 184px; height: auto; pointer-events: none; filter: drop-shadow(0 10px 16px rgba(0,0,0,.18)); }
+    .nov-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 26px; line-height: 1; color: #9AA1AB; cursor: pointer; }
+    .nov-close:hover { color: #1D1D1D; }
+    .nov-header { text-align: center; margin-bottom: 22px; }
+    .nov-header h2 { font-size: 22px; font-weight: 800; color: #12223A; }
+    .nov-header p { font-size: 13.5px; color: #8A94A6; margin-top: 4px; }
+    .nov-list { display: flex; flex-direction: column; gap: 12px; }
+    .nov-item { display: flex; align-items: flex-start; gap: 13px; padding: 14px; border: 1px solid #E4E8EE; border-radius: 14px; }
+    .nov-ic { width: 40px; height: 40px; border-radius: 10px; background: #FDEEE8; color: #ED6939; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nov-ic svg { width: 22px; height: 22px; }
+    .nov-body { flex: 1; min-width: 0; }
+    .nov-name { font-weight: 700; font-size: 14.5px; color: #12223A; margin-bottom: 2px; }
+    .nov-desc { font-size: 12.5px; color: #7A828F; line-height: 1.45; }
+    .nov-badge { font-size: 10.5px; font-weight: 800; letter-spacing: .03em; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+    .nov-badge.breve { background: #FDEEE8; color: #C0531F; }
+    .nov-badge.dev { background: #EAF1FA; color: #12509A; }
+    .nov-badge.plan { background: #EEF0F4; color: #7A828F; }
+    .nov-foot { margin-top: 18px; text-align: center; font-size: 12.5px; font-style: italic; color: #8A94A6; }
+
     /* ===== conteúdo da home ===== */
     .home-content { flex: 1; overflow-y: auto; padding: 22px 28px 30px; background: #F4F6FA; }
     .home-top { display: flex; gap: 20px; align-items: stretch; }
@@ -134,6 +162,7 @@
       </div>
     </div>
     <div class="topbar-right">
+      <button class="btn-novidades" onclick="abrirNovidades()">O que vem por aí <span class="bn-q">?</span></button>
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B9805B" stroke-width="1.8"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0z"/><path d="M17 5h3v2a3 3 0 01-3 3M7 5H4v2a3 3 0 003 3"/></svg>
       <div style="text-align:right"><div class="user-name">Yuri Derevtsoff</div><div class="user-role">Professor</div></div>
     </div>
@@ -244,6 +273,20 @@
   </div>
 </div>
 
+<!-- MODAL: O que vem por aí -->
+<div class="nov-overlay hidden" id="modalNovidades" onclick="if(event.target===this)fecharNovidades()">
+  <div class="nov-modal">
+    <img src="BuboPainel.png" class="nov-bubo" alt="Bubo" />
+    <button class="nov-close" onclick="fecharNovidades()" aria-label="Fechar">&times;</button>
+    <div class="nov-header">
+      <h2>O que vem por aí 🚀</h2>
+      <p>Novidades que estamos preparando para o eProf</p>
+    </div>
+    <div class="nov-list" id="novList"></div>
+    <div class="nov-foot">Itens em desenvolvimento. A liberação será feita gradualmente.</div>
+  </div>
+</div>
+
 <script>
 const SUGESTOES = [
   'Como lidar com a indisciplina de forma acolhedora?',
@@ -296,6 +339,31 @@ function setTab(tab){
   }
 }
 setTab('aulas');
+
+/* ===== Modal "O que vem por aí" ===== */
+const IC_BOLETIM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>';
+const IC_NOTAS   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+const IC_PERM    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>';
+const IC_MOTIVO  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 6h10M11 12h10M11 18h10"/><path d="M3 6l1.4 1.4L6.2 4.6"/><path d="M3 12l1.4 1.4L6.2 10.6"/><path d="M3 18l1.4 1.4L6.2 16.6"/></svg>';
+const IC_HORARIO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="8" y1="10" x2="8" y2="20"/><line x1="16" y1="10" x2="16" y2="20"/></svg>';
+
+const NOVIDADES = [
+  { ic: IC_BOLETIM, nome: 'Boletim',                  desc: 'Vamos otimizar a entrega de notas: o boletim passará a ser emitido diretamente a partir dos registros já lançados no sistema.' },
+  { ic: IC_NOTAS,   nome: 'Anotações da coordenação', desc: 'Vamos ampliar o acompanhamento individual do estudante com um espaço de registro exclusivo da coordenação.' },
+  { ic: IC_PERM,    nome: 'Permissões da secretaria', desc: 'Vamos atualizar o perfil da secretaria, que passará a justificar faltas e a lançar as médias de alunos transferidos de outras escolas.' },
+  { ic: IC_MOTIVO,  nome: 'Motivos de justificativa', desc: 'Vamos revisar a lista de motivos de falta com a inclusão de "Doença sem atestado médico".' },
+  { ic: IC_HORARIO, nome: 'Gerir horários',           desc: 'Vamos ajustar a montagem da grade com a opção "Oficina", que dispensa a seleção de professor.' },
+];
+
+document.getElementById('novList').innerHTML = NOVIDADES.map(n =>
+  '<div class="nov-item">'
+  + '<div class="nov-ic">' + n.ic + '</div>'
+  + '<div class="nov-body"><div class="nov-name">' + n.nome + '</div><div class="nov-desc">' + n.desc + '</div></div>'
+  + '</div>'
+).join('');
+
+function abrirNovidades(){ document.getElementById('modalNovidades').classList.remove('hidden'); }
+function fecharNovidades(){ document.getElementById('modalNovidades').classList.add('hidden'); }
 </script>
 
 </body>
