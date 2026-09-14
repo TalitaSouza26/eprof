@@ -34,6 +34,7 @@
     .nov-header h2 { font-size: 22px; font-weight: 800; color: #12223A; }
     .nov-header p { font-size: 13.5px; color: #8A94A6; margin: 6px auto 0; max-width: 440px; line-height: 1.5; }
     .nov-list { display: flex; flex-direction: column; gap: 12px; }
+    .nov-secao { font-size: 13px; font-weight: 800; color: #12223A; margin: 8px 2px 0; }
     .nov-item { display: flex; align-items: flex-start; gap: 13px; padding: 14px; border: 1px solid #E4E8EE; border-radius: 14px; }
     .nov-ic { width: 40px; height: 40px; border-radius: 10px; background: #FDEEE8; color: #ED6939; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .nov-ic svg { width: 22px; height: 22px; }
@@ -349,15 +350,15 @@ const IC_HORARIO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 const IC_EDITOR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>';
 const IC_VISAO   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>';
 
-// cls: 'dev' (verde, em desenvolvimento) | 'analise' (amarelo, em análise)
+// cls: 'dev' (em desenvolvimento) | 'analise' (em análise, agrupado sob divisor)
 const NOVIDADES = [
-  { ic: IC_BOLETIM, nome: 'Boletim',                  desc: 'Vamos otimizar a entrega de notas: o boletim passará a ser emitido diretamente a partir dos registros já lançados no sistema.', status: 'Em desenvolvimento', cls: 'dev' },
-  { ic: IC_NOTAS,   nome: 'Anotações da coordenação', desc: 'Vamos ampliar o acompanhamento individual do estudante com um espaço de registro exclusivo da coordenação.', status: 'Em desenvolvimento', cls: 'dev' },
-  { ic: IC_PERM,    nome: 'Permissões da secretaria', desc: 'Vamos atualizar o perfil da secretaria, que passará a justificar faltas e a lançar as médias de alunos transferidos de outras escolas.', status: 'Em desenvolvimento', cls: 'dev' },
-  { ic: IC_MOTIVO,  nome: 'Motivos de justificativa', desc: 'Vamos revisar a lista de motivos de falta com a inclusão de "Doença sem atestado médico".', status: 'Em desenvolvimento', cls: 'dev' },
-  { ic: IC_HORARIO, nome: 'Gerir horários',           desc: 'Vamos ajustar a montagem da grade com a opção "Oficina", que dispensa a seleção de professor.', status: 'Em desenvolvimento', cls: 'dev' },
-  { ic: IC_EDITOR,  nome: 'Editor do plano de aula',  desc: 'Estamos avaliando a ampliação dos recursos de formatação do campo de plano de aula, como negrito, itálico, listas, alinhamento e títulos.', status: 'Em análise', cls: 'analise' },
-  { ic: IC_VISAO,   nome: 'Visão consolidada de notas para a coordenação', desc: 'Estamos avaliando uma tela em que o coordenador visualize, de uma só vez, todos os alunos de uma turma com as respectivas matérias e notas.', status: 'Em análise', cls: 'analise' },
+  { ic: IC_BOLETIM, nome: 'Boletim',                  desc: 'Viabilizaremos a impressão do boletim, assim como já ocorre na ficha de matrícula.', cls: 'dev' },
+  { ic: IC_NOTAS,   nome: 'Anotações da coordenação', desc: 'Disponibilizaremos um espaço de anotações exclusivo da coordenação para o acompanhamento de cada estudante.', cls: 'dev' },
+  { ic: IC_PERM,    nome: 'Permissões da secretaria', desc: 'Atualizaremos as permissões da secretaria para justificar faltas e lançar as médias de alunos transferidos de outras escolas, quando necessário.', cls: 'dev' },
+  { ic: IC_MOTIVO,  nome: 'Motivos de justificativa', desc: 'Ampliaremos a lista de motivos de falta com a inclusão de "Doença sem atestado médico".', cls: 'dev' },
+  { ic: IC_HORARIO, nome: 'Gerir horários',           desc: 'Ajustaremos a montagem da grade de horários com a opção "Oficina".', cls: 'dev' },
+  { ic: IC_EDITOR,  nome: 'Editor do plano de aula',  desc: 'Ampliaremos os recursos de formatação do plano de aula.', cls: 'analise' },
+  { ic: IC_VISAO,   nome: 'Visão consolidada de notas', desc: 'Disponibilizaremos uma visão completa de notas por turma para o coordenador.', cls: 'analise' },
 ];
 
 document.getElementById('novList').innerHTML = NOVIDADES.map(n =>
