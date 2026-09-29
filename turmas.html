@@ -260,6 +260,13 @@
     .rel-textarea { width: 100%; min-height: 340px; padding: 14px; border: 1.5px solid #ddd; border-radius: 10px; font-size: 13px; color: #333; font-family: 'Segoe UI', Arial, sans-serif; resize: vertical; line-height: 1.6; outline: none; transition: border-color 0.15s; }
     .rel-textarea:focus { border-color: #1e4db7; }
     .rel-char-count { font-size: 11px; color: #aaa; text-align: right; margin-top: 6px; }
+    .rel-assinaturas { display: flex; gap: 48px; margin-top: 48px; }
+    .rel-assin { flex: 1; text-align: center; }
+    .rel-assin-linha { border-top: 1.5px solid #333; margin-bottom: 7px; }
+    .rel-assin-label { font-size: 12px; color: #555; }
+    .ficha-print { display: inline-flex; align-items: center; gap: 7px; padding: 11px 18px; background: #fff; color: #1e4db7; border: 1.5px solid #1e4db7; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .ficha-print:hover { background: #eef3fc; }
+    .ficha-print svg { width: 15px; height: 15px; }
     /* ===== NOTAS ===== */
     .notas-wrap { width:100%; }
     .notas-headbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
@@ -553,6 +560,7 @@
   <div class="ficha-pb" id="relPanelBody"></div>
   <div class="ficha-pf">
     <button class="ficha-save" onclick="saveRel()">Salvar relatório</button>
+    <button class="ficha-print" onclick="imprimirRelatorio()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir</button>
     <button class="ficha-cancel" onclick="closeRelPanel()">Cancelar</button>
   </div>
 </div>
@@ -1217,7 +1225,60 @@ function renderRelPanel() {
     <textarea id="relTextarea" class="rel-textarea"
       placeholder="${placeholder}"
       oninput="atualizarContador(this)">${textoAtual}</textarea>
-    <div class="rel-char-count" id="relCharCount">${textoAtual.length} caracteres</div>`;
+    <div class="rel-char-count" id="relCharCount">${textoAtual.length} caracteres</div>
+    ${assinaturasHtml()}`;
+}
+
+function assinaturasHtml() {
+  return `<div class="rel-assinaturas">
+      <div class="rel-assin"><div class="rel-assin-linha"></div><div class="rel-assin-label">Professor(a)</div></div>
+      <div class="rel-assin"><div class="rel-assin-linha"></div><div class="rel-assin-label">Professor(a)</div></div>
+    </div>`;
+}
+
+function imprimirRelatorio() {
+  salvarTextoAtual();
+  const a = currentAluno;
+  const t = currentTurma || {};
+  const unidade = UNIDADES[relUnidadeAtual - 1];
+  const titulo = unidade === 'Inicial' ? 'Relatório Inicial' : `Relatório do ${unidade}`;
+  const texto = (relTextos[`${a ? a.idx : 0}-${relUnidadeAtual}`] || '').trim();
+  const nome = a ? a.nome : '';
+  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${esc(titulo)} - ${esc(nome)}</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: 'Segoe UI', Arial, sans-serif; color: #222; margin: 40px; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      .sub { color: #666; font-size: 13px; margin-bottom: 24px; }
+      .meta { font-size: 13px; margin-bottom: 20px; line-height: 1.7; }
+      .meta b { color: #1e4db7; }
+      .titulo { font-size: 15px; font-weight: 700; margin: 24px 0 10px; }
+      .texto { font-size: 14px; line-height: 1.7; white-space: pre-wrap; min-height: 220px; border: 1px solid #e2e5ea; border-radius: 8px; padding: 16px; }
+      .assin { display: flex; gap: 60px; margin-top: 80px; }
+      .assin .col { flex: 1; text-align: center; }
+      .assin .linha { border-top: 1.5px solid #333; margin-bottom: 8px; }
+      .assin .lbl { font-size: 13px; color: #444; }
+      @media print { body { margin: 20mm; } }
+    </style></head><body>
+    <h1>Relatório do aluno</h1>
+    <div class="sub">${esc(t.escola || '')}</div>
+    <div class="meta">
+      <div><b>Aluno(a):</b> ${esc(nome)}</div>
+      <div><b>Turma:</b> ${esc(t.nome || '')}${t.tag ? ' · ' + esc(t.tag) : ''}</div>
+      <div><b>Período:</b> ${esc(unidade)}</div>
+    </div>
+    <div class="titulo">${esc(titulo)}</div>
+    <div class="texto">${esc(texto)}</div>
+    <div class="assin">
+      <div class="col"><div class="linha"></div><div class="lbl">Professor(a)</div></div>
+      <div class="col"><div class="linha"></div><div class="lbl">Professor(a)</div></div>
+    </div>
+  </body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(() => w.print(), 300);
 }
 
 function trocarUnidade(num) {
