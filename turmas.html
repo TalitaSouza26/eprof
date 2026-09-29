@@ -557,20 +557,20 @@
   </div>
 </div>
 
-<!-- FICHA PANEL -->
-<div class="ficha-overlay" id="fichaOverlay" onclick="closeFichaPanel()"></div>
-<div class="ficha-panel" id="fichaPanel">
+<!-- REGISTROS E OBSERVAÇÕES PANEL -->
+<div class="ficha-overlay" id="regOverlay" onclick="closeRegPanel()"></div>
+<div class="ficha-panel" id="regPanel">
   <div class="ficha-ph">
     <div class="ficha-ph-info">
-      <div class="ficha-ph-ttl">Ficha de avaliação</div>
-      <div class="ficha-ph-sub" id="fichaPanelSub">Perfil de Desenvolvimento — Grupo I</div>
+      <div class="ficha-ph-ttl">Registros e observações</div>
+      <div class="ficha-ph-sub" id="regPanelSub"></div>
     </div>
-    <button class="modal-close" onclick="closeFichaPanel()">×</button>
+    <button class="modal-close" onclick="closeRegPanel()">×</button>
   </div>
-  <div class="ficha-pb" id="fichaPanelBody"></div>
+  <div class="ficha-pb" id="regPanelBody"></div>
   <div class="ficha-pf">
-    <button class="ficha-save" onclick="saveFicha()">Salvar ficha</button>
-    <button class="ficha-cancel" onclick="closeFichaPanel()">Cancelar</button>
+    <button class="ficha-save" onclick="saveReg()">Salvar registro</button>
+    <button class="ficha-cancel" onclick="closeRegPanel()">Cancelar</button>
   </div>
 </div>
 
@@ -1062,11 +1062,11 @@ function renderDetalheAluno() {
         <div class="acoes-col">
           ${(() => {
             const ano12 = !isInfantil && (t.nome.startsWith('1°') || t.nome.startsWith('2°'));
-            const fichaCard = (clickable) => `
-          <div class="acao-card" ${clickable ? 'onclick="openFichaPanel()"' : 'style="cursor:default;opacity:0.7;"'}>
+            const regCard = (clickable) => `
+          <div class="acao-card" ${clickable ? 'onclick="openRegPanel()"' : 'style="cursor:default;opacity:0.7;"'}>
             <div class="acao-info">
-              <div class="acao-ttl">Fichas de avaliação <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-              <div class="acao-desc">${clickable ? 'Preencha e edite as fichas de avaliação — Perfil de Desenvolvimento · ' + (getFichaParaTurma(t.tag) === FICHA_GRUPO2 ? 'Grupo II' : getFichaParaTurma(t.tag) === FICHA_GRUPO3 ? 'Grupo III' : 'Grupo I') : 'Fichas de avaliação disponíveis para este aluno'}</div>
+              <div class="acao-ttl">Registros e observações <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+              <div class="acao-desc">${clickable ? 'Registre observações e anotações do aluno por bimestre' : 'Registros e observações disponíveis para este aluno'}</div>
             </div>
             <div class="acao-img-wrap">
               <svg viewBox="0 0 60 60" width="52" height="52">
@@ -1103,8 +1103,8 @@ function renderDetalheAluno() {
               </svg>
             </div>
           </div>`;
-            if (isInfantil) return (getFichaParaTurma(t.tag) ? fichaCard(true) : '') + relCard(true);
-            if (ano12) return fichaCard(false) + relCard(false);
+            if (isInfantil) return regCard(true) + relCard(true);
+            if (ano12) return regCard(false) + relCard(false);
             return '';
           })()}
         </div>
@@ -1112,98 +1112,61 @@ function renderDetalheAluno() {
     </div>`;
 }
 
-// ============ FICHA PANEL ============
-function openFichaPanel() {
-  document.getElementById('fichaOverlay').classList.add('open');
-  document.getElementById('fichaPanel').classList.add('open');
-  renderFichaPanel();
+// ============ REGISTROS E OBSERVAÇÕES PANEL ============
+const UNIDADES_REG = ['I Bimestre', 'II Bimestre', 'III Bimestre', 'IV Bimestre'];
+let regUnidadeAtual = 1;
+let regTextos = {}; // key: "alunoIdx-unidade"
+
+function openRegPanel() {
+  regUnidadeAtual = 1;
+  document.getElementById('regOverlay').classList.add('open');
+  document.getElementById('regPanel').classList.add('open');
+  renderRegPanel();
 }
 
-function closeFichaPanel() {
-  document.getElementById('fichaOverlay').classList.remove('open');
-  document.getElementById('fichaPanel').classList.remove('open');
+function closeRegPanel() {
+  salvarTextoRegAtual();
+  document.getElementById('regOverlay').classList.remove('open');
+  document.getElementById('regPanel').classList.remove('open');
 }
 
-let fichaCampoAtual = 0;
+function salvarTextoRegAtual() {
+  const ta = document.getElementById('regTextarea');
+  if (ta && currentAluno) regTextos[`${currentAluno.idx}-${regUnidadeAtual}`] = ta.value;
+}
 
-function renderFichaPanel() {
+function renderRegPanel() {
   const a = currentAluno;
-  const ficha = getFichaParaTurma(currentTurma.tag);
-  const grupo = ficha === FICHA_GRUPO2 ? 'Grupo II' : 'Grupo I';
-  document.getElementById('fichaPanelSub').textContent = a ? `${a.nome} — Perfil de Desenvolvimento · ${grupo}` : `Perfil de Desenvolvimento — ${grupo}`;
-  fichaCampoAtual = 0;
-  renderFichaCampo();
+  document.getElementById('regPanelSub').textContent = a ? a.nome : '';
+  const textoAtual = regTextos[`${a ? a.idx : 0}-${regUnidadeAtual}`] || '';
+  const unidade = UNIDADES_REG[regUnidadeAtual - 1];
+  document.getElementById('regPanelBody').innerHTML = `
+    <div class="rel-unid-tabs">
+      ${UNIDADES_REG.map((u, i) => `
+        <span class="rel-unid-tab${regUnidadeAtual === i+1 ? ' active' : ''}"
+              onclick="trocarUnidadeReg(${i+1})">${u}</span>`).join('')}
+    </div>
+    <div class="rel-unid-titulo">Registros do ${unidade}</div>
+    <textarea id="regTextarea" class="rel-textarea"
+      placeholder="Escreva os registros e observações do ${unidade}..."
+      oninput="atualizarContadorReg(this)">${textoAtual}</textarea>
+    <div class="rel-char-count" id="regCharCount">${textoAtual.length} caracteres</div>`;
 }
 
-function renderFichaCampo() {
-  const a = currentAluno;
-  const si = fichaCampoAtual;
-  const fichaAtual = getFichaParaTurma(currentTurma.tag) || FICHA_GRUPO1;
-  const sec = fichaAtual[si];
-
-  const legendHtml = `
-    <div class="fr-legend">
-      <div class="fr-leg-item"><span class="fr-leg-badge fr-leg-sim">SIM</span> Sim</div>
-      <div class="fr-leg-item"><span class="fr-leg-badge fr-leg-av">AV</span> Às Vezes</div>
-      <div class="fr-leg-item"><span class="fr-leg-badge fr-leg-an">AN</span> Ainda Não</div>
-      <div class="fr-leg-item"><span class="fr-leg-badge fr-leg-nt">NT</span> Não Trabalhado</div>
-    </div>`;
-
-  const selectCampoHtml = `
-    <div style="margin-bottom:14px;">
-      <label style="font-size:11px;color:#aaa;display:block;margin-bottom:5px;">Campo de Experiência</label>
-      <select style="width:100%;padding:8px 12px;font-size:13px;border-radius:8px;color:#1e4db7;font-weight:600;border:1.5px solid #1e4db7;outline:none;" onchange="fichaCampoAtual=parseInt(this.value);renderFichaCampo()">
-        ${fichaAtual.map((s, i) => `<option value="${i}"${i===si?' selected':''}>${s.campo}</option>`).join('')}
-      </select>
-    </div>`;
-
-  const opts = [
-    {val:'sim', label:'SIM',  cls:'v-sim'},
-    {val:'av',  label:'AV',   cls:'v-av'},
-    {val:'an',  label:'AN',   cls:'v-an'},
-    {val:'nt',  label:'NT',   cls:'v-nt'},
-  ];
-
-  const tableHtml = `
-    <table class="fr-table">
-      <thead><tr>
-        <th>Indicadores</th>
-        <th class="unid">I</th>
-        <th class="unid">II</th>
-        <th class="unid">III</th>
-        <th class="unid">IV</th>
-      </tr></thead>
-      <tbody>
-        ${sec.indicadores.map((ind, ii) => {
-          const baseKey = `${a ? a.idx : 0}-${si}-${ii}`;
-          return `<tr class="fr-obj-row">
-            <td><span class="fr-num">${ii+1}</span>${ind}</td>
-            ${[1,2,3,4].map(u => {
-              const key = `${baseKey}-${u}`;
-              const val = fichaRespostas[key] || '';
-              const cls = opts.find(o=>o.val===val)?.cls || '';
-              return `<td><select class="fr-select ${cls}" onchange="salvarFichaSelect('${key}',this)">
-                <option value=""></option>
-                ${opts.map(o=>`<option value="${o.val}"${val===o.val?' selected':''}>${o.label}</option>`).join('')}
-              </select></td>`;
-            }).join('')}
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>`;
-
-  document.getElementById('fichaPanelBody').innerHTML = legendHtml + selectCampoHtml + tableHtml;
+function trocarUnidadeReg(num) {
+  salvarTextoRegAtual();
+  regUnidadeAtual = num;
+  renderRegPanel();
 }
 
-function salvarFichaSelect(key, sel) {
-  const clsMap = {sim:'v-sim', av:'v-av', an:'v-an', nt:'v-nt'};
-  sel.className = 'fr-select ' + (clsMap[sel.value] || '');
-  if (sel.value) fichaRespostas[key] = sel.value;
-  else delete fichaRespostas[key];
+function atualizarContadorReg(el) {
+  document.getElementById('regCharCount').textContent = el.value.length + ' caracteres';
+  if (currentAluno) regTextos[`${currentAluno.idx}-${regUnidadeAtual}`] = el.value;
 }
 
-function saveFicha() {
-  closeFichaPanel();
+function saveReg() {
+  salvarTextoRegAtual();
+  closeRegPanel();
 }
 
 // ============ RELATÓRIO PANEL ============
@@ -1574,7 +1537,7 @@ function renderContent() {
   } else if (currentTab === 'notas') {
     renderNotas(el);
   } else if (currentTab === 'criancas') {
-    const temFicha = t.tag && !!getFichaParaTurma(t.tag);
+    const temFicha = !!t.tag; // todo aluno infantil pode abrir os detalhes (registros/relatório)
     el.innerHTML = `
       <div style="width:100%">
         <div class="alunos-table">
