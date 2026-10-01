@@ -75,12 +75,16 @@
     .slot-card.oficina:hover { background: #f4f6f9; border-color: #9aa2af; }
     .slot-card.oficina .slot-rotina { color: #3a4150; }
     .slot-card.oficina .slot-turma { color: #99a0ac; }
-    .btn-add-prof { align-self: flex-start; margin-top: 4px; background: none; border: none; color: #f26522; font-size: 12px; font-weight: 600; cursor: pointer; padding: 2px 0; }
-    .btn-add-prof:hover { text-decoration: underline; }
-    .prof-row { display: flex; gap: 8px; align-items: center; }
-    .prof-row .form-input { flex: 1; }
-    .prof-row-del { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 18px; line-height: 1; padding: 2px 6px; flex-shrink: 0; }
-    .prof-row-del:hover { color: #e05050; }
+    .prof-hint { color: #aaa; font-weight: 400; font-size: 11px; }
+    .prof-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .prof-chips:empty { display: none; }
+    .prof-chip { display: inline-flex; align-items: center; gap: 4px; background: #eaf1fa; color: #1e4db7; border: 1px solid #cdd8f2; border-radius: 16px; padding: 4px 4px 4px 12px; font-size: 12px; font-weight: 600; }
+    .prof-chip button { background: none; border: none; color: #1e4db7; cursor: pointer; font-size: 15px; line-height: 1; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; padding: 0; }
+    .prof-chip button:hover { background: #d4e1f5; }
+    .prof-add-row { display: flex; gap: 8px; align-items: center; }
+    .prof-add-row .form-input { flex: 1; }
+    .btn-add-inline { background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .btn-add-inline:hover { background: #d9561e; }
     .slot-card { border-left: 3px solid #1e4db7; padding: 6px 10px 6px 10px; border-radius: 0 6px 6px 0; background: #fff; display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
     .slot-card:hover { background: #f5f8ff; }
     .slot-info { cursor: pointer; flex: 1; }
@@ -235,9 +239,19 @@
     </div>
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
       <div class="form-group">
-        <label class="form-label">Professor(es)</label>
-        <div id="slotProfsWrap" style="display:flex;flex-direction:column;gap:8px;"></div>
-        <button type="button" id="btnAddProf" class="btn-add-prof" onclick="addProfField()">+ Adicionar professor</button>
+        <label class="form-label">Professor(es) <span class="prof-hint" id="profHint"></span></label>
+        <div id="slotProfsChips" class="prof-chips"></div>
+        <div class="prof-add-row" id="profAddRow">
+          <select class="form-input" id="slotProfSelect">
+            <option value="">Selecione...</option>
+            <option>Maria</option>
+            <option>Pedro</option>
+            <option>João</option>
+            <option>Caio</option>
+            <option>José</option>
+          </select>
+          <button type="button" class="btn-add-inline" onclick="adicionarProfChip()">Adicionar</button>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Rotina</label>
@@ -420,62 +434,57 @@ function renderTabela() {
 // Slot atual sendo editado
 let slotAtual = { row: null, col: null };
 
-const PROFESSORES = ['Maria', 'Pedro', 'João', 'Caio', 'José'];
+const MAX_PROFS = 3;
+let slotProfs = []; // professores adicionados no slot em edição
 
 function isInfantilAtual() {
   return document.getElementById('selectTipo').value === 'infantil';
 }
-
-function profSelectOptions(sel) {
-  return `<option value="">Selecione...</option>` +
-    PROFESSORES.map(p => `<option${p === sel ? ' selected' : ''}>${p}</option>`).join('');
+function maxProfsAtual() {
+  return isInfantilAtual() ? MAX_PROFS : 1;
 }
 
-const MAX_PROFS = 3;
-
-function renderProfFields(profs) {
-  if (!profs || profs.length === 0) profs = [''];
-  if (profs.length > MAX_PROFS) profs = profs.slice(0, MAX_PROFS);
-  const infantil = isInfantilAtual();
-  document.getElementById('slotProfsWrap').innerHTML = profs.map((p, i) => `
-    <div class="prof-row">
-      <select class="form-input slot-prof-sel">${profSelectOptions(p)}</select>
-      ${(infantil && i > 0) ? `<button type="button" class="prof-row-del" onclick="removeProfField(${i})" title="Remover">×</button>` : ''}
-    </div>`).join('');
-  // botão "+ Adicionar professor" só na Ed. Infantil e até 3 professores
-  document.getElementById('btnAddProf').style.display = (infantil && profs.length < MAX_PROFS) ? '' : 'none';
+function renderProfChips() {
+  const max = maxProfsAtual();
+  document.getElementById('slotProfsChips').innerHTML = slotProfs.map(p =>
+    `<span class="prof-chip">${p}<button type="button" onclick="removerProfChip('${p.replace(/'/g, "\\'")}')" title="Remover">×</button></span>`
+  ).join('');
+  // esconde o campo de adicionar ao atingir o máximo
+  document.getElementById('profAddRow').style.display = slotProfs.length >= max ? 'none' : '';
+  const hint = document.getElementById('profHint');
+  if (hint) hint.textContent = max > 1 ? `(até ${max})` : '';
 }
 
-function collectProfs() {
-  return Array.from(document.querySelectorAll('#slotProfsWrap .slot-prof-sel')).map(s => s.value);
+function adicionarProfChip() {
+  const sel = document.getElementById('slotProfSelect');
+  const nome = sel.value;
+  if (!nome) return;
+  if (slotProfs.includes(nome) || slotProfs.length >= maxProfsAtual()) { sel.value = ''; return; }
+  slotProfs.push(nome);
+  sel.value = '';
+  renderProfChips();
 }
 
-function addProfField() {
-  const profs = collectProfs();
-  if (profs.length >= MAX_PROFS) return;
-  profs.push('');
-  renderProfFields(profs);
-}
-
-function removeProfField(i) {
-  const profs = collectProfs();
-  profs.splice(i, 1);
-  renderProfFields(profs);
+function removerProfChip(nome) {
+  slotProfs = slotProfs.filter(p => p !== nome);
+  renderProfChips();
 }
 
 function abrirSlot(rowIdx, colIdx) {
   slotAtual = { row: rowIdx, col: colIdx };
   document.getElementById('slotRotina').value = '';
-  let profs = [''];
+  slotProfs = [];
   // Pré-preencher se já existir
   const val = horarios[rowIdx]?.dias[colIdx] || '';
   if (val) {
     const parts = val.split(' · ');
     const profStr = parts[0] || '';
-    profs = profStr ? profStr.split(',').map(s => s.trim()).filter(Boolean) : [''];
+    slotProfs = profStr ? profStr.split(',').map(s => s.trim()).filter(Boolean) : [];
     document.getElementById('slotRotina').value = parts[1] || '';
   }
-  renderProfFields(profs);
+  if (slotProfs.length > maxProfsAtual()) slotProfs = slotProfs.slice(0, maxProfsAtual());
+  document.getElementById('slotProfSelect').value = '';
+  renderProfChips();
   document.getElementById('modalSlot').classList.remove('hidden');
 }
 
@@ -488,8 +497,7 @@ document.getElementById('modalSlot').addEventListener('click', function(e) {
 });
 
 function salvarSlot() {
-  const profs  = collectProfs().filter(Boolean);
-  const profStr = profs.join(', ');
+  const profStr = slotProfs.join(', ');
   const rotina = document.getElementById('slotRotina').value;
   if (!profStr && !rotina) { closeModalSlot(); return; }
   const { row, col } = slotAtual;
