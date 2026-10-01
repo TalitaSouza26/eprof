@@ -75,6 +75,12 @@
     .slot-card.oficina:hover { background: #f4f6f9; border-color: #9aa2af; }
     .slot-card.oficina .slot-rotina { color: #3a4150; }
     .slot-card.oficina .slot-turma { color: #99a0ac; }
+    .btn-add-prof { align-self: flex-start; margin-top: 4px; background: none; border: none; color: #f26522; font-size: 12px; font-weight: 600; cursor: pointer; padding: 2px 0; }
+    .btn-add-prof:hover { text-decoration: underline; }
+    .prof-row { display: flex; gap: 8px; align-items: center; }
+    .prof-row .form-input { flex: 1; }
+    .prof-row-del { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 18px; line-height: 1; padding: 2px 6px; flex-shrink: 0; }
+    .prof-row-del:hover { color: #e05050; }
     .slot-card { border-left: 3px solid #1e4db7; padding: 6px 10px 6px 10px; border-radius: 0 6px 6px 0; background: #fff; display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
     .slot-card:hover { background: #f5f8ff; }
     .slot-info { cursor: pointer; flex: 1; }
@@ -229,15 +235,9 @@
     </div>
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
       <div class="form-group">
-        <label class="form-label">Professor</label>
-        <select class="form-input" id="slotProfessor">
-          <option value="">Selecione...</option>
-          <option>Maria</option>
-          <option>Pedro</option>
-          <option>João</option>
-          <option>Caio</option>
-          <option>José</option>
-        </select>
+        <label class="form-label">Professor(es)</label>
+        <div id="slotProfsWrap" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <button type="button" id="btnAddProf" class="btn-add-prof" onclick="addProfField()">+ Adicionar professor</button>
       </div>
       <div class="form-group">
         <label class="form-label">Rotina</label>
@@ -393,12 +393,14 @@ function renderTabela() {
         }
         if (val) {
           const [prof, rotina] = val.split(' · ');
+          const profsHtml = (prof || '').split(',').map(p => p.trim()).filter(Boolean)
+            .map(p => `<div class="slot-prof">${p}</div>`).join('');
           return `<td>
             <div class="slot-card">
               <div class="slot-info" onclick="abrirSlot(${i},${di})">
                 <div class="slot-rotina">${rotina || ''}</div>
                 <div class="slot-turma">${turma}</div>
-                <div class="slot-prof">${prof || ''}</div>
+                ${profsHtml}
               </div>
               ${delBtn}
             </div>
@@ -418,17 +420,58 @@ function renderTabela() {
 // Slot atual sendo editado
 let slotAtual = { row: null, col: null };
 
+const PROFESSORES = ['Maria', 'Pedro', 'João', 'Caio', 'José'];
+
+function isInfantilAtual() {
+  return document.getElementById('selectTipo').value === 'infantil';
+}
+
+function profSelectOptions(sel) {
+  return `<option value="">Selecione...</option>` +
+    PROFESSORES.map(p => `<option${p === sel ? ' selected' : ''}>${p}</option>`).join('');
+}
+
+function renderProfFields(profs) {
+  if (!profs || profs.length === 0) profs = [''];
+  const infantil = isInfantilAtual();
+  document.getElementById('slotProfsWrap').innerHTML = profs.map((p, i) => `
+    <div class="prof-row">
+      <select class="form-input slot-prof-sel">${profSelectOptions(p)}</select>
+      ${(infantil && i > 0) ? `<button type="button" class="prof-row-del" onclick="removeProfField(${i})" title="Remover">×</button>` : ''}
+    </div>`).join('');
+  // botão "+ Adicionar professor" só na Ed. Infantil
+  document.getElementById('btnAddProf').style.display = infantil ? '' : 'none';
+}
+
+function collectProfs() {
+  return Array.from(document.querySelectorAll('#slotProfsWrap .slot-prof-sel')).map(s => s.value);
+}
+
+function addProfField() {
+  const profs = collectProfs();
+  profs.push('');
+  renderProfFields(profs);
+}
+
+function removeProfField(i) {
+  const profs = collectProfs();
+  profs.splice(i, 1);
+  renderProfFields(profs);
+}
+
 function abrirSlot(rowIdx, colIdx) {
   slotAtual = { row: rowIdx, col: colIdx };
-  document.getElementById('slotProfessor').value = '';
   document.getElementById('slotRotina').value = '';
+  let profs = [''];
   // Pré-preencher se já existir
   const val = horarios[rowIdx]?.dias[colIdx] || '';
   if (val) {
     const parts = val.split(' · ');
-    document.getElementById('slotProfessor').value = parts[0] || '';
+    const profStr = parts[0] || '';
+    profs = profStr ? profStr.split(',').map(s => s.trim()).filter(Boolean) : [''];
     document.getElementById('slotRotina').value = parts[1] || '';
   }
+  renderProfFields(profs);
   document.getElementById('modalSlot').classList.remove('hidden');
 }
 
@@ -441,11 +484,12 @@ document.getElementById('modalSlot').addEventListener('click', function(e) {
 });
 
 function salvarSlot() {
-  const prof   = document.getElementById('slotProfessor').value;
+  const profs  = collectProfs().filter(Boolean);
+  const profStr = profs.join(', ');
   const rotina = document.getElementById('slotRotina').value;
-  if (!prof && !rotina) { closeModalSlot(); return; }
+  if (!profStr && !rotina) { closeModalSlot(); return; }
   const { row, col } = slotAtual;
-  horarios[row].dias[col] = [prof, rotina].filter(Boolean).join(' · ');
+  horarios[row].dias[col] = [profStr, rotina].filter(Boolean).join(' · ');
   renderTabela();
   closeModalSlot();
 }
