@@ -431,16 +431,19 @@ function profSelectOptions(sel) {
     PROFESSORES.map(p => `<option${p === sel ? ' selected' : ''}>${p}</option>`).join('');
 }
 
+const MAX_PROFS = 3;
+
 function renderProfFields(profs) {
   if (!profs || profs.length === 0) profs = [''];
+  if (profs.length > MAX_PROFS) profs = profs.slice(0, MAX_PROFS);
   const infantil = isInfantilAtual();
   document.getElementById('slotProfsWrap').innerHTML = profs.map((p, i) => `
     <div class="prof-row">
       <select class="form-input slot-prof-sel">${profSelectOptions(p)}</select>
       ${(infantil && i > 0) ? `<button type="button" class="prof-row-del" onclick="removeProfField(${i})" title="Remover">×</button>` : ''}
     </div>`).join('');
-  // botão "+ Adicionar professor" só na Ed. Infantil
-  document.getElementById('btnAddProf').style.display = infantil ? '' : 'none';
+  // botão "+ Adicionar professor" só na Ed. Infantil e até 3 professores
+  document.getElementById('btnAddProf').style.display = (infantil && profs.length < MAX_PROFS) ? '' : 'none';
 }
 
 function collectProfs() {
@@ -449,6 +452,7 @@ function collectProfs() {
 
 function addProfField() {
   const profs = collectProfs();
+  if (profs.length >= MAX_PROFS) return;
   profs.push('');
   renderProfFields(profs);
 }
