@@ -76,7 +76,7 @@
     .slot-card.oficina .slot-rotina { color: #3a4150; }
     .slot-card.oficina .slot-turma { color: #99a0ac; }
     .prof-hint { color: #aaa; font-weight: 400; font-size: 11px; }
-    .prof-list { margin-bottom: 10px; border: 1px solid #e6e8ec; border-radius: 8px; overflow: hidden; }
+    .prof-list { margin-top: 10px; border: 1px solid #e6e8ec; border-radius: 8px; overflow: hidden; }
     .prof-list:empty { display: none; }
     .prof-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 8px 7px 10px; border-bottom: 1px solid #f2f3f5; }
     .prof-item:last-child { border-bottom: none; }
@@ -245,7 +245,6 @@
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
       <div class="form-group">
         <label class="form-label">Professor(es) <span class="prof-hint" id="profHint"></span></label>
-        <div id="slotProfsChips" class="prof-list"></div>
         <div class="prof-add-row" id="profAddRow">
           <select class="form-input" id="slotProfSelect">
             <option value="">Selecione...</option>
@@ -257,6 +256,7 @@
           </select>
           <button type="button" class="btn-add-inline" onclick="adicionarProfChip()">Adicionar</button>
         </div>
+        <div id="slotProfsChips" class="prof-list"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Rotina</label>
