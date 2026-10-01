@@ -83,8 +83,9 @@
     .prof-chip button:hover { background: #d4e1f5; }
     .prof-add-row { display: flex; gap: 8px; align-items: center; }
     .prof-add-row .form-input { flex: 1; }
-    .btn-add-inline { background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .btn-add-inline:hover { background: #d9561e; }
+    .btn-add-inline { background: #fff; color: #f26522; border: 1.5px solid #f6b48f; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-add-inline:hover { background: #fef0e8; border-color: #f26522; }
+    .btn-add-inline::before { content: "+"; font-size: 16px; line-height: 1; }
     .slot-card { border-left: 3px solid #1e4db7; padding: 6px 10px 6px 10px; border-radius: 0 6px 6px 0; background: #fff; display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
     .slot-card:hover { background: #f5f8ff; }
     .slot-info { cursor: pointer; flex: 1; }
