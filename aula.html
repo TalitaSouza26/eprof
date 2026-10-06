@@ -118,6 +118,36 @@
     .pres-btn.falta { background: #fde8e8; color: #c0392b; border-color: #f5c0c0; }
     .pres-btn:hover { opacity: 0.85; }
     .justif-select { border: 1px solid #ddd; border-radius: 6px; padding: 5px 10px; font-size: 12px; color: #555; background: #fff; cursor: pointer; }
+    /* chamada: validar aula(s) */
+    .chamada-topbar { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-bottom: 1px solid #eee; flex-wrap: wrap; }
+    .cham-btn-primary { background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+    .cham-btn-primary:hover { background: #e05010; }
+    .cham-btn-primary.ok { background: #3DC200; }
+    .cham-btn-primary.ok:hover { background: #35a800; }
+    .cham-btn-outline { background: #fff; color: #f26522; border: 1.5px solid #f6b48f; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+    .cham-btn-outline:hover { background: #fef0e8; border-color: #f26522; }
+    .cham-btn-primary svg, .cham-btn-outline svg { width: 14px; height: 14px; }
+    .chamada-nota { padding: 12px 20px; font-size: 12px; color: #9aa0aa; border-top: 1px solid #f2f2f2; }
+    .vv-desc { font-size: 13px; color: #666; padding: 4px 24px 8px; line-height: 1.5; }
+    .vv-list { padding: 4px 24px; display: flex; flex-direction: column; gap: 10px; max-height: 46vh; overflow-y: auto; }
+    .vv-slot { display: flex; align-items: center; gap: 12px; border: 1.5px solid #f3d9cc; background: #fff6f1; border-radius: 12px; padding: 13px 16px; cursor: pointer; }
+    .vv-slot.atual { cursor: default; }
+    .vv-check { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #f26522; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fff; color: #fff; }
+    .vv-slot.sel .vv-check { background: #f26522; }
+    .vv-slot.atual .vv-check { background: #c8ccd3; border-color: #c8ccd3; }
+    .vv-check svg { width: 13px; height: 13px; }
+    .vv-slot-info { flex: 1; }
+    .vv-slot-hora { font-size: 14px; font-weight: 600; color: #222; }
+    .vv-slot-data { font-size: 12px; color: #888; margin-top: 2px; }
+    .vv-slot-badge { font-size: 12px; color: #888; }
+    .vv-foot { padding: 14px 24px 18px; border-top: 1px solid #f0f0f0; margin-top: 8px; }
+    .vv-count { font-size: 12.5px; color: #888; margin-bottom: 12px; }
+    .vv-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .vv-cancel { background: #fff; color: #555; border: 1px solid #ddd; border-radius: 8px; padding: 9px 18px; font-size: 13px; cursor: pointer; }
+    .vv-cancel:hover { background: #f5f5f5; }
+    .vv-validar { background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .vv-validar:hover { background: #e05010; }
+    .vv-validar:disabled { background: #f6c6a9; cursor: not-allowed; }
 
     /* PLANO TAB */
     .plano-wrap { margin: 16px 32px 32px; }
@@ -273,6 +303,25 @@
   </div>
 </div>
 
+<!-- MODAL: Validar várias aulas -->
+<div class="modal-overlay hidden" id="modalValidarVarias" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div style="background:#fff;border-radius:16px;width:480px;max-width:calc(100vw - 32px);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,0.18);">
+    <div class="mv-header">
+      <div class="mv-title">Validar várias aulas</div>
+      <button onclick="fecharValidarVarias()" style="background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="vv-desc" id="vvDesc"></div>
+    <div class="vv-list" id="vvList"></div>
+    <div class="vv-foot">
+      <div class="vv-count" id="vvCount"></div>
+      <div class="vv-actions">
+        <button class="vv-cancel" onclick="fecharValidarVarias()">Cancelar</button>
+        <button class="vv-validar" id="vvValidarBtn" onclick="validarVarias()">Validar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div><!-- /main -->
 
 <script>
@@ -342,6 +391,7 @@ function switchTab(tab) {
 const ALUNOS = ['Caio Lopes','Clóvis Souza','Davi Brito','Edmunda Santos','Januário Santos','Joana Soares','João Pedro','Marta Silva','Rodrygo Goes'];
 const presState = {};
 ALUNOS.forEach(a => presState[a] = 'presente');
+let aulaValidada = false;
 
 function renderContent() {
   const el = document.getElementById('aulaContent');
@@ -409,24 +459,33 @@ function renderContent() {
   else if (currentTab === 'chamada') {
     el.innerHTML = `
       <div class="chamada-wrap">
+        <div class="chamada-topbar">
+          <button class="cham-btn-outline" onclick="abrirValidarVarias()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Validar várias aulas</button>
+          <button class="cham-btn-primary ${aulaValidada ? 'ok' : ''}" onclick="validarEstaAula()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> ${aulaValidada ? 'Aula validada' : 'Validar esta aula'}</button>
+        </div>
         <div class="chamada-header">
           <span>Nome do aluno</span><span>Presença</span><span>Justificativa</span>
         </div>
-        ${ALUNOS.map(a => `
+        ${ALUNOS.map(a => {
+          const falta = presState[a] === 'falta';
+          const key = a.replace(/\s/g,'_');
+          return `
           <div class="chamada-row">
             <div class="aluno-name">
               <div class="aluno-avatar">${a[0]}</div>${a}
             </div>
             <div class="toggle-pres">
-              <button class="pres-btn presente" id="p_${a.replace(/\s/g,'_')}" onclick="togglePres('${a}',this)">Presente</button>
+              <button class="pres-btn ${falta ? 'falta' : 'presente'}" id="p_${key}" onclick="togglePres('${a}',this)">${falta ? 'Falta' : 'Presente'}</button>
             </div>
-            <select class="justif-select" id="j_${a.replace(/\s/g,'_')}" style="display:none">
+            <select class="justif-select" id="j_${key}" style="display:${falta ? '' : 'none'}">
               <option value="">Selecionar justificativa</option>
               <option>Atestado médico</option>
               <option>Falta justificada</option>
               <option>Outros</option>
             </select>
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
+        <div class="chamada-nota">Somente chamadas validadas entram na contagem de frequência.</div>
       </div>`;
   }
 
@@ -654,13 +713,94 @@ function togglePres(nome, btn) {
     btn.classList.remove('presente');
     btn.classList.add('falta');
     btn.textContent = 'Falta';
+    presState[nome] = 'falta';
     if (justif) justif.style.display = '';
   } else {
     btn.classList.remove('falta');
     btn.classList.add('presente');
     btn.textContent = 'Presente';
+    presState[nome] = 'presente';
     if (justif) justif.style.display = 'none';
   }
+  // ao mudar a chamada, ela deixa de estar validada
+  if (aulaValidada) {
+    aulaValidada = false;
+    const pb = document.querySelector('.cham-btn-primary');
+    if (pb) { pb.classList.remove('ok'); pb.lastChild.textContent = ' Validar esta aula'; }
+  }
+}
+
+// ---------- VALIDAR AULA(S) ----------
+let vvSlots = [], vvSel = [];
+
+function validarEstaAula() {
+  aulaValidada = true;
+  renderContent();
+}
+
+function _parseHoraRange(h) {
+  const p = (h || '').split(/[–-]/).map(s => s.trim());
+  return { ini: p[0] || '08:00', fim: p[1] || '09:00' };
+}
+function _toMin(hhmm) { const [h, m] = hhmm.split(':').map(Number); return h * 60 + (m || 0); }
+function _toHHMM(min) { const h = Math.floor(min / 60), m = min % 60; return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'); }
+
+function aulasSeguidas() {
+  const { ini, fim } = _parseHoraRange(hora);
+  let dur = _toMin(fim) - _toMin(ini);
+  if (dur <= 0 || dur > 240) dur = 60;
+  const dataLabel = diaExtenso();
+  const slots = [];
+  let s = _toMin(ini);
+  for (let i = 0; i < 3; i++) {
+    const e = s + dur;
+    slots.push({ ini: _toHHMM(s), fim: _toHHMM(e), data: dataLabel, atual: i === 0 });
+    s = e;
+  }
+  return slots;
+}
+
+function abrirValidarVarias() {
+  vvSlots = aulasSeguidas();
+  vvSel = vvSlots.map(() => true);
+  document.getElementById('vvDesc').textContent =
+    `Aplicar as mesmas presenças e ausências às aulas selecionadas de ${disc} · ${turma}.`;
+  renderVVList();
+  document.getElementById('modalValidarVarias').classList.remove('hidden');
+}
+function fecharValidarVarias() {
+  document.getElementById('modalValidarVarias').classList.add('hidden');
+}
+function toggleVV(i) {
+  if (vvSlots[i].atual) return;
+  vvSel[i] = !vvSel[i];
+  renderVVList();
+}
+function renderVVList() {
+  const check = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+  document.getElementById('vvList').innerHTML = vvSlots.map((s, i) => `
+    <div class="vv-slot ${vvSel[i] ? 'sel' : ''} ${s.atual ? 'atual' : ''}" onclick="toggleVV(${i})">
+      <div class="vv-check">${vvSel[i] ? check : ''}</div>
+      <div class="vv-slot-info">
+        <div class="vv-slot-hora">${s.ini} às ${s.fim}</div>
+        <div class="vv-slot-data">${s.data}</div>
+      </div>
+      ${s.atual ? '<div class="vv-slot-badge">Aula atual</div>' : ''}
+    </div>`).join('');
+  const n = vvSel.filter(Boolean).length;
+  const pres = ALUNOS.filter(a => presState[a] !== 'falta').length;
+  const aus = ALUNOS.length - pres;
+  document.getElementById('vvCount').textContent =
+    `${n} aula${n !== 1 ? 's' : ''} selecionada${n !== 1 ? 's' : ''} · ${pres} presentes, ${aus} ausentes por aula`;
+  const btn = document.getElementById('vvValidarBtn');
+  btn.textContent = `Validar ${n} aula${n !== 1 ? 's' : ''}`;
+  btn.disabled = n === 0;
+}
+function validarVarias() {
+  if (vvSel.filter(Boolean).length === 0) return;
+  aulaValidada = true;
+  fecharValidarVarias();
+  renderContent();
 }
 
 // ---------- SVG HELPERS ----------
