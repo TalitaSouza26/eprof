@@ -118,6 +118,26 @@
     .pres-btn.falta { background: #fde8e8; color: #c0392b; border-color: #f5c0c0; }
     .pres-btn:hover { opacity: 0.85; }
     .justif-select { border: 1px solid #ddd; border-radius: 6px; padding: 5px 10px; font-size: 12px; color: #555; background: #fff; cursor: pointer; }
+    /* chamada: linhas estilo Presente/Ausente + motivo */
+    .cham-row { display: grid; grid-template-columns: 1fr 150px 150px 180px; gap: 10px; padding: 9px 20px; border-bottom: 1px solid #f2f2f2; align-items: center; }
+    .cham-row:last-child { border-bottom: none; }
+    .cham-name { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #333; }
+    .cham-av { width: 30px; height: 30px; border-radius: 50%; background: #dde3ef; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #5a6a8a; flex-shrink: 0; }
+    .cham-pill { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 7px 10px; border-radius: 22px; border: 1.5px solid #e2e5ea; background: #fff; font-size: 12.5px; font-weight: 600; color: #a8adb6; cursor: pointer; transition: all .12s; user-select: none; }
+    .cham-pill:hover { border-color: #c8ccd3; }
+    .cham-pill .ic { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #c9cdd4; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cham-pill .ic svg { width: 10px; height: 10px; color: #fff; }
+    .cham-pill.pres.on { background: #e3f9ea; border-color: #6cc98a; color: #2a9d5c; }
+    .cham-pill.pres.on .ic { background: #2ecc71; border-color: #2ecc71; }
+    .cham-pill.aus.on { background: #fdeae2; border-color: #f0956f; color: #e0542a; }
+    .cham-pill.aus.on .ic { background: #f26522; border-color: #f26522; }
+    .cham-motivo { width: 100%; padding: 7px 9px; border: 1.5px solid #e2e5ea; border-radius: 8px; font-size: 12.5px; color: #333; background: #fff; cursor: pointer; outline: none; transition: all .12s; }
+    .cham-motivo:focus { border-color: #f26522; }
+    .cham-motivo:disabled { background: #f4f5f7; color: #b6bac1; cursor: not-allowed; border-color: #eceef1; }
+    .cham-motivo.on { border-color: #f0956f; color: #e0542a; font-weight: 600; }
+    @media (max-width: 700px) {
+      .cham-row { grid-template-columns: 1fr; gap: 7px; }
+    }
     /* chamada: validar aula(s) */
     .chamada-topbar { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-bottom: 1px solid #eee; flex-wrap: wrap; }
     .cham-btn-primary { background: #f26522; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
@@ -387,8 +407,11 @@ function switchTab(tab) {
 
 // ---------- CONTENT ----------
 const ALUNOS = ['Caio Lopes','Clóvis Souza','Davi Brito','Edmunda Santos','Januário Santos','Joana Soares','João Pedro','Marta Silva','Rodrygo Goes'];
-const presState = {};
-ALUNOS.forEach(a => presState[a] = 'presente');
+const MOTIVOS_AUS = ['Aluno suspenso','Atestado médico','Falta injustificada','Motivo familiar','Perda familiar','Problemas de transporte'];
+const CHAM_IC_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+const CHAM_IC_X = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>`;
+const chamSt = {};
+ALUNOS.forEach(a => chamSt[a] = { status: 'p', motivo: '' });
 let aulaValidada = false;
 
 function renderContent() {
@@ -461,25 +484,18 @@ function renderContent() {
           <button class="cham-btn-outline" onclick="abrirValidarVarias()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Validar várias aulas</button>
           <button class="cham-btn-primary ${aulaValidada ? 'ok' : ''}" onclick="validarEstaAula()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> ${aulaValidada ? 'Aula validada' : 'Validar esta aula'}</button>
         </div>
-        <div class="chamada-header">
-          <span>Nome do aluno</span><span>Presença</span><span>Justificativa</span>
-        </div>
-        ${ALUNOS.map(a => {
-          const falta = presState[a] === 'falta';
-          const key = a.replace(/\s/g,'_');
+        ${ALUNOS.map((a, i) => {
+          const st = chamSt[a];
+          const pres = st.status === 'p', aus = st.status === 'a';
+          const ini = a.split(' ').map(x => x[0]).join('').slice(0,2);
           return `
-          <div class="chamada-row">
-            <div class="aluno-name">
-              <div class="aluno-avatar">${a[0]}</div>${a}
-            </div>
-            <div class="toggle-pres">
-              <button class="pres-btn ${falta ? 'falta' : 'presente'}" id="p_${key}" onclick="togglePres('${a}',this)">${falta ? 'Falta' : 'Presente'}</button>
-            </div>
-            <select class="justif-select" id="j_${key}" style="display:${falta ? '' : 'none'}">
-              <option value="">Selecionar justificativa</option>
-              <option>Atestado médico</option>
-              <option>Falta justificada</option>
-              <option>Outros</option>
+          <div class="cham-row">
+            <div class="cham-name"><div class="cham-av">${ini}</div>${a}</div>
+            <div class="cham-pill pres ${pres?'on':''}" onclick="setChamPres(${i},'p')"><span class="ic">${pres?CHAM_IC_CHECK:''}</span>Presente</div>
+            <div class="cham-pill aus ${aus?'on':''}" onclick="setChamPres(${i},'a')"><span class="ic">${aus?CHAM_IC_X:''}</span>Ausente</div>
+            <select class="cham-motivo ${aus&&st.motivo?'on':''}" ${pres?'disabled':''} onchange="setChamMotivo(${i}, this.value)">
+              <option value="" ${!st.motivo?'selected':''} disabled hidden>Motivo da ausência</option>
+              ${MOTIVOS_AUS.map(m => `<option ${st.motivo===m?'selected':''}>${m}</option>`).join('')}
             </select>
           </div>`;
         }).join('')}
@@ -704,28 +720,17 @@ function rotinaHtml() {
     </div>`;
 }
 
-function togglePres(nome, btn) {
-  const key = nome.replace(/\s/g,'_');
-  const justif = document.getElementById('j_' + key);
-  if (btn.classList.contains('presente')) {
-    btn.classList.remove('presente');
-    btn.classList.add('falta');
-    btn.textContent = 'Falta';
-    presState[nome] = 'falta';
-    if (justif) justif.style.display = '';
-  } else {
-    btn.classList.remove('falta');
-    btn.classList.add('presente');
-    btn.textContent = 'Presente';
-    presState[nome] = 'presente';
-    if (justif) justif.style.display = 'none';
-  }
-  // ao mudar a chamada, ela deixa de estar validada
-  if (aulaValidada) {
-    aulaValidada = false;
-    const pb = document.querySelector('.cham-btn-primary');
-    if (pb) { pb.classList.remove('ok'); pb.lastChild.textContent = ' Validar esta aula'; }
-  }
+function setChamPres(i, v) {
+  const a = ALUNOS[i];
+  chamSt[a].status = v;
+  if (v === 'p') chamSt[a].motivo = '';
+  aulaValidada = false; // ao mudar a chamada, ela deixa de estar validada
+  renderContent();
+}
+function setChamMotivo(i, v) {
+  chamSt[ALUNOS[i]].motivo = v;
+  aulaValidada = false;
+  renderContent();
 }
 
 // ---------- VALIDAR AULA(S) ----------
