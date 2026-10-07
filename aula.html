@@ -158,6 +158,7 @@
     .vv-check svg { width: 13px; height: 13px; }
     .vv-slot-info { flex: 1; }
     .vv-slot-hora { font-size: 14px; font-weight: 600; color: #222; }
+    .vv-slot-disc { color: #f26522; font-weight: 700; }
     .vv-slot-data { font-size: 12px; color: #888; margin-top: 2px; }
     .vv-slot-badge { font-size: 12px; color: #888; }
     .vv-foot { padding: 14px 24px 18px; border-top: 1px solid #f0f0f0; margin-top: 8px; }
@@ -753,11 +754,15 @@ function aulasSeguidas() {
   let dur = _toMin(fim) - _toMin(ini);
   if (dur <= 0 || dur > 240) dur = 60;
   const dataLabel = diaExtenso();
+  // disciplinas das aulas seguidas (a 1ª é a aula atual; as demais podem variar)
+  const pool = ['Arte', 'Ciências', 'Agroecologia', 'Educação Física', 'História', 'Geografia'];
+  const extras = pool.filter(d => d !== disc);
+  const discs = [disc, extras[0], extras[1]];
   const slots = [];
   let s = _toMin(ini);
   for (let i = 0; i < 3; i++) {
     const e = s + dur;
-    slots.push({ ini: _toHHMM(s), fim: _toHHMM(e), data: dataLabel, atual: i === 0 });
+    slots.push({ ini: _toHHMM(s), fim: _toHHMM(e), data: dataLabel, disc: discs[i], atual: i === 0 });
     s = e;
   }
   return slots;
@@ -767,7 +772,7 @@ function abrirValidarVarias() {
   vvSlots = aulasSeguidas();
   vvSel = vvSlots.map(() => true);
   document.getElementById('vvDesc').textContent =
-    `Aplicar as mesmas presenças e ausências às aulas selecionadas de ${disc} · ${turma}.`;
+    `Aplicar as mesmas presenças e ausências às aulas seguidas selecionadas da turma ${turma}.`;
   renderVVList();
   document.getElementById('modalValidarVarias').classList.remove('hidden');
 }
@@ -785,7 +790,7 @@ function renderVVList() {
     <div class="vv-slot ${vvSel[i] ? 'sel' : ''} ${s.atual ? 'atual' : ''}" onclick="toggleVV(${i})">
       <div class="vv-check">${vvSel[i] ? check : ''}</div>
       <div class="vv-slot-info">
-        <div class="vv-slot-hora">${s.ini} às ${s.fim}</div>
+        <div class="vv-slot-hora">${s.disc ? `<span class="vv-slot-disc">${s.disc}</span> · ` : ''}${s.ini} às ${s.fim}</div>
         <div class="vv-slot-data">${s.data}</div>
       </div>
       ${s.atual ? '<div class="vv-slot-badge">Aula atual</div>' : ''}
