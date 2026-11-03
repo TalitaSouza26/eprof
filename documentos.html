@@ -235,7 +235,7 @@ const TURMAS = [
 // ---------- DOCUMENTOS ----------
 const DOCS = [
   { id:'declaracao', nome:'Declaração Geral', desc:'Vaga, transferência, escolaridade ou conclusão.', ativo:true },
-  { id:'historico',  nome:'Histórico Escolar', desc:'Registro acadêmico completo (Certificado de Transferência).', ativo:false },
+  { id:'historico',  nome:'Histórico Escolar', desc:'Registro acadêmico completo (Certificado de Transferência).', ativo:true },
   { id:'boletim',    nome:'Boletim', desc:'Notas por bimestre, frequência e situação final.', ativo:false },
 ];
 
@@ -303,6 +303,150 @@ function renderDocGrid() {
 function abrirDoc(id) {
   if (turmaSel < 0 || alunoSel < 0) { alert('Selecione a turma e o aluno primeiro.'); return; }
   if (id === 'declaracao') abrirDecl();
+  else if (id === 'historico') abrirHistorico();
+}
+
+// ---------- HISTÓRICO ESCOLAR ----------
+function abrirHistorico() {
+  tipoSel = 'historico'; // não é PDF; impressão usa o iframe
+  document.getElementById('prevTitle').textContent = 'Pré-visualização — Histórico Escolar';
+  const fr = document.getElementById('prevFrame');
+  fr.removeAttribute('src');
+  fr.srcdoc = historicoHTML();
+  document.getElementById('modalPrev').classList.remove('hidden');
+}
+
+function historicoHTML() {
+  const a = alunoAtual();
+  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const resp = (a.filiacao || '').split(' e ');
+  const pai = resp[0] || '', mae = resp[1] || '';
+  const L = '<span class="ln"></span>';
+  const ANOS = ['1º','2º','3º','4º','5º','6º','7º','8º','9º'];
+  const BASE = ['Língua Portuguesa','Educação Física','Arte','Língua Materna (Pataxó)','Língua Estrangeira (Inglês)','Matemática','Ciências da Natureza','História','Geografia','Agroecologia'];
+  const DIV  = ['Diversidade Afrodescendente e Indígena','História de Porto Seguro','Turismo','Ensino Religioso'];
+  const NCOLS = ANOS.length * 3 + 4; // C/N/CH por ano + 4 fases EJA
+  const vazias = `<td></td>`.repeat(NCOLS);
+  const linha = (c, grpCell) => `<tr>${grpCell}<td class="comp">${esc(c)}</td>${vazias}</tr>`;
+  const rowsBase = BASE.map((c,i) => linha(c, i===0 ? `<td class="vgrp" rowspan="${BASE.length}">BASE COMUM</td>` : '')).join('');
+  const rowsDiv  = DIV.map((c,i)  => linha(c, i===0 ? `<td class="vgrp" rowspan="${DIV.length}">PARTE DIVERSIFICADA</td>` : '')).join('');
+
+  // verso: rendimento escolar do ano em curso
+  const rendRows = [...BASE, ...DIV].map(c => `<tr><td class="comp">${esc(c)}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`).join('');
+
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Histórico Escolar - ${esc(a.nome)}</title>
+  <style>
+    @page { size: A4 landscape; margin: 10mm; }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 10px; margin: 10mm; }
+    .hcab { display: flex; align-items: center; gap: 12px; text-align: center; }
+    .hcab .bras { width: 46px; height: 46px; border-radius: 50%; border: 1px solid #0a7d2c; display:flex; align-items:center; justify-content:center; color:#0a7d2c; font-weight:700; font-size:9px; text-align:center; line-height:1.05; flex-shrink:0; }
+    .hcab .bras.az { border-color:#1a3e8c; color:#1a3e8c; }
+    .hcab .tit { flex: 1; line-height: 1.35; }
+    .hcab .tit b { font-size: 12px; }
+    .hcab .tit .ct { font-size: 13px; font-weight: 700; text-decoration: underline; }
+    .esc-line { text-align: center; margin: 4px 0 2px; font-weight: 700; }
+    .pub { text-align: center; font-size: 8.5px; color: #333; margin-bottom: 8px; line-height: 1.3; }
+    .ln { display: inline-block; border-bottom: 1px solid #000; min-width: 70px; }
+    .aluno-box { border: 1px solid #000; padding: 6px 8px; margin-bottom: 8px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4px 14px; font-size: 10px; }
+    .aluno-box .full { grid-column: 1 / -1; }
+    table.hist { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    table.hist th, table.hist td { border: 1px solid #000; text-align: center; font-size: 7px; padding: 1px; }
+    table.hist td.comp, table.hist th.comp { text-align: left; font-size: 8px; padding: 2px 4px; width: 150px; }
+    table.hist td.vgrp { writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 700; font-size: 8px; width: 16px; letter-spacing: .02em; }
+    table.hist th.ano { font-size: 8px; }
+    table.hist td.total { font-weight: 700; text-align: right; }
+    .leg { font-size: 8.5px; margin-top: 6px; }
+    .pagina { page-break-before: always; }
+    .sec-tit { font-weight: 700; font-size: 11px; margin: 10px 0 4px; }
+    table.simple { width: 100%; border-collapse: collapse; }
+    table.simple th, table.simple td { border: 1px solid #000; font-size: 9px; padding: 3px 5px; text-align: center; height: 20px; }
+    table.simple th { background: #eee; }
+    .equiv { border: 1px solid #000; padding: 8px; font-size: 8.5px; line-height: 1.4; margin: 10px 0; text-align: justify; }
+    .cert { border: 2px solid #000; padding: 14px; margin-top: 14px; }
+    .cert h3 { text-align: center; font-size: 13px; letter-spacing: 1px; margin: 0 0 12px; }
+    .cert p { font-size: 11px; line-height: 1.8; margin: 0; }
+    .assin-row { display: flex; justify-content: space-around; margin-top: 54px; text-align: center; font-size: 10px; }
+    .assin-row .ln2 { border-top: 1px solid #000; width: 230px; margin: 0 auto 4px; }
+  </style></head><body>
+
+    <!-- FRENTE -->
+    <div class="hcab">
+      <div class="bras">PORTO<br>SEGURO</div>
+      <div class="tit">
+        <b>PREFEITURA MUNICIPAL DE PORTO SEGURO</b><br>
+        SECRETARIA MUNICIPAL DE EDUCAÇÃO<br>
+        ENSINO FUNDAMENTAL<br>
+        <span class="ct">CERTIFICADO DE TRANSFERÊNCIA</span>
+      </div>
+      <div class="bras az">BA</div>
+    </div>
+    <div class="esc-line">${esc(a.escola)}</div>
+    <div class="pub">Publicado no Diário Oficial de 27 de Junho de 2013<br>Educação Infantil e Ensino Fundamental</div>
+
+    <div class="aluno-box">
+      <div class="full"><b>NOME:</b> ${esc(a.nome)}</div>
+      <div class="full"><b>ENDEREÇO:</b> ${L}</div>
+      <div><b>NATURALIDADE:</b> Porto Seguro - BA</div>
+      <div><b>NACIONALIDADE:</b> Brasileira</div>
+      <div><b>DATA DE NASCIMENTO:</b> ${esc(a.nasc)}</div>
+      <div class="full"><b>NOME DO PAI:</b> ${esc(pai)}</div>
+      <div class="full"><b>NOME DA MÃE:</b> ${esc(mae)}</div>
+    </div>
+
+    <table class="hist">
+      <thead>
+        <tr>
+          <th rowspan="2" style="width:16px"></th>
+          <th rowspan="2" class="comp">Componentes Curriculares</th>
+          ${ANOS.map(an => `<th colspan="3" class="ano">${an} Ano</th>`).join('')}
+          <th colspan="4" class="ano">EJA</th>
+        </tr>
+        <tr>
+          ${ANOS.map(() => `<th>C</th><th>N</th><th>CH</th>`).join('')}
+          <th>1ª</th><th>2ª</th><th>3ª</th><th>4ª</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsBase}
+        ${rowsDiv}
+        <tr><td></td><td class="comp total">Total de Carga Horária</td>${vazias}</tr>
+      </tbody>
+    </table>
+    <div class="leg"><b>Legenda:</b> C = Conceito &nbsp; N = Nota &nbsp; CH = Carga Horária</div>
+
+    <!-- VERSO -->
+    <div class="pagina">
+      <div class="sec-tit">Registros Complementares</div>
+      <table class="simple">
+        <tr><th>Ano Escolar</th><th>Ano</th><th>Unidades Escolares</th><th>Município</th><th>UF</th></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+      </table>
+
+      <div class="equiv">
+        <b>Equivalência:</b> Para alunos do 1º e 2º anos do Ensino Fundamental fica assegurada a progressão continuada, conforme Art. 32 da Lei 9394/96. O Ciclo Básico de Aprendizagem corresponde ao 1º e 2º anos do Ensino Fundamental. As Provas de Avaliação e de Aceleração do 1º e 2º anos amparam-se no Art. 24, Inciso V, Alínea C da Lei 9394/96 e no Parecer do CME de Porto Seguro - BA.
+      </div>
+
+      <div class="sec-tit">Transferência em Curso — Rendimento Escolar do Ano Letivo de ${L} &nbsp;·&nbsp; Turma ${esc(a.turma)} &nbsp;·&nbsp; Turno ${esc(a.turno)}</div>
+      <table class="simple">
+        <tr><th style="text-align:left">Componentes Curriculares</th><th>1ª Unid. N/C</th><th>2ª Unid. N/C</th><th>3ª Unid. N/C</th><th>4ª Unid. N/C</th><th>Nº de Faltas</th><th>Obs.</th></tr>
+        ${rendRows}
+      </table>
+
+      <div class="cert">
+        <h3>CERTIFICADO</h3>
+        <p>CERTIFICAMOS QUE <b>${esc(a.nome.toUpperCase())}</b> CONCLUIU O(A) ${L} ANO DO ENSINO FUNDAMENTAL DO ANO LETIVO DE ${L}, NA FORMA DAS LEIS EDUCACIONAIS VIGENTES NO PAÍS E DO REGIMENTO ESCOLAR.</p>
+      </div>
+
+      <div style="text-align:right; margin-top:18px;">PORTO SEGURO - BA, &nbsp; DATA: ${L} / ${L} / ${L}</div>
+      <div class="assin-row">
+        <div><div class="ln2"></div>DIRETOR(A)</div>
+        <div><div class="ln2"></div>SECRETÁRIO(A)</div>
+      </div>
+    </div>
+  </body></html>`;
 }
 
 // ---------- DECLARAÇÃO ----------
