@@ -247,8 +247,8 @@ const TIPOS_DECL = [
   { id:'matricula',    label:'Matrícula' },
 ];
 
-let turmaSel = 0;
-let alunoSel = 0;
+let turmaSel = -1;
+let alunoSel = -1;
 let tipoSel = 'escolaridade';
 
 function alunoAtual() {
@@ -265,21 +265,27 @@ function icDoc() {
 
 function initDocs() {
   document.getElementById('selTurma').innerHTML =
+    '<option value="" disabled selected>Selecionar turma</option>' +
     TURMAS.map((t, i) => `<option value="${i}">${t.nome}</option>`).join('');
-  preencherAlunos();
+  const sa = document.getElementById('selAluno');
+  sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>';
+  sa.disabled = true;
   renderDocGrid();
 }
 function preencherAlunos() {
-  document.getElementById('selAluno').innerHTML =
+  const sa = document.getElementById('selAluno');
+  sa.disabled = false;
+  sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>' +
     TURMAS[turmaSel].alunos.map((a, i) => `<option value="${i}">${a.nome}</option>`).join('');
 }
-function selecionarTurma(i) { turmaSel = +i; alunoSel = 0; preencherAlunos(); }
+function selecionarTurma(i) { turmaSel = +i; alunoSel = -1; preencherAlunos(); }
 function selecionarAluno(i) { alunoSel = +i; }
 function redefinirFiltro() {
-  turmaSel = 0; alunoSel = 0;
-  document.getElementById('selTurma').value = '0';
-  preencherAlunos();
-  document.getElementById('selAluno').value = '0';
+  turmaSel = -1; alunoSel = -1;
+  document.getElementById('selTurma').value = '';
+  const sa = document.getElementById('selAluno');
+  sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>';
+  sa.disabled = true;
 }
 
 function renderDocGrid() {
@@ -295,6 +301,7 @@ function renderDocGrid() {
 }
 
 function abrirDoc(id) {
+  if (turmaSel < 0 || alunoSel < 0) { alert('Selecione a turma e o aluno primeiro.'); return; }
   if (id === 'declaracao') abrirDecl();
 }
 
@@ -387,18 +394,16 @@ function declaracaoHTML() {
 }
 
 function fichaMatriculaHTML() {
-  const a = alunoAtual();
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
   const now = new Date();
   const p2 = n => String(n).padStart(2,'0');
   const emiss = `${p2(now.getDate())}/${p2(now.getMonth()+1)}/${now.getFullYear()} ${p2(now.getHours())}:${p2(now.getMinutes())}`;
   const dataExt = `Porto Seguro, Bahia, ${p2(now.getDate())} de ${MESES[now.getMonth()]} de ${now.getFullYear()}`;
-  // matrícula determinística a partir do nome
-  let h = 0; for (const c of a.nome) h = (h*31 + c.charCodeAt(0)) % 90000000; const matricula = 20000000 + h;
-  const nivel = a.nivel || `Ensino Fundamental - ${esc(a.ano_ensino)} ano`;
-  const resp = (a.filiacao || '').split(' e ');
-  const mae = resp[1] || '--', pai = resp[0] || '--';
+  // Protótipo: usa a ficha de matrícula enviada como exemplo (dados fixos)
+  const a = { nome:'Maria Antonella Ferreira', nasc:'28/01/2024', escola:'Escola EPROF Education', nivel:'Educação Infantil - CN II', turno:'Matutino' };
+  const matricula = '23276473';
+  const nivel = a.nivel;
   const f = (lbl, val) => `<div class="fm-f"><div class="fm-lbl">${lbl}</div><div class="fm-val">${esc(val || '--')}</div></div>`;
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ${esc(a.nome)}</title>
   <style>
@@ -431,9 +436,9 @@ function fichaMatriculaHTML() {
       <div class="fm-emiss">Emissão em: ${emiss}</div>
     </div>
     <div class="fm-school">
-      <b>${esc(a.escola.toUpperCase())}</b> &nbsp; Contato: (73) 3288-0000<br>
+      <b>${esc(a.escola.toUpperCase())}</b> &nbsp; Contato: (35) 1 7399-1255<br>
       Código INEP: 65656565 &nbsp;·&nbsp; Localidade: Urbana<br>
-      Endereço: Centro, Porto Seguro - BA &nbsp;·&nbsp; E-mail: apresentacao@eprof.app
+      E-mail: apresentacao@eprof.app
     </div>
 
     <div class="fm-sec">Informações de Ensino</div>
@@ -446,17 +451,17 @@ function fichaMatriculaHTML() {
     <div class="fm-sec">Informações do aluno</div>
     <div class="fm-grid">
       ${f('Nome completo', a.nome)}
-      ${f('Raça / cor', 'Parda')}
+      ${f('Raça / cor', 'Preto')}
       ${f('Etnia', '--')}
       ${f('Nome social', '--')}
       ${f('Data de nascimento', a.nasc)}
       ${f('Naturalidade', 'Porto Seguro - BA')}
-      ${f('Sexo', '--')}
+      ${f('Sexo', 'Feminino')}
       ${f('Contato', '--')}
       ${f('Cartão SUS', '--')}
-      ${f('CPF', '--')}
-      ${f('Bolsa Família', 'Não possui')}
-      ${f('RG', a.rg)}
+      ${f('CPF', '442.376.430-00')}
+      ${f('Bolsa Família', 'Possui sim')}
+      ${f('RG', '--')}
       ${f('Número do NIS', '--')}
       ${f('Certidão de nascimento', '--')}
     </div>
@@ -464,35 +469,35 @@ function fichaMatriculaHTML() {
     <div class="fm-sec">Endereço do aluno</div>
     <div class="fm-grid">
       ${f('CEP', '45810-000')}
-      ${f('Bairro', 'Centro')}
+      ${f('Bairro', 'Cambolo')}
       ${f('Distrito', 'Porto Seguro')}
       ${f('Complemento', 'Casa')}
-      ${f('Endereço', 'Rua Pero Vaz de Caminha')}
-      ${f('Número', '--')}
-      ${f('Ponto de referência', '--')}
+      ${f('Endereço', 'Rua 2')}
+      ${f('Número', '555')}
+      ${f('Ponto de referência', 'Ao lado de uma loja de celular, casa com portão preto.')}
     </div>
 
     <div class="fm-sec">Informações médicas</div>
     <div class="fm-grid two">
       ${f('O aluno possui alguma deficiência?', 'Não')}
       ${f('O aluno frequenta atendimento especializado?', 'Não')}
-      ${f('O aluno possui alguma condição de saúde ou alergia?', '--')}
+      ${f('O aluno possui alguma condição de saúde ou alergia?', 'Anemia e sarampo')}
       ${f('Possui autorização para buscar o aluno', '--')}
     </div>
 
     <div class="fm-sec">Informações do responsável 1</div>
     <div class="fm-grid">
-      ${f('Nome completo', mae)}
-      ${f('Parentesco', 'Mãe')}
-      ${f('CPF', '--')}
-      ${f('Contato', '--')}
-      ${f('Data de nascimento', '--')}
+      ${f('Nome completo', 'Luiza Moreira')}
+      ${f('Parentesco', 'Madrasta/Padrasto')}
+      ${f('CPF', '188.230.410-15')}
+      ${f('Contato', '(73) 9 9562-6262')}
+      ${f('Data de nascimento', '10/05/1990')}
     </div>
 
     <div class="fm-sec">Informações do responsável 2</div>
     <div class="fm-grid">
-      ${f('Nome completo', pai)}
-      ${f('Parentesco', 'Pai')}
+      ${f('Nome completo', '--')}
+      ${f('Parentesco', '--')}
       ${f('CPF', '--')}
       ${f('Contato', '--')}
       ${f('Data de nascimento', '--')}
