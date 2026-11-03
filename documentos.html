@@ -549,18 +549,19 @@ function fichaMatriculaHTML() {
   </body></html>`;
 }
 
-const FICHA_MATRICULA_PDF = 'ficha-matricula-exemplo.pdf';
+const DOC_PDF = {
+  vaga:          'declaracao-de-vaga.pdf',
+  transferencia: 'declaracao-de-transferencia.pdf',
+  escolaridade:  'declaracao-de-escolaridade-bolsa-familia.pdf',
+  conclusao:     'declaracao-de-conclusao.pdf',
+  matricula:     'ficha-matricula-exemplo.pdf',
+};
 function previewDeclaracao() {
   const nomesTipo = { vaga:'Declaração de Vaga', transferencia:'Declaração de Transferência', escolaridade:'Declaração de Escolaridade/Bolsa Família', conclusao:'Declaração de Conclusão', matricula:'Ficha de Matrícula' };
   document.getElementById('prevTitle').textContent = 'Pré-visualização — ' + (nomesTipo[tipoSel] || 'Documento');
   const fr = document.getElementById('prevFrame');
-  if (tipoSel === 'matricula') {
-    fr.removeAttribute('srcdoc');
-    fr.src = FICHA_MATRICULA_PDF;
-  } else {
-    fr.removeAttribute('src');
-    fr.srcdoc = declaracaoHTML();
-  }
+  fr.removeAttribute('srcdoc');
+  fr.src = DOC_PDF[tipoSel] || '';
   fecharDecl();
   document.getElementById('modalPrev').classList.remove('hidden');
 }
@@ -572,7 +573,7 @@ function imprimirDeclaracao() {
     fr.contentWindow.focus();
     fr.contentWindow.print();
   } catch (e) {
-    if (tipoSel === 'matricula') window.open(FICHA_MATRICULA_PDF, '_blank');
+    if (DOC_PDF[tipoSel]) window.open(DOC_PDF[tipoSel], '_blank');
   }
 }
 
