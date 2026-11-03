@@ -197,8 +197,9 @@ const DOCS = [
 const TIPOS_DECL = [
   { id:'vaga',         label:'Vaga' },
   { id:'transferencia',label:'Transferência' },
-  { id:'escolaridade', label:'Escolaridade' },
+  { id:'escolaridade', label:'Escolaridade/Bolsa Família' },
   { id:'conclusao',    label:'Conclusão' },
+  { id:'matricula',    label:'Matrícula' },
 ];
 
 let turmaSel = 0;
@@ -261,6 +262,7 @@ function renderTipos() {
 }
 
 function declaracaoHTML() {
+  if (tipoSel === 'matricula') return fichaMatriculaHTML();
   const a = alunoAtual();
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const box = marcado => `<span class="box">${marcado ? 'X' : ''}</span>`;
@@ -300,7 +302,7 @@ function declaracaoHTML() {
     <div class="tipos">
       <span class="op">${box(t==='vaga')} Vaga</span>
       <span class="op">${box(t==='transferencia')} Transferência</span>
-      <span class="op">${box(t==='escolaridade')} Escolaridade</span>
+      <span class="op">${box(t==='escolaridade')} Escolaridade/Bolsa Família</span>
       <span class="op">${box(t==='conclusao')} Conclusão</span>
     </div>
     <p>Declaramos para os devidos fins que, <b>${esc(a.nome)}</b> nº ${L} RG <b>${esc(a.rg)}</b>, nascido em <b>${esc(a.nasc)}</b> filho (a) de <b>${esc(a.filiacao)}</b>.</p>
@@ -321,6 +323,35 @@ function declaracaoHTML() {
       SECRETARIA MUNICIPAL DE EDUCAÇÃO<br>
       RUA PERO VAZ DE CAMINHA, 68, CENTRO<br>
       PORTO SEGURO-BA – CEP 45.810-000
+    </div>
+  </body></html>`;
+}
+
+function fichaMatriculaHTML() {
+  const a = alunoAtual();
+  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ${esc(a.nome)}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Times New Roman', serif; color: #000; margin: 28mm 22mm; font-size: 13px; line-height: 1.6; }
+    .cab { display: flex; align-items: center; gap: 14px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 18px; }
+    .cab .bras { width: 52px; height: 52px; border-radius: 50%; border: 1px solid #0a7d2c; display:flex; align-items:center; justify-content:center; color:#0a7d2c; font-weight:700; font-size:10px; text-align:center; line-height:1.1; }
+    .cab .tit { flex: 1; text-align: center; }
+    .cab .tit b { font-size: 14px; }
+    h1 { text-align: center; font-size: 16px; text-decoration: underline; margin: 10px 0 24px; }
+    .ph { margin-top: 40px; border: 1px dashed #bbb; border-radius: 8px; padding: 40px 24px; text-align: center; color: #888; }
+    .ph b { color: #555; }
+  </style></head><body>
+    <div class="cab">
+      <div class="bras">PORTO<br>SEGURO</div>
+      <div class="tit"><b>Prefeitura Municipal de Porto Seguro</b><br>Secretaria Municipal de Educação</div>
+      <div class="bras" style="border-color:#1a3e8c;color:#1a3e8c">BA</div>
+    </div>
+    <h1>FICHA DE MATRÍCULA</h1>
+    <p><b>Aluno(a):</b> ${esc(a.nome)}</p>
+    <p><b>Turma:</b> ${esc(a.turma)} &nbsp;&nbsp; <b>Escola:</b> ${esc(a.escola)}</p>
+    <div class="ph">
+      Modelo oficial da <b>Ficha de Matrícula</b> será configurado em breve.
     </div>
   </body></html>`;
 }
