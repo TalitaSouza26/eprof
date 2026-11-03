@@ -21,7 +21,8 @@
     .doc-panel-title svg { width: 19px; height: 19px; color: #ED6939; }
     .doc-panel-sub { font-size: 13px; color: #8A94A6; margin-bottom: 18px; }
 
-    .doc-field { max-width: 460px; margin-bottom: 24px; }
+    .doc-fields-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .doc-field { flex: 1; min-width: 240px; max-width: 360px; }
     .doc-label { font-size: 12px; color: #8A94A6; font-weight: 600; display: block; margin-bottom: 6px; }
     .doc-select { width: 100%; padding: 11px 13px; border: 1.5px solid #E4E8EE; border-radius: 10px; font-size: 14px; color: #1D1D1D; background: #fff; font-family: inherit; outline: none; cursor: pointer; }
     .doc-select:focus { border-color: #ED6939; }
@@ -110,9 +111,15 @@
       <div class="doc-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Emitir documento do aluno</div>
       <div class="doc-panel-sub">Selecione o aluno e escolha o documento para emitir e imprimir.</div>
 
-      <div class="doc-field">
-        <label class="doc-label">Aluno</label>
-        <select class="doc-select" id="selAluno" onchange="selecionarAluno(this.value)"></select>
+      <div class="doc-fields-row">
+        <div class="doc-field">
+          <label class="doc-label">Turma</label>
+          <select class="doc-select" id="selTurma" onchange="selecionarTurma(this.value)"></select>
+        </div>
+        <div class="doc-field">
+          <label class="doc-label">Aluno</label>
+          <select class="doc-select" id="selAluno" onchange="selecionarAluno(this.value)"></select>
+        </div>
       </div>
 
       <div class="doc-grid" id="docGrid"></div>
@@ -140,11 +147,26 @@
 
 <script>
 // ---------- DADOS (mock) ----------
-const ALUNOS = [
-  { nome:'Letícia Marques de Souza', nasc:'12/03/2017', rg:'20.345.678-9', filiacao:'Marcos Marques e Ana Paula de Souza', escola:'Escola Municipal Ciranda do Saber', serie:'2º', ano_ensino:'2º', turno:'Vespertino', anoLetivo:'2026' },
-  { nome:'Caio Lopes Ferreira',       nasc:'05/08/2016', rg:'21.112.334-0', filiacao:'João Lopes e Marta Ferreira',        escola:'Escola Municipal Ciranda do Saber', serie:'3º', ano_ensino:'3º', turno:'Matutino',   anoLetivo:'2026' },
-  { nome:'Alice Mendes da Rocha',     nasc:'22/11/2018', rg:'22.556.778-1', filiacao:'Pedro Mendes e Clara Rocha',         escola:'Escola Municipal Ciranda do Saber', serie:'1º', ano_ensino:'1º', turno:'Vespertino', anoLetivo:'2026' },
-  { nome:'Davi Brito Nascimento',     nasc:'30/01/2015', rg:'19.998.221-7', filiacao:'Rafael Brito e Sandra Nascimento',   escola:'Escola Municipal Ciranda do Saber', serie:'4º', ano_ensino:'4º', turno:'Matutino',   anoLetivo:'2026' },
+const TURMAS = [
+  { nome:'1º ano A', escola:'Escola Municipal Ciranda do Saber', ano_ensino:'1º', turno:'Vespertino', anoLetivo:'2026', alunos:[
+      { nome:'Alice Mendes da Rocha',   nasc:'22/11/2018', rg:'22.556.778-1', filiacao:'Pedro Mendes e Clara Rocha' },
+      { nome:'Bento Costa Lima',        nasc:'03/02/2018', rg:'22.610.447-5', filiacao:'André Costa e Júlia Lima' },
+      { nome:'Elis Carvalho Dias',      nasc:'17/09/2018', rg:'22.701.889-3', filiacao:'Hugo Carvalho e Nara Dias' },
+  ]},
+  { nome:'2º ano A', escola:'Escola Municipal Ciranda do Saber', ano_ensino:'2º', turno:'Vespertino', anoLetivo:'2026', alunos:[
+      { nome:'Letícia Marques de Souza', nasc:'12/03/2017', rg:'20.345.678-9', filiacao:'Marcos Marques e Ana Paula de Souza' },
+      { nome:'Joana Soares Pires',       nasc:'28/06/2017', rg:'20.998.112-4', filiacao:'Tiago Soares e Rita Pires' },
+      { nome:'João Pedro Alves',         nasc:'09/10/2017', rg:'21.004.556-8', filiacao:'Paulo Alves e Vera Nunes' },
+  ]},
+  { nome:'3º ano A', escola:'Escola Municipal Ciranda do Saber', ano_ensino:'3º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Caio Lopes Ferreira',  nasc:'05/08/2016', rg:'21.112.334-0', filiacao:'João Lopes e Marta Ferreira' },
+      { nome:'Clóvis Souza Matos',   nasc:'14/04/2016', rg:'21.223.667-2', filiacao:'Luan Souza e Bia Matos' },
+      { nome:'Marta Silva Rocha',    nasc:'25/12/2016', rg:'21.330.998-6', filiacao:'Igor Silva e Dora Rocha' },
+  ]},
+  { nome:'4º ano A', escola:'Escola Municipal Ciranda do Saber', ano_ensino:'4º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Davi Brito Nascimento', nasc:'30/01/2015', rg:'19.998.221-7', filiacao:'Rafael Brito e Sandra Nascimento' },
+      { nome:'Rodrygo Góes Pinto',    nasc:'11/07/2015', rg:'20.110.443-9', filiacao:'César Góes e Lúcia Pinto' },
+  ]},
 ];
 
 // ---------- DOCUMENTOS ----------
@@ -161,18 +183,32 @@ const TIPOS_DECL = [
   { id:'conclusao',    label:'Conclusão' },
 ];
 
+let turmaSel = 0;
 let alunoSel = 0;
 let tipoSel = 'escolaridade';
+
+function alunoAtual() {
+  const t = TURMAS[turmaSel];
+  const a = t.alunos[alunoSel];
+  return { nome:a.nome, nasc:a.nasc, rg:a.rg, filiacao:a.filiacao,
+           escola:t.escola, ano_ensino:t.ano_ensino, turno:t.turno, anoLetivo:t.anoLetivo, turma:t.nome };
+}
 
 function icDoc() {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
 }
 
 function initDocs() {
-  document.getElementById('selAluno').innerHTML =
-    ALUNOS.map((a, i) => `<option value="${i}">${a.nome}</option>`).join('');
+  document.getElementById('selTurma').innerHTML =
+    TURMAS.map((t, i) => `<option value="${i}">${t.nome}</option>`).join('');
+  preencherAlunos();
   renderDocGrid();
 }
+function preencherAlunos() {
+  document.getElementById('selAluno').innerHTML =
+    TURMAS[turmaSel].alunos.map((a, i) => `<option value="${i}">${a.nome}</option>`).join('');
+}
+function selecionarTurma(i) { turmaSel = +i; alunoSel = 0; preencherAlunos(); }
 function selecionarAluno(i) { alunoSel = +i; }
 
 function renderDocGrid() {
@@ -193,7 +229,8 @@ function abrirDoc(id) {
 
 // ---------- DECLARAÇÃO ----------
 function abrirDecl() {
-  document.getElementById('declAlunoNome').textContent = ALUNOS[alunoSel].nome;
+  const a = alunoAtual();
+  document.getElementById('declAlunoNome').textContent = `${a.nome} — ${a.turma}`;
   renderTipos();
   document.getElementById('modalDecl').classList.remove('hidden');
 }
@@ -206,7 +243,7 @@ function renderTipos() {
 }
 
 function imprimirDeclaracao() {
-  const a = ALUNOS[alunoSel];
+  const a = alunoAtual();
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const box = marcado => `<span class="box">${marcado ? 'X' : ''}</span>`;
   // qual parágrafo recebe o X conforme o tipo
