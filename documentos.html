@@ -43,6 +43,9 @@
     .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,32,.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
     .modal-overlay.hidden { display: none; }
     .modal { background: #fff; border-radius: 18px; width: min(460px, 94vw); max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 30px 70px rgba(20,40,80,.30); overflow: hidden; }
+    .modal-prev { width: min(900px, 96vw); }
+    .prev-body { flex: 1; overflow: auto; background: #e9ecf1; padding: 18px; min-height: 0; }
+    .prev-body iframe { width: 100%; height: 62vh; border: none; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.12); border-radius: 4px; }
     .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #EDEFF3; }
     .modal-title { font-size: 16px; font-weight: 700; color: #12223A; }
     .modal-close { background: none; border: none; font-size: 24px; color: #9AA1AB; cursor: pointer; line-height: 1; }
@@ -140,7 +143,22 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="fecharDecl()">Cancelar</button>
-      <button class="btn-print" onclick="imprimirDeclaracao()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir declaração</button>
+      <button class="btn-print" onclick="previewDeclaracao()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg> Visualizar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Pré-visualização da Declaração -->
+<div class="modal-overlay hidden" id="modalPrev" onclick="if(event.target===this)fecharPrev()">
+  <div class="modal modal-prev">
+    <div class="modal-header">
+      <div class="modal-title">Pré-visualização — Declaração Geral</div>
+      <button class="modal-close" onclick="fecharPrev()">×</button>
+    </div>
+    <div class="prev-body"><iframe id="prevFrame" title="Pré-visualização"></iframe></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="voltarPrev()">Voltar</button>
+      <button class="btn-print" onclick="imprimirDeclaracao()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir</button>
     </div>
   </div>
 </div>
@@ -242,15 +260,14 @@ function renderTipos() {
     </div>`).join('');
 }
 
-function imprimirDeclaracao() {
+function declaracaoHTML() {
   const a = alunoAtual();
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const box = marcado => `<span class="box">${marcado ? 'X' : ''}</span>`;
   // qual parágrafo recebe o X conforme o tipo
   const t = tipoSel;
   const L = '<span class="ln"></span>'; // linha em branco
-  const w = window.open('', '_blank');
-  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Declaração - ${esc(a.nome)}</title>
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Declaração - ${esc(a.nome)}</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Times New Roman', serif; color: #000; margin: 28mm 22mm; font-size: 13px; line-height: 1.6; }
@@ -305,11 +322,22 @@ function imprimirDeclaracao() {
       RUA PERO VAZ DE CAMINHA, 68, CENTRO<br>
       PORTO SEGURO-BA – CEP 45.810-000
     </div>
-  </body></html>`);
-  w.document.close();
-  w.focus();
-  setTimeout(() => w.print(), 300);
+  </body></html>`;
+}
+
+function previewDeclaracao() {
+  document.getElementById('prevFrame').srcdoc = declaracaoHTML();
   fecharDecl();
+  document.getElementById('modalPrev').classList.remove('hidden');
+}
+function fecharPrev() { document.getElementById('modalPrev').classList.add('hidden'); }
+function voltarPrev() { fecharPrev(); document.getElementById('modalDecl').classList.remove('hidden'); }
+function imprimirDeclaracao() {
+  const fr = document.getElementById('prevFrame');
+  if (fr && fr.contentWindow) {
+    fr.contentWindow.focus();
+    fr.contentWindow.print();
+  }
 }
 
 initDocs();
