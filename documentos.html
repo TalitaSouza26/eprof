@@ -549,10 +549,18 @@ function fichaMatriculaHTML() {
   </body></html>`;
 }
 
+const FICHA_MATRICULA_PDF = 'ficha-matricula-exemplo.pdf';
 function previewDeclaracao() {
   const nomesTipo = { vaga:'Declaração de Vaga', transferencia:'Declaração de Transferência', escolaridade:'Declaração de Escolaridade/Bolsa Família', conclusao:'Declaração de Conclusão', matricula:'Ficha de Matrícula' };
   document.getElementById('prevTitle').textContent = 'Pré-visualização — ' + (nomesTipo[tipoSel] || 'Documento');
-  document.getElementById('prevFrame').srcdoc = declaracaoHTML();
+  const fr = document.getElementById('prevFrame');
+  if (tipoSel === 'matricula') {
+    fr.removeAttribute('srcdoc');
+    fr.src = FICHA_MATRICULA_PDF;
+  } else {
+    fr.removeAttribute('src');
+    fr.srcdoc = declaracaoHTML();
+  }
   fecharDecl();
   document.getElementById('modalPrev').classList.remove('hidden');
 }
@@ -560,9 +568,11 @@ function fecharPrev() { document.getElementById('modalPrev').classList.add('hidd
 function voltarPrev() { fecharPrev(); document.getElementById('modalDecl').classList.remove('hidden'); }
 function imprimirDeclaracao() {
   const fr = document.getElementById('prevFrame');
-  if (fr && fr.contentWindow) {
+  try {
     fr.contentWindow.focus();
     fr.contentWindow.print();
+  } catch (e) {
+    if (tipoSel === 'matricula') window.open(FICHA_MATRICULA_PDF, '_blank');
   }
 }
 
