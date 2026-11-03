@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eProf - Documentos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { display: flex; height: 100vh; overflow: hidden; font-family: 'Plus Jakarta Sans','Segoe UI',sans-serif; color: #1D1D1D; }
+    .sidebar { display: flex; flex-direction: column; }
+    .sidebar-logo { display: flex; }
+    .nav-item, .logout { display: flex; align-items: center; cursor: pointer; }
+    .nav-item svg, .logout svg { flex-shrink: 0; }
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; }
+    .topbar-left, .topbar-right { display: flex; align-items: center; }
+
+    .doc-content { flex: 1; overflow-y: auto; padding: 24px 28px 32px; background: #F4F6FA; }
+    .doc-panel { background: #fff; border: 1px solid #E4E8EE; border-radius: 16px; padding: 22px 24px; max-width: 980px; }
+    .doc-panel-title { font-size: 16px; font-weight: 700; color: #12223A; display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+    .doc-panel-title svg { width: 19px; height: 19px; color: #ED6939; }
+    .doc-panel-sub { font-size: 13px; color: #8A94A6; margin-bottom: 18px; }
+
+    .doc-field { max-width: 460px; margin-bottom: 24px; }
+    .doc-label { font-size: 12px; color: #8A94A6; font-weight: 600; display: block; margin-bottom: 6px; }
+    .doc-select { width: 100%; padding: 11px 13px; border: 1.5px solid #E4E8EE; border-radius: 10px; font-size: 14px; color: #1D1D1D; background: #fff; font-family: inherit; outline: none; cursor: pointer; }
+    .doc-select:focus { border-color: #ED6939; }
+
+    .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .doc-card { position: relative; display: flex; align-items: flex-start; gap: 14px; background: #fff; border: 1px solid #E4E8EE; border-radius: 14px; padding: 18px; cursor: pointer; transition: .15s; }
+    .doc-card:hover { border-color: #ED6939; box-shadow: 0 6px 18px rgba(237,105,57,.10); }
+    .doc-card.soon { cursor: default; opacity: .6; }
+    .doc-card.soon:hover { border-color: #E4E8EE; box-shadow: none; }
+    .doc-ic { width: 46px; height: 46px; border-radius: 12px; background: #FDEEE8; color: #ED6939; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .doc-ic svg { width: 24px; height: 24px; }
+    .doc-card-body { flex: 1; min-width: 0; }
+    .doc-card-name { font-size: 15px; font-weight: 700; color: #12223A; margin-bottom: 3px; }
+    .doc-card-desc { font-size: 12.5px; color: #7A828F; line-height: 1.45; }
+    .doc-soon-tag { position: absolute; top: 12px; right: 12px; background: #EEF1F5; color: #8A94A6; font-size: 10px; font-weight: 800; letter-spacing: .04em; padding: 3px 8px; border-radius: 20px; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,32,.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: #fff; border-radius: 18px; width: min(460px, 94vw); max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 30px 70px rgba(20,40,80,.30); overflow: hidden; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #EDEFF3; }
+    .modal-title { font-size: 16px; font-weight: 700; color: #12223A; }
+    .modal-close { background: none; border: none; font-size: 24px; color: #9AA1AB; cursor: pointer; line-height: 1; }
+    .modal-close:hover { color: #1D1D1D; }
+    .modal-body { padding: 20px 24px; overflow-y: auto; }
+    .modal-sub { font-size: 13px; color: #7A828F; margin-bottom: 16px; line-height: 1.5; }
+    .modal-sub b { color: #12223A; }
+    .tipo-list { display: flex; flex-direction: column; gap: 8px; }
+    .tipo-opt { display: flex; align-items: center; gap: 11px; border: 1.5px solid #E4E8EE; border-radius: 12px; padding: 12px 14px; cursor: pointer; font-size: 14px; color: #33404F; transition: .12s; }
+    .tipo-opt:hover { border-color: #c8ccd3; }
+    .tipo-opt.sel { border-color: #ED6939; background: #FDEEE8; color: #C0531F; font-weight: 600; }
+    .tipo-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #c9cdd4; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .tipo-opt.sel .tipo-radio { border-color: #ED6939; }
+    .tipo-opt.sel .tipo-radio::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: #ED6939; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px; border-top: 1px solid #EDEFF3; }
+    .btn-cancel { background: #fff; color: #555; border: 1px solid #ddd; border-radius: 10px; padding: 10px 18px; font-size: 13px; cursor: pointer; font-family: inherit; }
+    .btn-cancel:hover { background: #f5f5f5; }
+    .btn-print { display: inline-flex; align-items: center; gap: 7px; background: #ED6939; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-print:hover { background: #D4531F; }
+    .btn-print svg { width: 15px; height: 15px; }
+  </style>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="eprof" class="logo-img" />
+    <span class="portal-tag">Portal do Professor</span>
+  </div>
+  <nav class="nav">
+    <a href="inicio.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Página inicial</a>
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Minhas aulas</a>
+    <a href="turmas.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Minhas turmas</a>
+    <a href="horario.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="8" y1="10" x2="8" y2="20"/><line x1="16" y1="10" x2="16" y2="20"/></svg>Gerir horário</a>
+    <a href="planejamento2.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planejamento</a>
+    <a href="documentos.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Documentos</a>
+    <a href="comunicacao.html" class="nav-item" style="opacity:.45;pointer-events:none;cursor:default"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comunicação</a>
+    <div class="nav-item" style="opacity:.45;pointer-events:none;cursor:default"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Acervo digital</div>
+    <a href="secretario.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Mudar acesso</a>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 19v2M12 3V1"/></svg>Configurações</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="logout" onclick="location.href='perfis.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg class="page-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ED6939" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <div>
+        <div class="topbar-title">Documentos</div>
+        <div class="topbar-sub">Educação Municipal de Porto Seguro</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div style="text-align:right"><div class="user-name">Andreia Souza</div><div class="user-role">Secretário(a)</div></div>
+    </div>
+  </div>
+
+  <div class="doc-content">
+    <div class="doc-panel">
+      <div class="doc-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Emitir documento do aluno</div>
+      <div class="doc-panel-sub">Selecione o aluno e escolha o documento para emitir e imprimir.</div>
+
+      <div class="doc-field">
+        <label class="doc-label">Aluno</label>
+        <select class="doc-select" id="selAluno" onchange="selecionarAluno(this.value)"></select>
+      </div>
+
+      <div class="doc-grid" id="docGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Emitir Declaração -->
+<div class="modal-overlay hidden" id="modalDecl" onclick="if(event.target===this)fecharDecl()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Emitir Declaração Geral</div>
+      <button class="modal-close" onclick="fecharDecl()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-sub">Aluno: <b id="declAlunoNome"></b><br>Selecione o tipo da declaração:</div>
+      <div class="tipo-list" id="tipoList"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="fecharDecl()">Cancelar</button>
+      <button class="btn-print" onclick="imprimirDeclaracao()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir declaração</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- DADOS (mock) ----------
+const ALUNOS = [
+  { nome:'Letícia Marques de Souza', nasc:'12/03/2017', rg:'20.345.678-9', filiacao:'Marcos Marques e Ana Paula de Souza', escola:'Escola Municipal Ciranda do Saber', serie:'2º', ano_ensino:'2º', turno:'Vespertino', anoLetivo:'2026' },
+  { nome:'Caio Lopes Ferreira',       nasc:'05/08/2016', rg:'21.112.334-0', filiacao:'João Lopes e Marta Ferreira',        escola:'Escola Municipal Ciranda do Saber', serie:'3º', ano_ensino:'3º', turno:'Matutino',   anoLetivo:'2026' },
+  { nome:'Alice Mendes da Rocha',     nasc:'22/11/2018', rg:'22.556.778-1', filiacao:'Pedro Mendes e Clara Rocha',         escola:'Escola Municipal Ciranda do Saber', serie:'1º', ano_ensino:'1º', turno:'Vespertino', anoLetivo:'2026' },
+  { nome:'Davi Brito Nascimento',     nasc:'30/01/2015', rg:'19.998.221-7', filiacao:'Rafael Brito e Sandra Nascimento',   escola:'Escola Municipal Ciranda do Saber', serie:'4º', ano_ensino:'4º', turno:'Matutino',   anoLetivo:'2026' },
+];
+
+// ---------- DOCUMENTOS ----------
+const DOCS = [
+  { id:'declaracao', nome:'Declaração Geral', desc:'Vaga, transferência, escolaridade ou conclusão.', ativo:true },
+  { id:'historico',  nome:'Histórico Escolar', desc:'Registro acadêmico completo (Certificado de Transferência).', ativo:false },
+  { id:'boletim',    nome:'Boletim', desc:'Notas por bimestre, frequência e situação final.', ativo:false },
+];
+
+const TIPOS_DECL = [
+  { id:'vaga',         label:'Vaga' },
+  { id:'transferencia',label:'Transferência' },
+  { id:'escolaridade', label:'Escolaridade' },
+  { id:'conclusao',    label:'Conclusão' },
+];
+
+let alunoSel = 0;
+let tipoSel = 'escolaridade';
+
+function icDoc() {
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
+}
+
+function initDocs() {
+  document.getElementById('selAluno').innerHTML =
+    ALUNOS.map((a, i) => `<option value="${i}">${a.nome}</option>`).join('');
+  renderDocGrid();
+}
+function selecionarAluno(i) { alunoSel = +i; }
+
+function renderDocGrid() {
+  document.getElementById('docGrid').innerHTML = DOCS.map(d => `
+    <div class="doc-card ${d.ativo ? '' : 'soon'}" ${d.ativo ? `onclick="abrirDoc('${d.id}')"` : ''}>
+      ${d.ativo ? '' : '<span class="doc-soon-tag">EM BREVE</span>'}
+      <div class="doc-ic">${icDoc()}</div>
+      <div class="doc-card-body">
+        <div class="doc-card-name">${d.nome}</div>
+        <div class="doc-card-desc">${d.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function abrirDoc(id) {
+  if (id === 'declaracao') abrirDecl();
+}
+
+// ---------- DECLARAÇÃO ----------
+function abrirDecl() {
+  document.getElementById('declAlunoNome').textContent = ALUNOS[alunoSel].nome;
+  renderTipos();
+  document.getElementById('modalDecl').classList.remove('hidden');
+}
+function fecharDecl() { document.getElementById('modalDecl').classList.add('hidden'); }
+function renderTipos() {
+  document.getElementById('tipoList').innerHTML = TIPOS_DECL.map(t => `
+    <div class="tipo-opt ${tipoSel === t.id ? 'sel' : ''}" onclick="tipoSel='${t.id}';renderTipos()">
+      <span class="tipo-radio"></span>${t.label}
+    </div>`).join('');
+}
+
+function imprimirDeclaracao() {
+  const a = ALUNOS[alunoSel];
+  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const box = marcado => `<span class="box">${marcado ? 'X' : ''}</span>`;
+  // qual parágrafo recebe o X conforme o tipo
+  const t = tipoSel;
+  const L = '<span class="ln"></span>'; // linha em branco
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Declaração - ${esc(a.nome)}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Times New Roman', serif; color: #000; margin: 28mm 22mm; font-size: 13px; line-height: 1.6; }
+    .cab { display: flex; align-items: center; gap: 14px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 4px; }
+    .cab .bras { width: 52px; height: 52px; border-radius: 50%; border: 1px solid #0a7d2c; display:flex; align-items:center; justify-content:center; color:#0a7d2c; font-weight:700; font-size:10px; text-align:center; line-height:1.1; }
+    .cab .tit { flex: 1; text-align: center; }
+    .cab .tit b { font-size: 14px; }
+    .data-top { font-size: 12px; margin: 10px 0 18px; }
+    h1 { text-align: center; font-size: 16px; letter-spacing: .5px; text-decoration: underline; margin: 16px 0 18px; }
+    .escola { font-weight: bold; margin-bottom: 12px; }
+    .tipos { display: flex; gap: 26px; margin: 10px 0 18px; font-size: 13px; }
+    .tipos span.op { display: inline-flex; align-items: center; gap: 6px; }
+    .box { display: inline-block; width: 15px; height: 15px; border: 1px solid #000; text-align: center; line-height: 14px; font-weight: bold; }
+    .ln { display: inline-block; border-bottom: 1px solid #000; min-width: 60px; }
+    p { margin: 0 0 14px; text-align: justify; }
+    .par { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 14px; }
+    .par .box { margin-top: 2px; flex-shrink: 0; }
+    .obs { font-size: 12px; font-style: italic; margin-top: 22px; }
+    .foot { margin-top: 40px; border-top: 1px solid #000; padding-top: 8px; text-align: center; font-size: 11px; line-height: 1.5; }
+    @media print { body { margin: 22mm; } }
+  </style></head><body>
+    <div class="cab">
+      <div class="bras">PORTO<br>SEGURO</div>
+      <div class="tit"><b>Prefeitura Municipal de Porto Seguro</b><br>Secretaria Municipal de Educação</div>
+      <div class="bras" style="border-color:#1a3e8c;color:#1a3e8c">BA</div>
+    </div>
+    <div class="data-top">DATA: ${L}</div>
+    <h1>DECLARAÇÃO GERAL</h1>
+    <div class="escola">Escola Municipal ${esc(a.escola.replace(/^Escola Municipal\s*/,''))}</div>
+    <div class="tipos">
+      <span class="op">${box(t==='vaga')} Vaga</span>
+      <span class="op">${box(t==='transferencia')} Transferência</span>
+      <span class="op">${box(t==='escolaridade')} Escolaridade</span>
+      <span class="op">${box(t==='conclusao')} Conclusão</span>
+    </div>
+    <p>Declaramos para os devidos fins que, <b>${esc(a.nome)}</b> nº ${L} RG <b>${esc(a.rg)}</b>, nascido em <b>${esc(a.nasc)}</b> filho (a) de <b>${esc(a.filiacao)}</b>.</p>
+
+    <div class="par">${box(t==='vaga')}<div>Tem vaga reservada no ${L} Ano do Ensino ${L} desde que apresente a documentação no prazo de ${L} dias a contar desta data.</div></div>
+
+    <div class="par">${box(t==='transferencia')}<div>Entrou com pedido de transferência nesta data, devendo retirar seu Histórico Escolar no prazo de 30 dias a contar desta data. Tem direito a matricular-se no ${L} ano do ${L}.</div></div>
+
+    <div class="par">${box(t==='escolaridade')}<div>É regularmente matriculado no <b>${esc(a.ano_ensino)}º</b> ano do Ensino <b>Fundamental</b> no horário das ${L} às ${L}.</div></div>
+
+    <div class="par">${box(t==='conclusao')}<div>Concluiu o ${t==='conclusao'?('<b>'+esc(a.ano_ensino)+'º</b>'):L} ano do Ensino ${t==='conclusao'?'<b>Fundamental</b>':L} no Ano Letivo de ${t==='conclusao'?('<b>'+esc(a.anoLetivo)+'</b>'):L} devendo matricular-se no ${L} ano do Ensino ${L}. Devendo retirar seu Histórico Escolar no prazo de ${L} dias a contar desta data.</div></div>
+
+    <div class="par">${box(false)}<div>Foi aluno (a) regularmente matriculado (a) ${L} do Ensino ${L}, nesta Unidade Escolar, no Ano Letivo de ${L}, tendo sido considerada ${L}.</div></div>
+
+    <div class="obs">OBS: Esta Declaração não contém emenda nem rasura, e só terá validade com um item assinalado com X.</div>
+
+    <div class="foot">
+      SECRETARIA MUNICIPAL DE EDUCAÇÃO<br>
+      RUA PERO VAZ DE CAMINHA, 68, CENTRO<br>
+      PORTO SEGURO-BA – CEP 45.810-000
+    </div>
+  </body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(() => w.print(), 300);
+  fecharDecl();
+}
+
+initDocs();
+</script>
+</body>
+</html>
