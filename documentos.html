@@ -465,74 +465,65 @@ function renderTipos() {
 }
 
 function declaracaoHTML() {
-  if (tipoSel === 'matricula') return fichaMatriculaHTML();
   const a = alunoAtual();
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const box = marcado => `<span class="box">${marcado ? 'X' : ''}</span>`;
-  // qual parágrafo recebe o X conforme o tipo
   const t = tipoSel;
-  const L = '<span class="ln"></span>'; // linha em branco
-  const ensinoFund = a.ensino === 'Fundamental';
-  const serieFrase = ensinoFund
-    ? `<b>${esc(a.ano_ensino)}º</b> ano do Ensino <b>Fundamental</b>`
-    : `<b>${esc(a.ano_ensino)}</b> da <b>Educação Infantil</b>`;
-  const TITULOS = { vaga:'VAGA', transferencia:'TRANSFERÊNCIA', escolaridade:'ESCOLARIDADE / BOLSA FAMÍLIA', conclusao:'CONCLUSÃO' };
+  const resp = (a.filiacao || '').split(' e ');
+  const pai = resp[0] || '', mae = resp[1] || '';
+  const escolaNome = a.escola.replace(/^Escola Municipal\s*/, '');
+  const rgReg = a.rg && a.rg !== '--';
+  const serie = a.ano_ensino;        // puxa automaticamente ano/série
+  const ensino = a.ensino === 'Fundamental' ? 'Fundamental' : 'Educação Infantil';
+  const HOR = { Matutino:['07','00','11','00'], Vespertino:['13','00','17','00'], Integral:['07','30','17','30'], Noturno:['19','00','22','00'] };
+  const hr = HOR[a.turno] || ['','','',''];
+  const V = s => `<span class="fill">${esc(s)}</span>`;          // campo preenchido
+  const B = (w=130) => `<span class="blank" style="min-width:${w}px"></span>`; // campo em branco
+  const TITULOS = { vaga:'DECLARAÇÃO DE VAGA', transferencia:'DECLARAÇÃO DE TRANSFERÊNCIA', escolaridade:'DECLARAÇÃO DE ESCOLARIDADE / BOLSA FAMÍLIA', conclusao:'DECLARAÇÃO DE CONCLUSÃO' };
   const CORPO = {
-    vaga: `Tem vaga reservada no ${L} ${ensinoFund ? 'Ano' : 'Grupo'} do Ensino ${L} desde que apresente a documentação no prazo de ${L} dias a contar desta data.`,
-    transferencia: `Entrou com pedido de transferência nesta data, devendo retirar seu Histórico Escolar no prazo de 30 dias a contar desta data. Tem direito a matricular-se no ${L} do ${L}.`,
-    escolaridade: `É regularmente matriculado no ${serieFrase} no horário das ${L} às ${L}.`,
-    conclusao: `Concluiu o ${serieFrase} no Ano Letivo de <b>${esc(a.anoLetivo)}</b>, devendo matricular-se no ${L} do Ensino ${L}. Devendo retirar seu Histórico Escolar no prazo de ${L} dias a contar desta data.`,
+    vaga: `tem vaga reservada no ${V(serie)} ano do Ensino ${V(ensino)}, desde que apresente a documentação no prazo de ${B(40)} dias a contar desta data.`,
+    transferencia: `solicitou transferência nesta data, devendo retirar seu Histórico Escolar no prazo de 30 dias a contar desta data. Tem direito a matricular-se no ${V(serie)} ano do Ensino ${V(ensino)}.`,
+    escolaridade: `está regularmente matriculado(a) no ${V(serie)} ano do Ensino ${V(ensino)}, nesta unidade escolar, no horário das ${V(hr[0])}h${V(hr[1])} às ${V(hr[2])}h${V(hr[3])}.`,
+    conclusao: `concluiu o ${V(serie)} ano do Ensino ${V(ensino)}, no ano letivo de ${V(a.anoLetivo)}, devendo matricular-se no ${B(40)} ano do Ensino ${B(150)}. Deverá retirar seu Histórico Escolar no prazo de ${B(40)} dias a contar desta data.`,
   };
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Declaração - ${esc(a.nome)}</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Times New Roman', serif; color: #000; margin: 28mm 22mm; font-size: 13px; line-height: 1.6; }
-    .cab { display: flex; align-items: center; gap: 14px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 4px; }
-    .cab .bras { width: 52px; height: 52px; border-radius: 50%; border: 1px solid #0a7d2c; display:flex; align-items:center; justify-content:center; color:#0a7d2c; font-weight:700; font-size:10px; text-align:center; line-height:1.1; }
-    .cab .tit { flex: 1; text-align: center; }
-    .cab .tit b { font-size: 14px; }
-    .data-top { font-size: 12px; margin: 10px 0 18px; }
-    h1 { text-align: center; font-size: 16px; letter-spacing: .5px; text-decoration: underline; margin: 16px 0 18px; }
-    .escola { font-weight: bold; margin-bottom: 12px; }
-    .tipos { display: flex; gap: 26px; margin: 10px 0 18px; font-size: 13px; }
-    .tipos span.op { display: inline-flex; align-items: center; gap: 6px; }
-    .box { display: inline-block; width: 15px; height: 15px; border: 1px solid #000; text-align: center; line-height: 14px; font-weight: bold; }
-    .ln { display: inline-block; border-bottom: 1px solid #000; min-width: 60px; }
-    p { margin: 0 0 14px; text-align: justify; }
-    .par { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 14px; }
-    .par .box { margin-top: 2px; flex-shrink: 0; }
-    .obs { font-size: 12px; font-style: italic; margin-top: 22px; }
-    .assin-wrap { margin-top: 60px; text-align: center; }
-    .cidade-data { margin-bottom: 48px; }
-    .assin-ln { border-top: 1px solid #000; width: 340px; margin: 0 auto 6px; }
-    .assin-decl { font-size: 13px; }
-    .foot { margin-top: 48px; border-top: 1px solid #000; padding-top: 8px; text-align: center; font-size: 11px; line-height: 1.5; }
+    body { font-family: 'Times New Roman', serif; color: #000; margin: 26mm 24mm; font-size: 14px; line-height: 2; }
+    .cab { text-align: center; line-height: 1.4; }
+    .cab b { font-size: 15px; }
+    .cab .s { font-size: 13px; }
+    hr { border: none; border-top: 1px solid #000; margin: 8px 0 20px; }
+    .data-top { font-size: 13px; margin-bottom: 20px; }
+    h1 { text-align: center; font-size: 16px; font-weight: bold; margin: 14px 0 22px; line-height: 1.3; }
+    .escola { margin-bottom: 14px; }
+    p { text-align: justify; margin: 0 0 14px; }
+    .fill { font-weight: bold; border-bottom: 1px solid #000; padding: 0 4px; white-space: nowrap; }
+    .blank { display: inline-block; border-bottom: 1px solid #000; min-width: 120px; }
+    .assin-wrap { text-align: center; margin-top: 44px; }
+    .assin-ln { border-top: 1px solid #000; width: 360px; margin: 0 auto 4px; }
+    .assin-cap { font-size: 11px; }
+    .obs { font-size: 12px; margin-top: 22px; }
+    .foot { text-align: center; font-size: 11px; margin-top: 40px; line-height: 1.6; }
     @media print { body { margin: 22mm; } }
   </style></head><body>
     <div class="cab">
-      <div class="bras">PORTO<br>SEGURO</div>
-      <div class="tit"><b>Prefeitura Municipal de Porto Seguro</b><br>Secretaria Municipal de Educação</div>
-      <div class="bras" style="border-color:#1a3e8c;color:#1a3e8c">BA</div>
+      <b>Prefeitura Municipal de Porto Seguro</b><br>
+      <span class="s">Secretaria Municipal de Educação</span>
     </div>
-    <div class="data-top">DATA: ${L}</div>
-    <h1>DECLARAÇÃO DE ${TITULOS[t]}</h1>
-    <div class="escola">Escola Municipal ${esc(a.escola.replace(/^Escola Municipal\s*/,''))}</div>
-    <p>Declaramos para os devidos fins que, <b>${esc(a.nome)}</b> nº ${L} RG <b>${esc(a.rg)}</b>, nascido em <b>${esc(a.nasc)}</b> filho (a) de <b>${esc(a.filiacao)}</b>.</p>
-
-    <p>${CORPO[t]}</p>
-
-    <div class="obs">OBS: Esta Declaração não contém emenda nem rasura.</div>
-
+    <hr>
+    <div class="data-top">DATA: ${B(40)} / ${B(40)} / ${B(60)}</div>
+    <h1>${TITULOS[t]}</h1>
+    <div class="escola">Escola Municipal ${V(escolaNome)}</div>
+    <p>Declaramos, para os devidos fins, que ${V(a.nome)}, RG nº ${rgReg ? V(a.rg) : B(150)}, nascido(a) em ${V(a.nasc)}, filho(a) de ${V(pai || '—')} e de ${V(mae || '—')}, ${CORPO[t]}</p>
     <div class="assin-wrap">
-      <div class="cidade-data">Porto Seguro - BA, ${L} de ${L} de ${L}.</div>
       <div class="assin-ln"></div>
-      <div class="assin-decl">Secretaria Municipal de Educação</div>
+      <div class="assin-cap">Assinatura e carimbo do(a) responsável pela emissão</div>
     </div>
-
+    <div class="obs">OBS.: Esta declaração não deve conter emendas nem rasuras.</div>
     <div class="foot">
       SECRETARIA MUNICIPAL DE EDUCAÇÃO<br>
       RUA PERO VAZ DE CAMINHA, 68, CENTRO<br>
-      PORTO SEGURO-BA – CEP 45.810-000
+      PORTO SEGURO - BA - CEP 45.810-000
     </div>
   </body></html>`;
 }
@@ -704,8 +695,13 @@ function previewDeclaracao() {
   const nomesTipo = { vaga:'Declaração de Vaga', transferencia:'Declaração de Transferência', escolaridade:'Declaração de Escolaridade/Bolsa Família', conclusao:'Declaração de Conclusão', matricula:'Ficha de Matrícula' };
   document.getElementById('prevTitle').textContent = 'Pré-visualização — ' + (nomesTipo[tipoSel] || 'Documento');
   const fr = document.getElementById('prevFrame');
-  fr.removeAttribute('srcdoc');
-  fr.src = DOC_PDF[tipoSel] || '';
+  if (tipoSel === 'matricula') {
+    fr.removeAttribute('srcdoc');
+    fr.src = DOC_PDF.matricula;
+  } else {
+    fr.removeAttribute('src');
+    fr.srcdoc = declaracaoHTML();
+  }
   fecharDecl();
   document.getElementById('modalPrev').classList.remove('hidden');
 }
