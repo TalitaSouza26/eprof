@@ -21,8 +21,12 @@
     .doc-panel-title svg { width: 19px; height: 19px; color: #ED6939; }
     .doc-panel-sub { font-size: 13px; color: #8A94A6; margin-bottom: 18px; }
 
-    .doc-fields-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .doc-fields-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 24px; }
     .doc-field { flex: 1; min-width: 240px; max-width: 360px; }
+    .reset-field { display: flex; align-items: flex-end; }
+    .btn-reset { display: inline-flex; align-items: center; gap: 7px; background: #fff; color: #5B6472; border: 1.5px solid #E4E8EE; border-radius: 10px; padding: 11px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .btn-reset:hover { border-color: #ED6939; color: #ED6939; }
+    .btn-reset svg { width: 15px; height: 15px; }
     .doc-label { font-size: 12px; color: #8A94A6; font-weight: 600; display: block; margin-bottom: 6px; }
     .doc-select { width: 100%; padding: 11px 13px; border: 1.5px solid #E4E8EE; border-radius: 10px; font-size: 14px; color: #1D1D1D; background: #fff; font-family: inherit; outline: none; cursor: pointer; }
     .doc-select:focus { border-color: #ED6939; }
@@ -123,6 +127,9 @@
           <label class="doc-label">Aluno</label>
           <select class="doc-select" id="selAluno" onchange="selecionarAluno(this.value)"></select>
         </div>
+        <div class="reset-field">
+          <button class="btn-reset" onclick="redefinirFiltro()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg> Redefinir filtro</button>
+        </div>
       </div>
 
       <div class="doc-grid" id="docGrid"></div>
@@ -165,25 +172,63 @@
 
 <script>
 // ---------- DADOS (mock) ----------
+const ESC_FUND = 'Escola Municipal Ciranda do Saber';
+const ESC_INF  = 'CMEI Estrela do Mar';
 const TURMAS = [
-  { nome:'1º ano A', escola:'Escola Municipal Ciranda do Saber', ano_ensino:'1º', turno:'Vespertino', anoLetivo:'2026', alunos:[
+  { nome:'Berçário', ensino:'Educação Infantil', nivel:'Educação Infantil - Berçário', escola:ESC_INF, ano_ensino:'Berçário', turno:'Integral', anoLetivo:'2026', alunos:[
+      { nome:'Maria Antonella Ferreira', nasc:'28/01/2024', rg:'--',            filiacao:'José Ferreira e Luiza Moreira' },
+      { nome:'Theo Ramos Lima',          nasc:'10/03/2024', rg:'--',            filiacao:'Diego Ramos e Paula Lima' },
+      { nome:'Aurora Nunes Dias',        nasc:'19/05/2024', rg:'--',            filiacao:'Felipe Nunes e Bianca Dias' },
+      { nome:'Noah Castro Pinto',        nasc:'02/07/2024', rg:'--',            filiacao:'Rui Castro e Ana Pinto' },
+  ]},
+  { nome:'CN II', ensino:'Educação Infantil', nivel:'Educação Infantil - CN II', escola:ESC_INF, ano_ensino:'CN II', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Helena Prado Teixeira', nasc:'14/09/2023', rg:'--', filiacao:'Victor Prado e Sara Teixeira' },
+      { nome:'Gael Moura Santos',     nasc:'27/11/2023', rg:'--', filiacao:'Breno Moura e Carla Santos' },
+      { nome:'Lívia Barros Melo',     nasc:'06/02/2023', rg:'--', filiacao:'Alex Barros e Tânia Melo' },
+      { nome:'Pietro Lima Rocha',     nasc:'21/04/2023', rg:'--', filiacao:'Davi Lima e Nina Rocha' },
+  ]},
+  { nome:'PN I', ensino:'Educação Infantil', nivel:'Educação Infantil - PN I', escola:ESC_INF, ano_ensino:'PN I', turno:'Vespertino', anoLetivo:'2026', alunos:[
+      { nome:'Isabela Fontes Cruz',  nasc:'03/03/2022', rg:'--', filiacao:'Léo Fontes e Vera Cruz' },
+      { nome:'Miguel Araújo Dias',   nasc:'18/08/2022', rg:'--', filiacao:'Caio Araújo e Lara Dias' },
+      { nome:'Sophia Vieira Lopes',  nasc:'29/10/2022', rg:'--', filiacao:'Tomás Vieira e Rute Lopes' },
+  ]},
+  { nome:'1º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 1º ano', escola:ESC_FUND, ano_ensino:'1º', turno:'Vespertino', anoLetivo:'2026', alunos:[
       { nome:'Alice Mendes da Rocha',   nasc:'22/11/2018', rg:'22.556.778-1', filiacao:'Pedro Mendes e Clara Rocha' },
       { nome:'Bento Costa Lima',        nasc:'03/02/2018', rg:'22.610.447-5', filiacao:'André Costa e Júlia Lima' },
       { nome:'Elis Carvalho Dias',      nasc:'17/09/2018', rg:'22.701.889-3', filiacao:'Hugo Carvalho e Nara Dias' },
+      { nome:'Enzo Ribeiro Gomes',      nasc:'08/05/2018', rg:'22.744.012-6', filiacao:'Saulo Ribeiro e Paula Gomes' },
+      { nome:'Valentina Reis Cunha',    nasc:'30/07/2018', rg:'22.780.556-2', filiacao:'Dino Reis e Mel Cunha' },
   ]},
-  { nome:'2º ano A', escola:'Escola Municipal Ciranda do Saber', ano_ensino:'2º', turno:'Vespertino', anoLetivo:'2026', alunos:[
+  { nome:'1º ano B', ensino:'Fundamental', nivel:'Ensino Fundamental - 1º ano', escola:ESC_FUND, ano_ensino:'1º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Arthur Nogueira Pires', nasc:'12/01/2018', rg:'22.610.998-0', filiacao:'Léo Nogueira e Dani Pires' },
+      { nome:'Laura Campos Silva',    nasc:'25/06/2018', rg:'22.655.321-7', filiacao:'Ivo Campos e Sol Silva' },
+      { nome:'Heitor Dias Moraes',    nasc:'04/09/2018', rg:'22.712.667-4', filiacao:'Max Dias e Rosa Moraes' },
+      { nome:'Cecília Alves Rocha',   nasc:'16/11/2018', rg:'22.790.114-8', filiacao:'Beto Alves e Gal Rocha' },
+  ]},
+  { nome:'2º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 2º ano', escola:ESC_FUND, ano_ensino:'2º', turno:'Vespertino', anoLetivo:'2026', alunos:[
       { nome:'Letícia Marques de Souza', nasc:'12/03/2017', rg:'20.345.678-9', filiacao:'Marcos Marques e Ana Paula de Souza' },
       { nome:'Joana Soares Pires',       nasc:'28/06/2017', rg:'20.998.112-4', filiacao:'Tiago Soares e Rita Pires' },
       { nome:'João Pedro Alves',         nasc:'09/10/2017', rg:'21.004.556-8', filiacao:'Paulo Alves e Vera Nunes' },
+      { nome:'Manuela Freitas Luz',      nasc:'21/02/2017', rg:'21.040.778-3', filiacao:'Erik Freitas e Lia Luz' },
+      { nome:'Bernardo Teles Rocha',     nasc:'15/08/2017', rg:'21.077.990-1', filiacao:'Gus Teles e Fê Rocha' },
   ]},
-  { nome:'3º ano A', escola:'Escola Municipal Ciranda do Saber', ano_ensino:'3º', turno:'Matutino', anoLetivo:'2026', alunos:[
+  { nome:'3º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 3º ano', escola:ESC_FUND, ano_ensino:'3º', turno:'Matutino', anoLetivo:'2026', alunos:[
       { nome:'Caio Lopes Ferreira',  nasc:'05/08/2016', rg:'21.112.334-0', filiacao:'João Lopes e Marta Ferreira' },
       { nome:'Clóvis Souza Matos',   nasc:'14/04/2016', rg:'21.223.667-2', filiacao:'Luan Souza e Bia Matos' },
       { nome:'Marta Silva Rocha',    nasc:'25/12/2016', rg:'21.330.998-6', filiacao:'Igor Silva e Dora Rocha' },
+      { nome:'Antônia Lima Melo',    nasc:'07/03/2016', rg:'21.377.112-9', filiacao:'Rafa Lima e Dê Melo' },
   ]},
-  { nome:'4º ano A', escola:'Escola Municipal Ciranda do Saber', ano_ensino:'4º', turno:'Matutino', anoLetivo:'2026', alunos:[
+  { nome:'4º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 4º ano', escola:ESC_FUND, ano_ensino:'4º', turno:'Matutino', anoLetivo:'2026', alunos:[
       { nome:'Davi Brito Nascimento', nasc:'30/01/2015', rg:'19.998.221-7', filiacao:'Rafael Brito e Sandra Nascimento' },
       { nome:'Rodrygo Góes Pinto',    nasc:'11/07/2015', rg:'20.110.443-9', filiacao:'César Góes e Lúcia Pinto' },
+      { nome:'Yasmin Correia Dias',   nasc:'22/09/2015', rg:'20.150.667-2', filiacao:'Edu Correia e Liz Dias' },
+      { nome:'Gabriel Nunes Rocha',   nasc:'03/12/2015', rg:'20.188.990-5', filiacao:'Tom Nunes e Bel Rocha' },
+  ]},
+  { nome:'5º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 5º ano', escola:ESC_FUND, ano_ensino:'5º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Lucas Pereira Santos', nasc:'18/02/2014', rg:'19.556.221-4', filiacao:'Nei Pereira e Ká Santos' },
+      { nome:'Beatriz Lima Cunha',   nasc:'29/05/2014', rg:'19.600.778-8', filiacao:'Dado Lima e Van Cunha' },
+      { nome:'Pedro Henrique Dias',  nasc:'10/10/2014', rg:'19.655.334-1', filiacao:'Zé Dias e Su Oliveira' },
+      { nome:'Sarah Teixeira Melo',  nasc:'24/12/2014', rg:'19.700.990-6', filiacao:'Léo Teixeira e Dri Melo' },
   ]},
 ];
 
@@ -210,7 +255,8 @@ function alunoAtual() {
   const t = TURMAS[turmaSel];
   const a = t.alunos[alunoSel];
   return { nome:a.nome, nasc:a.nasc, rg:a.rg, filiacao:a.filiacao,
-           escola:t.escola, ano_ensino:t.ano_ensino, turno:t.turno, anoLetivo:t.anoLetivo, turma:t.nome };
+           escola:t.escola, ano_ensino:t.ano_ensino, turno:t.turno, anoLetivo:t.anoLetivo,
+           turma:t.nome, ensino:t.ensino, nivel:t.nivel };
 }
 
 function icDoc() {
@@ -229,6 +275,12 @@ function preencherAlunos() {
 }
 function selecionarTurma(i) { turmaSel = +i; alunoSel = 0; preencherAlunos(); }
 function selecionarAluno(i) { alunoSel = +i; }
+function redefinirFiltro() {
+  turmaSel = 0; alunoSel = 0;
+  document.getElementById('selTurma').value = '0';
+  preencherAlunos();
+  document.getElementById('selAluno').value = '0';
+}
 
 function renderDocGrid() {
   document.getElementById('docGrid').innerHTML = DOCS.map(d => `
@@ -269,12 +321,16 @@ function declaracaoHTML() {
   // qual parágrafo recebe o X conforme o tipo
   const t = tipoSel;
   const L = '<span class="ln"></span>'; // linha em branco
+  const ensinoFund = a.ensino === 'Fundamental';
+  const serieFrase = ensinoFund
+    ? `<b>${esc(a.ano_ensino)}º</b> ano do Ensino <b>Fundamental</b>`
+    : `<b>${esc(a.ano_ensino)}</b> da <b>Educação Infantil</b>`;
   const TITULOS = { vaga:'VAGA', transferencia:'TRANSFERÊNCIA', escolaridade:'ESCOLARIDADE / BOLSA FAMÍLIA', conclusao:'CONCLUSÃO' };
   const CORPO = {
-    vaga: `Tem vaga reservada no ${L} Ano do Ensino ${L} desde que apresente a documentação no prazo de ${L} dias a contar desta data.`,
-    transferencia: `Entrou com pedido de transferência nesta data, devendo retirar seu Histórico Escolar no prazo de 30 dias a contar desta data. Tem direito a matricular-se no ${L} ano do ${L}.`,
-    escolaridade: `É regularmente matriculado no <b>${esc(a.ano_ensino)}º</b> ano do Ensino <b>Fundamental</b> no horário das ${L} às ${L}.`,
-    conclusao: `Concluiu o <b>${esc(a.ano_ensino)}º</b> ano do Ensino <b>Fundamental</b> no Ano Letivo de <b>${esc(a.anoLetivo)}</b>, devendo matricular-se no ${L} ano do Ensino ${L}. Devendo retirar seu Histórico Escolar no prazo de ${L} dias a contar desta data.`,
+    vaga: `Tem vaga reservada no ${L} ${ensinoFund ? 'Ano' : 'Grupo'} do Ensino ${L} desde que apresente a documentação no prazo de ${L} dias a contar desta data.`,
+    transferencia: `Entrou com pedido de transferência nesta data, devendo retirar seu Histórico Escolar no prazo de 30 dias a contar desta data. Tem direito a matricular-se no ${L} do ${L}.`,
+    escolaridade: `É regularmente matriculado no ${serieFrase} no horário das ${L} às ${L}.`,
+    conclusao: `Concluiu o ${serieFrase} no Ano Letivo de <b>${esc(a.anoLetivo)}</b>, devendo matricular-se no ${L} do Ensino ${L}. Devendo retirar seu Histórico Escolar no prazo de ${L} dias a contar desta data.`,
   };
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Declaração - ${esc(a.nome)}</title>
   <style>
@@ -340,7 +396,7 @@ function fichaMatriculaHTML() {
   const dataExt = `Porto Seguro, Bahia, ${p2(now.getDate())} de ${MESES[now.getMonth()]} de ${now.getFullYear()}`;
   // matrícula determinística a partir do nome
   let h = 0; for (const c of a.nome) h = (h*31 + c.charCodeAt(0)) % 90000000; const matricula = 20000000 + h;
-  const nivel = `Ensino Fundamental - ${esc(a.ano_ensino)} ano`;
+  const nivel = a.nivel || `Ensino Fundamental - ${esc(a.ano_ensino)} ano`;
   const resp = (a.filiacao || '').split(' e ');
   const mae = resp[1] || '--', pai = resp[0] || '--';
   const f = (lbl, val) => `<div class="fm-f"><div class="fm-lbl">${lbl}</div><div class="fm-val">${esc(val || '--')}</div></div>`;
