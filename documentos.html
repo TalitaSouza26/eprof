@@ -152,7 +152,7 @@
 <div class="modal-overlay hidden" id="modalPrev" onclick="if(event.target===this)fecharPrev()">
   <div class="modal modal-prev">
     <div class="modal-header">
-      <div class="modal-title">Pré-visualização — Declaração Geral</div>
+      <div class="modal-title" id="prevTitle">Pré-visualização</div>
       <button class="modal-close" onclick="fecharPrev()">×</button>
     </div>
     <div class="prev-body"><iframe id="prevFrame" title="Pré-visualização"></iframe></div>
@@ -269,6 +269,13 @@ function declaracaoHTML() {
   // qual parágrafo recebe o X conforme o tipo
   const t = tipoSel;
   const L = '<span class="ln"></span>'; // linha em branco
+  const TITULOS = { vaga:'VAGA', transferencia:'TRANSFERÊNCIA', escolaridade:'ESCOLARIDADE / BOLSA FAMÍLIA', conclusao:'CONCLUSÃO' };
+  const CORPO = {
+    vaga: `Tem vaga reservada no ${L} Ano do Ensino ${L} desde que apresente a documentação no prazo de ${L} dias a contar desta data.`,
+    transferencia: `Entrou com pedido de transferência nesta data, devendo retirar seu Histórico Escolar no prazo de 30 dias a contar desta data. Tem direito a matricular-se no ${L} ano do ${L}.`,
+    escolaridade: `É regularmente matriculado no <b>${esc(a.ano_ensino)}º</b> ano do Ensino <b>Fundamental</b> no horário das ${L} às ${L}.`,
+    conclusao: `Concluiu o <b>${esc(a.ano_ensino)}º</b> ano do Ensino <b>Fundamental</b> no Ano Letivo de <b>${esc(a.anoLetivo)}</b>, devendo matricular-se no ${L} ano do Ensino ${L}. Devendo retirar seu Histórico Escolar no prazo de ${L} dias a contar desta data.`,
+  };
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Declaração - ${esc(a.nome)}</title>
   <style>
     * { box-sizing: border-box; }
@@ -288,7 +295,11 @@ function declaracaoHTML() {
     .par { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 14px; }
     .par .box { margin-top: 2px; flex-shrink: 0; }
     .obs { font-size: 12px; font-style: italic; margin-top: 22px; }
-    .foot { margin-top: 40px; border-top: 1px solid #000; padding-top: 8px; text-align: center; font-size: 11px; line-height: 1.5; }
+    .assin-wrap { margin-top: 60px; text-align: center; }
+    .cidade-data { margin-bottom: 48px; }
+    .assin-ln { border-top: 1px solid #000; width: 340px; margin: 0 auto 6px; }
+    .assin-decl { font-size: 13px; }
+    .foot { margin-top: 48px; border-top: 1px solid #000; padding-top: 8px; text-align: center; font-size: 11px; line-height: 1.5; }
     @media print { body { margin: 22mm; } }
   </style></head><body>
     <div class="cab">
@@ -297,27 +308,19 @@ function declaracaoHTML() {
       <div class="bras" style="border-color:#1a3e8c;color:#1a3e8c">BA</div>
     </div>
     <div class="data-top">DATA: ${L}</div>
-    <h1>DECLARAÇÃO GERAL</h1>
+    <h1>DECLARAÇÃO DE ${TITULOS[t]}</h1>
     <div class="escola">Escola Municipal ${esc(a.escola.replace(/^Escola Municipal\s*/,''))}</div>
-    <div class="tipos">
-      <span class="op">${box(t==='vaga')} Vaga</span>
-      <span class="op">${box(t==='transferencia')} Transferência</span>
-      <span class="op">${box(t==='escolaridade')} Escolaridade/Bolsa Família</span>
-      <span class="op">${box(t==='conclusao')} Conclusão</span>
-    </div>
     <p>Declaramos para os devidos fins que, <b>${esc(a.nome)}</b> nº ${L} RG <b>${esc(a.rg)}</b>, nascido em <b>${esc(a.nasc)}</b> filho (a) de <b>${esc(a.filiacao)}</b>.</p>
 
-    <div class="par">${box(t==='vaga')}<div>Tem vaga reservada no ${L} Ano do Ensino ${L} desde que apresente a documentação no prazo de ${L} dias a contar desta data.</div></div>
+    <p>${CORPO[t]}</p>
 
-    <div class="par">${box(t==='transferencia')}<div>Entrou com pedido de transferência nesta data, devendo retirar seu Histórico Escolar no prazo de 30 dias a contar desta data. Tem direito a matricular-se no ${L} ano do ${L}.</div></div>
+    <div class="obs">OBS: Esta Declaração não contém emenda nem rasura.</div>
 
-    <div class="par">${box(t==='escolaridade')}<div>É regularmente matriculado no <b>${esc(a.ano_ensino)}º</b> ano do Ensino <b>Fundamental</b> no horário das ${L} às ${L}.</div></div>
-
-    <div class="par">${box(t==='conclusao')}<div>Concluiu o ${t==='conclusao'?('<b>'+esc(a.ano_ensino)+'º</b>'):L} ano do Ensino ${t==='conclusao'?'<b>Fundamental</b>':L} no Ano Letivo de ${t==='conclusao'?('<b>'+esc(a.anoLetivo)+'</b>'):L} devendo matricular-se no ${L} ano do Ensino ${L}. Devendo retirar seu Histórico Escolar no prazo de ${L} dias a contar desta data.</div></div>
-
-    <div class="par">${box(false)}<div>Foi aluno (a) regularmente matriculado (a) ${L} do Ensino ${L}, nesta Unidade Escolar, no Ano Letivo de ${L}, tendo sido considerada ${L}.</div></div>
-
-    <div class="obs">OBS: Esta Declaração não contém emenda nem rasura, e só terá validade com um item assinalado com X.</div>
+    <div class="assin-wrap">
+      <div class="cidade-data">Porto Seguro - BA, ${L} de ${L} de ${L}.</div>
+      <div class="assin-ln"></div>
+      <div class="assin-decl">Secretaria Municipal de Educação</div>
+    </div>
 
     <div class="foot">
       SECRETARIA MUNICIPAL DE EDUCAÇÃO<br>
@@ -330,33 +333,164 @@ function declaracaoHTML() {
 function fichaMatriculaHTML() {
   const a = alunoAtual();
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const now = new Date();
+  const p2 = n => String(n).padStart(2,'0');
+  const emiss = `${p2(now.getDate())}/${p2(now.getMonth()+1)}/${now.getFullYear()} ${p2(now.getHours())}:${p2(now.getMinutes())}`;
+  const dataExt = `Porto Seguro, Bahia, ${p2(now.getDate())} de ${MESES[now.getMonth()]} de ${now.getFullYear()}`;
+  // matrícula determinística a partir do nome
+  let h = 0; for (const c of a.nome) h = (h*31 + c.charCodeAt(0)) % 90000000; const matricula = 20000000 + h;
+  const nivel = `Ensino Fundamental - ${esc(a.ano_ensino)} ano`;
+  const resp = (a.filiacao || '').split(' e ');
+  const mae = resp[1] || '--', pai = resp[0] || '--';
+  const f = (lbl, val) => `<div class="fm-f"><div class="fm-lbl">${lbl}</div><div class="fm-val">${esc(val || '--')}</div></div>`;
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ${esc(a.nome)}</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Times New Roman', serif; color: #000; margin: 28mm 22mm; font-size: 13px; line-height: 1.6; }
-    .cab { display: flex; align-items: center; gap: 14px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 18px; }
-    .cab .bras { width: 52px; height: 52px; border-radius: 50%; border: 1px solid #0a7d2c; display:flex; align-items:center; justify-content:center; color:#0a7d2c; font-weight:700; font-size:10px; text-align:center; line-height:1.1; }
-    .cab .tit { flex: 1; text-align: center; }
-    .cab .tit b { font-size: 14px; }
-    h1 { text-align: center; font-size: 16px; text-decoration: underline; margin: 10px 0 24px; }
-    .ph { margin-top: 40px; border: 1px dashed #bbb; border-radius: 8px; padding: 40px 24px; text-align: center; color: #888; }
-    .ph b { color: #555; }
+    body { font-family: Arial, Helvetica, sans-serif; color: #222; margin: 14mm 14mm; font-size: 11px; }
+    .fm-top { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #333; padding-bottom: 6px; }
+    .fm-title { font-size: 15px; font-weight: 700; color: #111; }
+    .fm-emiss { font-size: 10px; color: #777; white-space: nowrap; }
+    .fm-school { margin: 8px 0 6px; font-size: 11px; line-height: 1.55; }
+    .fm-school b { font-size: 12.5px; }
+    .fm-sec { background: #f0f2f5; font-weight: 700; font-size: 11px; padding: 6px 8px; margin: 16px 0 0; border-left: 3px solid #ED6939; }
+    .fm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 18px; padding: 6px 8px 2px; }
+    .fm-grid.two { grid-template-columns: 1fr 1fr; }
+    .fm-f { padding: 5px 0 6px; border-bottom: 1px solid #eee; }
+    .fm-lbl { font-size: 8.5px; color: #8a94a6; text-transform: uppercase; letter-spacing: .02em; }
+    .fm-val { font-size: 12px; color: #111; margin-top: 2px; min-height: 14px; }
+    .termo { margin-top: 24px; }
+    .termo h2 { text-align: center; font-size: 12px; border: 1px solid #333; padding: 7px; background: #f0f2f5; margin: 0; }
+    .termo .seduc { text-align: center; font-size: 9.5px; color: #555; margin: 8px 0 16px; line-height: 1.45; }
+    .termo h3 { font-size: 11px; margin: 12px 0 3px; color: #111; }
+    .termo p { font-size: 10px; text-align: justify; line-height: 1.5; margin: 0 0 9px; }
+    .termo .data { text-align: center; margin: 30px 0 34px; font-size: 11px; }
+    .assin { text-align: center; }
+    .assin .ln { border-top: 1px solid #333; width: 320px; margin: 0 auto 4px; }
+    .assin .cap { font-size: 11px; color: #333; }
+    @media print { body { margin: 12mm; } .termo { page-break-before: always; } }
   </style></head><body>
-    <div class="cab">
-      <div class="bras">PORTO<br>SEGURO</div>
-      <div class="tit"><b>Prefeitura Municipal de Porto Seguro</b><br>Secretaria Municipal de Educação</div>
-      <div class="bras" style="border-color:#1a3e8c;color:#1a3e8c">BA</div>
+    <div class="fm-top">
+      <div class="fm-title">Ficha de matrícula do aluno</div>
+      <div class="fm-emiss">Emissão em: ${emiss}</div>
     </div>
-    <h1>FICHA DE MATRÍCULA</h1>
-    <p><b>Aluno(a):</b> ${esc(a.nome)}</p>
-    <p><b>Turma:</b> ${esc(a.turma)} &nbsp;&nbsp; <b>Escola:</b> ${esc(a.escola)}</p>
-    <div class="ph">
-      Modelo oficial da <b>Ficha de Matrícula</b> será configurado em breve.
+    <div class="fm-school">
+      <b>${esc(a.escola.toUpperCase())}</b> &nbsp; Contato: (73) 3288-0000<br>
+      Código INEP: 65656565 &nbsp;·&nbsp; Localidade: Urbana<br>
+      Endereço: Centro, Porto Seguro - BA &nbsp;·&nbsp; E-mail: apresentacao@eprof.app
+    </div>
+
+    <div class="fm-sec">Informações de Ensino</div>
+    <div class="fm-grid">
+      ${f('Número de matrícula', matricula)}
+      ${f('Nível de ensino e série', nivel)}
+      ${f('Turno', a.turno)}
+    </div>
+
+    <div class="fm-sec">Informações do aluno</div>
+    <div class="fm-grid">
+      ${f('Nome completo', a.nome)}
+      ${f('Raça / cor', 'Parda')}
+      ${f('Etnia', '--')}
+      ${f('Nome social', '--')}
+      ${f('Data de nascimento', a.nasc)}
+      ${f('Naturalidade', 'Porto Seguro - BA')}
+      ${f('Sexo', '--')}
+      ${f('Contato', '--')}
+      ${f('Cartão SUS', '--')}
+      ${f('CPF', '--')}
+      ${f('Bolsa Família', 'Não possui')}
+      ${f('RG', a.rg)}
+      ${f('Número do NIS', '--')}
+      ${f('Certidão de nascimento', '--')}
+    </div>
+
+    <div class="fm-sec">Endereço do aluno</div>
+    <div class="fm-grid">
+      ${f('CEP', '45810-000')}
+      ${f('Bairro', 'Centro')}
+      ${f('Distrito', 'Porto Seguro')}
+      ${f('Complemento', 'Casa')}
+      ${f('Endereço', 'Rua Pero Vaz de Caminha')}
+      ${f('Número', '--')}
+      ${f('Ponto de referência', '--')}
+    </div>
+
+    <div class="fm-sec">Informações médicas</div>
+    <div class="fm-grid two">
+      ${f('O aluno possui alguma deficiência?', 'Não')}
+      ${f('O aluno frequenta atendimento especializado?', 'Não')}
+      ${f('O aluno possui alguma condição de saúde ou alergia?', '--')}
+      ${f('Possui autorização para buscar o aluno', '--')}
+    </div>
+
+    <div class="fm-sec">Informações do responsável 1</div>
+    <div class="fm-grid">
+      ${f('Nome completo', mae)}
+      ${f('Parentesco', 'Mãe')}
+      ${f('CPF', '--')}
+      ${f('Contato', '--')}
+      ${f('Data de nascimento', '--')}
+    </div>
+
+    <div class="fm-sec">Informações do responsável 2</div>
+    <div class="fm-grid">
+      ${f('Nome completo', pai)}
+      ${f('Parentesco', 'Pai')}
+      ${f('CPF', '--')}
+      ${f('Contato', '--')}
+      ${f('Data de nascimento', '--')}
+    </div>
+
+    <div class="fm-sec">Informações do responsável 3</div>
+    <div class="fm-grid">
+      ${f('Nome completo', '--')}
+      ${f('Parentesco', '--')}
+      ${f('CPF', '--')}
+      ${f('Contato', '--')}
+      ${f('Data de nascimento', '--')}
+    </div>
+
+    <div class="termo">
+      <h2>TERMO UNIFICADO DE RESPONSABILIDADE E COMPROMISSO</h2>
+      <div class="seduc">
+        Prefeitura Municipal de Porto Seguro - SEDUC (Secretaria Municipal de Educação, Cultura e Patrimônio Histórico)<br>
+        Rua Pero Vaz de Caminha, 68 - Centro - Porto Seguro - Bahia - CEP 45810-000
+      </div>
+
+      <h3>1 - IDENTIFICAÇÃO</h3>
+      <p>Eu, ____________________________________________, responsável pelo(a) estudante <b>${esc(a.nome.toUpperCase())}</b>, matriculado(a) nesta Unidade Escolar sob o número ${matricula}, declaro estar ciente e de acordo com todas as responsabilidades e compromissos estabelecidos neste termo.</p>
+
+      <h3>2 - TRANSPORTE E DESLOCAMENTO</h3>
+      <p>Declaro estar ciente de que me responsabilizo pelo transporte do(a) estudante entre a minha residência e a escola, ainda que exista vaga disponível em unidade de ensino mais próxima da minha casa que ofereça o mesmo nível ou modalidade dentro do Sistema Municipal de Ensino.</p>
+
+      <h3>3 - NORMAS ESCOLARES E DISCIPLINA</h3>
+      <p>Declaro conhecer e aceitar as normas e regras do Regimento Comum das Escolas Municipais de Educação Básica de Porto Seguro. Compreendo que, em caso de descumprimento, poderão ser aplicadas medidas disciplinares em ordem gradativa, que incluem advertência verbal, advertência escrita, suspensão, transferência e, quando necessário, o encaminhamento aos órgãos competentes, como o Ministério Público e o Conselho Tutelar.</p>
+
+      <h3>4 - ACOMPANHAMENTO FAMILIAR</h3>
+      <p>Reconheço que o sucesso escolar depende do apoio da família e, por isso, comprometo-me a participar das reuniões escolares, a acompanhar o desempenho, a frequência e o comportamento do(a) estudante e a colaborar com os projetos desenvolvidos pela escola.</p>
+
+      <h3>5 - DISPOSIÇÕES LEGAIS (CIÊNCIA DE OBRIGAÇÕES)</h3>
+      <p>Declaro estar ciente das obrigações previstas em lei. Segundo o Código Penal (art. 246), deixar de prover, sem justa causa, a instrução de filho em idade escolar configura abandono intelectual, com pena de detenção de quinze dias a um mês ou multa. O Estatuto da Criança e do Adolescente (art. 22) estabelece que os pais têm o dever de sustento, guarda e educação, o que inclui o acompanhamento da vida escolar, e determina (art. 56) que a escola comunique ao Conselho Tutelar casos de maus-tratos, faltas injustificadas, evasão ou elevada repetência. Por fim, conforme o Código Penal (art. 163, parágrafo único) e o ECA (art. 116), danificar patrimônio público sujeita o responsável a penalidades, cabendo aos pais ou responsáveis repor ou restaurar os bens danificados pelo(a) estudante, tais como paredes, livros e mobiliário.</p>
+
+      <h3>6 - REGRAS DE FUNCIONAMENTO E ACESSO</h3>
+      <p>Declaro conhecer as normas operacionais da escola. Comprometo-me a cumprir rigorosamente os horários de entrada e saída, ciente de que o portão será fechado no horário estipulado, com tolerância máxima de quinze minutos apenas em casos excepcionais. Entendo que a escola é responsável pelo(a) estudante somente durante o período das aulas, com carga mínima de quatro horas diárias, não se responsabilizando por ocorrências após o horário de saída. O atendimento a professores ou ao(à) estudante deve ser solicitado previamente à direção ou à secretaria, e a saída antecipada só será permitida mediante a presença do responsável ou solicitação por escrito, datada e assinada. Estou ciente, ainda, de que as faltas injustificadas serão comunicadas ao Ministério Público e ao Conselho Tutelar.</p>
+
+      <h3>7 - DECLARAÇÃO FINAL</h3>
+      <p>Declaro que li, compreendi e concordo integralmente com todas as condições acima, assumindo total responsabilidade pelo cumprimento deste termo.</p>
+
+      <div class="data">${dataExt}</div>
+      <div class="assin">
+        <div class="ln"></div>
+        <div class="cap">Assinatura do responsável</div>
+      </div>
     </div>
   </body></html>`;
 }
 
 function previewDeclaracao() {
+  const nomesTipo = { vaga:'Declaração de Vaga', transferencia:'Declaração de Transferência', escolaridade:'Declaração de Escolaridade/Bolsa Família', conclusao:'Declaração de Conclusão', matricula:'Ficha de Matrícula' };
+  document.getElementById('prevTitle').textContent = 'Pré-visualização — ' + (nomesTipo[tipoSel] || 'Documento');
   document.getElementById('prevFrame').srcdoc = declaracaoHTML();
   fecharDecl();
   document.getElementById('modalPrev').classList.remove('hidden');
