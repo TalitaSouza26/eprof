@@ -239,7 +239,7 @@ const TURMAS = [
 const DOCS = [
   { id:'declaracao', nome:'Declaração Geral', desc:'Vaga, transferência, escolaridade ou conclusão.', ativo:true },
   { id:'historico',  nome:'Histórico Escolar', desc:'Registro acadêmico completo (Certificado de Transferência).', ativo:true },
-  { id:'boletim',    nome:'Boletim', desc:'Notas por bimestre, frequência e situação final.', ativo:false },
+  { id:'boletim',    nome:'Boletim', desc:'Notas por bimestre, frequência e situação final.', ativo:true },
   { id:'atas',       nome:'Atas de Resultados finais', desc:'Resultados finais da turma por aluno no ano letivo.', ativo:true },
 ];
 
@@ -324,6 +324,130 @@ function abrirDoc(id) {
   if (turmaSel < 0 || alunoSel < 0) { alert('Selecione a turma e o aluno primeiro.'); return; }
   if (id === 'declaracao') abrirDecl();
   else if (id === 'historico') abrirHistorico();
+  else if (id === 'boletim') abrirBoletim();
+}
+
+// ---------- BOLETIM ESCOLAR ----------
+function abrirBoletim() {
+  tipoSel = 'boletim';
+  document.getElementById('prevTitle').textContent = 'Pré-visualização — Boletim Escolar';
+  const fr = document.getElementById('prevFrame');
+  fr.removeAttribute('src');
+  fr.srcdoc = boletimHTML();
+  document.getElementById('modalPrev').classList.remove('hidden');
+}
+
+function boletimHTML() {
+  const a = alunoAtual();
+  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fund = a.ensino === 'Fundamental';
+  const COMPS = fund
+    ? ['Língua Portuguesa','Educação Física','Arte','Matemática','Ciências','História','Geografia','Ensino Religioso']
+    : ['Escuta, Fala, Pensamento e Imaginação','Corpo, Gestos e Movimentos','Traços, Sons, Cores e Formas','O Eu, o Outro e o Nós','Espaços, Tempos, Quantidades, Relações e Transformações'];
+  const resp = (a.filiacao || '').split(' e ');
+  const respLegal = resp[1] || resp[0] || '';
+  let hh = 0; for (const c of a.nome) hh = (hh*31 + c.charCodeAt(0)) % 90000000; const matricula = 20000000 + hh;
+  const nota = (ci, bi) => 6 + ((ci*2 + bi*3 + alunoSel) % 5);        // 6..10
+  const freq = (ci, bi) => 86 + ((ci + bi*2 + alunoSel) % 14);        // 86..99
+  const fmt = v => Number(v).toFixed(1).replace('.', ',');
+  const STATUS = ['Aprovado','Reprovado','Desistente','Transferido','Aprovado pelo Conselho','Reprovado pelo Conselho'];
+  // média global p/ definir status
+  let somaMedias = 0;
+  const linhas = COMPS.map((comp, ci) => {
+    const cells = [0,1,2,3].map(bi => `<td>${fmt(nota(ci,bi))}</td><td>${freq(ci,bi)}</td>`).join('');
+    const media = (nota(ci,0)+nota(ci,1)+nota(ci,2)+nota(ci,3))/4;
+    somaMedias += media;
+    const res = media >= 6 ? 'A' : 'R';
+    return `<tr><td class="comp">${esc(comp)}</td>${cells}<td>—</td><td class="b">${fmt(media)}</td><td class="b">${res}</td></tr>`;
+  }).join('');
+  const mediaGeral = somaMedias / COMPS.length;
+  // status do aluno (exemplo): maioria Aprovado; variações por índice
+  let statusAluno = mediaGeral >= 6 ? 'Aprovado' : 'Reprovado';
+  if (alunoSel === 1) statusAluno = 'Aprovado pelo Conselho';
+  if (alunoSel === 2) statusAluno = 'Transferido';
+  const freqGlobal = 86 + (alunoSel % 12);
+  const box = marcado => `<span class="box">${marcado ? 'X' : ''}</span>`;
+
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Boletim Escolar - ${esc(a.nome)}</title>
+  <style>
+    @page { size: A4; margin: 12mm; }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 11px; margin: 12mm; }
+    .bcab { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #000; padding-bottom: 8px; }
+    .bcab img { height: 48px; }
+    .bcab .t { flex: 1; text-align: center; }
+    .bcab .t b { font-size: 13px; }
+    h1 { text-align: center; font-size: 15px; margin: 12px 0 14px; letter-spacing: .5px; }
+    .campo { margin: 3px 0; }
+    .campo b { font-weight: 700; }
+    .ln { display: inline-block; border-bottom: 1px solid #000; min-width: 120px; padding: 0 4px; font-weight: 600; }
+    .sec { font-weight: 700; margin: 14px 0 6px; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    table.bol th, table.bol td { border: 1px solid #000; text-align: center; padding: 3px 2px; font-size: 9.5px; }
+    table.bol th { background: #f2f2f2; }
+    table.bol td.comp { text-align: left; white-space: nowrap; font-size: 10px; }
+    table.bol td.b { font-weight: 700; }
+    .legenda { font-size: 9px; color: #333; margin-top: 5px; line-height: 1.5; }
+    .resfinal { margin-top: 14px; }
+    .status { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0; }
+    .status span.op { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; }
+    .box { display: inline-block; width: 14px; height: 14px; border: 1px solid #000; text-align: center; line-height: 13px; font-weight: 700; }
+    .obs { margin-top: 10px; }
+    .nota-rodape { font-size: 9.5px; color: #333; margin-top: 12px; line-height: 1.5; }
+    .assin { display: flex; justify-content: space-around; margin-top: 48px; text-align: center; font-size: 10px; }
+    .assin .l { border-top: 1px solid #000; width: 250px; margin: 0 auto 4px; }
+  </style></head><body>
+    <div class="bcab">
+      <img src="logo-porto-seguro.jpg" alt="Prefeitura de Porto Seguro">
+      <div class="t"><b>Prefeitura Municipal de Porto Seguro</b><br>Secretaria Municipal de Educação, Cultura e Patrimônio Histórico</div>
+    </div>
+    <h1>BOLETIM ESCOLAR</h1>
+
+    <div class="campo"><b>Unidade escolar:</b> <span class="ln" style="min-width:420px">${esc(a.escola)}</span></div>
+    <div class="campo"><b>Município / UF:</b> <span class="ln">Porto Seguro - BA</span> &nbsp; <b>Ano letivo:</b> <span class="ln" style="min-width:80px">${esc(a.anoLetivo)}</span></div>
+    <div class="campo"><b>Aluno(a):</b> <span class="ln" style="min-width:460px">${esc(a.nome)}</span></div>
+    <div class="campo"><b>Matrícula:</b> <span class="ln">${matricula}</span> &nbsp; <b>Ano/Série:</b> <span class="ln" style="min-width:70px">${esc(a.ano_ensino)}</span> &nbsp; <b>Turma:</b> <span class="ln" style="min-width:80px">${esc(a.turma)}</span> &nbsp; <b>Turno:</b> <span class="ln" style="min-width:90px">${esc(a.turno)}</span></div>
+    <div class="campo"><b>Responsável legal:</b> <span class="ln" style="min-width:420px">${esc(respLegal)}</span></div>
+
+    <div class="sec">Registro de rendimento e frequência</div>
+    <table class="bol">
+      <thead>
+        <tr>
+          <th rowspan="2">Componente curricular</th>
+          <th colspan="2">1º bimestre</th><th colspan="2">2º bimestre</th>
+          <th colspan="2">3º bimestre</th><th colspan="2">4º bimestre</th>
+          <th rowspan="2">Recup.<br>final</th><th rowspan="2">Média<br>final</th><th rowspan="2">Result.<br>final</th>
+        </tr>
+        <tr>
+          <th>Nota</th><th>Freq.(%)</th><th>Nota</th><th>Freq.(%)</th>
+          <th>Nota</th><th>Freq.(%)</th><th>Nota</th><th>Freq.(%)</th>
+        </tr>
+      </thead>
+      <tbody>${linhas}</tbody>
+    </table>
+    <div class="legenda">
+      Freq. = frequência percentual no bimestre. Recup. final = nota da recuperação final.<br>
+      Result. final por componente: <b>A</b> = aprovado(a); <b>R</b> = reprovado(a); <b>NA</b> = não se aplica.
+    </div>
+
+    <div class="resfinal">
+      <div class="sec">Resultado final do aluno</div>
+      <div class="status">
+        ${STATUS.map(s => `<span class="op">${box(statusAluno===s)} ${s}</span>`).join('')}
+      </div>
+      <div class="campo"><b>Frequência anual global:</b> <span class="ln" style="min-width:60px">${freqGlobal}%</span> &nbsp; <b>Total de faltas no ano:</b> <span class="ln" style="min-width:60px">${(100-freqGlobal)}</span></div>
+      <div class="campo obs"><b>Observações:</b> <span class="ln" style="min-width:420px"></span></div>
+    </div>
+
+    <div class="nota-rodape">Notas, frequência, recuperação, média e resultado final devem seguir os critérios do regimento escolar. Nos campos não aplicáveis, registrar um traço.</div>
+
+    <div class="campo" style="margin-top:14px"><b>Local e data:</b> <span class="ln">Porto Seguro - BA</span>, <span class="ln" style="min-width:40px"></span> / <span class="ln" style="min-width:40px"></span> / <span class="ln" style="min-width:60px">${esc(a.anoLetivo)}</span></div>
+
+    <div class="assin">
+      <div><div class="l"></div>Diretor(a) — assinatura e carimbo</div>
+      <div><div class="l"></div>Responsável legal — assinatura</div>
+    </div>
+  </body></html>`;
 }
 
 // ---------- ATA DE RESULTADO FINAL ----------
