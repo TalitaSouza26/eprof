@@ -36,6 +36,8 @@
     .doc-card:hover { border-color: #ED6939; box-shadow: 0 6px 18px rgba(237,105,57,.10); }
     .doc-card.soon { cursor: default; opacity: .6; }
     .doc-card.soon:hover { border-color: #E4E8EE; box-shadow: none; }
+    .doc-card.locked { opacity: .5; cursor: default; }
+    .doc-card.locked:hover { border-color: #E4E8EE; box-shadow: none; }
     .doc-ic { width: 46px; height: 46px; border-radius: 12px; background: #FDEEE8; color: #ED6939; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .doc-ic svg { width: 24px; height: 24px; }
     .doc-card-body { flex: 1; min-width: 0; }
@@ -271,6 +273,7 @@ function initDocs() {
   sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>';
   sa.disabled = true;
   renderDocGrid();
+  atualizarCards();
 }
 function preencherAlunos() {
   const sa = document.getElementById('selAluno');
@@ -278,14 +281,22 @@ function preencherAlunos() {
   sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>' +
     TURMAS[turmaSel].alunos.map((a, i) => `<option value="${i}">${a.nome}</option>`).join('');
 }
-function selecionarTurma(i) { turmaSel = +i; alunoSel = -1; preencherAlunos(); }
-function selecionarAluno(i) { alunoSel = +i; }
+function selecionarTurma(i) { turmaSel = +i; alunoSel = -1; preencherAlunos(); atualizarCards(); }
+function selecionarAluno(i) { alunoSel = +i; atualizarCards(); }
 function redefinirFiltro() {
   turmaSel = -1; alunoSel = -1;
   document.getElementById('selTurma').value = '';
   const sa = document.getElementById('selAluno');
   sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>';
   sa.disabled = true;
+  atualizarCards();
+}
+function atualizarCards() {
+  const travado = turmaSel < 0 || alunoSel < 0;
+  document.querySelectorAll('.doc-card').forEach(c => {
+    if (c.classList.contains('soon')) return;
+    c.classList.toggle('locked', travado);
+  });
 }
 
 function renderDocGrid() {
