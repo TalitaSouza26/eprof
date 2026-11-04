@@ -347,25 +347,10 @@ function boletimHTML() {
   const resp = (a.filiacao || '').split(' e ');
   const respLegal = resp[1] || resp[0] || '';
   let hh = 0; for (const c of a.nome) hh = (hh*31 + c.charCodeAt(0)) % 90000000; const matricula = 20000000 + hh;
-  const nota = (ci, bi) => 6 + ((ci*2 + bi*3 + alunoSel) % 5);        // 6..10
-  const freq = (ci, bi) => 86 + ((ci + bi*2 + alunoSel) % 14);        // 86..99
-  const fmt = v => Number(v).toFixed(1).replace('.', ',');
   const STATUS = ['Aprovado','Reprovado','Desistente','Transferido','Aprovado pelo Conselho','Reprovado pelo Conselho'];
-  // média global p/ definir status
-  let somaMedias = 0;
-  const linhas = COMPS.map((comp, ci) => {
-    const cells = [0,1,2].map(bi => `<td>${fmt(nota(ci,bi))}</td><td>${freq(ci,bi)}</td>`).join('');
-    const media = (nota(ci,0)+nota(ci,1)+nota(ci,2))/3;
-    somaMedias += media;
-    return `<tr><td class="comp">${esc(comp)}</td>${cells}</tr>`;
-  }).join('');
-  const mediaGeral = somaMedias / COMPS.length;
-  // status do aluno (exemplo): maioria Aprovado; variações por índice
-  let statusAluno = mediaGeral >= 6 ? 'Aprovado' : 'Reprovado';
-  if (alunoSel === 1) statusAluno = 'Aprovado pelo Conselho';
-  if (alunoSel === 2) statusAluno = 'Transferido';
-  const freqGlobal = 86 + (alunoSel % 12);
-  const box = marcado => `<span class="box">${marcado ? 'X' : ''}</span>`;
+  const box = () => `<span class="box"></span>`;
+  // Tabela em branco: todos os bimestres + Recup./Média/Result. final, sem preencher
+  const linhas = COMPS.map(comp => `<tr><td class="comp">${esc(comp)}</td>${'<td></td>'.repeat(11)}</tr>`).join('');
 
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Boletim Escolar - ${esc(a.nome)}</title>
   <style>
@@ -414,25 +399,27 @@ function boletimHTML() {
         <tr>
           <th rowspan="2">Componente curricular</th>
           <th colspan="2">1º bimestre</th><th colspan="2">2º bimestre</th>
-          <th colspan="2">3º bimestre</th>
+          <th colspan="2">3º bimestre</th><th colspan="2">4º bimestre</th>
+          <th rowspan="2">Recup.<br>final</th><th rowspan="2">Média<br>final</th><th rowspan="2">Result.<br>final</th>
         </tr>
         <tr>
           <th>Nota</th><th>Freq.(%)</th><th>Nota</th><th>Freq.(%)</th>
-          <th>Nota</th><th>Freq.(%)</th>
+          <th>Nota</th><th>Freq.(%)</th><th>Nota</th><th>Freq.(%)</th>
         </tr>
       </thead>
       <tbody>${linhas}</tbody>
     </table>
     <div class="legenda">
-      Freq. = frequência percentual no bimestre. (Lançamento parcial — até o 3º bimestre.)
+      Freq. = frequência percentual no bimestre. Recup. final = nota da recuperação final.<br>
+      Result. final por componente: <b>A</b> = aprovado(a); <b>R</b> = reprovado(a); <b>NA</b> = não se aplica.
     </div>
 
     <div class="resfinal">
       <div class="sec">Resultado final do aluno</div>
       <div class="status">
-        ${STATUS.map(s => `<span class="op">${box(statusAluno===s)} ${s}</span>`).join('')}
+        ${STATUS.map(s => `<span class="op">${box()} ${s}</span>`).join('')}
       </div>
-      <div class="campo"><b>Frequência anual global:</b> <span class="ln" style="min-width:60px">${freqGlobal}%</span> &nbsp; <b>Total de faltas no ano:</b> <span class="ln" style="min-width:60px">${(100-freqGlobal)}</span></div>
+      <div class="campo"><b>Frequência anual global:</b> <span class="ln" style="min-width:60px"></span> % &nbsp; <b>Total de faltas no ano:</b> <span class="ln" style="min-width:60px"></span></div>
       <div class="campo obs"><b>Observações:</b> <span class="ln" style="min-width:420px"></span></div>
     </div>
 
