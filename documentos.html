@@ -240,7 +240,7 @@ const DOCS = [
   { id:'declaracao', nome:'Declaração Geral', desc:'Vaga, transferência, escolaridade ou conclusão.', ativo:true },
   { id:'historico',  nome:'Histórico Escolar', desc:'Registro acadêmico completo (Certificado de Transferência).', ativo:true },
   { id:'boletim',    nome:'Boletim', desc:'Notas por bimestre, frequência e situação final.', ativo:false },
-  { id:'atas',       nome:'Atas de Resultados finais', desc:'Resultados finais da turma por aluno no ano letivo.', ativo:false },
+  { id:'atas',       nome:'Atas de Resultados finais', desc:'Resultados finais da turma por aluno no ano letivo.', ativo:true },
 ];
 
 const TIPOS_DECL = [
@@ -317,6 +317,154 @@ function abrirDoc(id) {
   if (turmaSel < 0 || alunoSel < 0) { alert('Selecione a turma e o aluno primeiro.'); return; }
   if (id === 'declaracao') abrirDecl();
   else if (id === 'historico') abrirHistorico();
+  else if (id === 'atas') abrirAta();
+}
+
+// ---------- ATA DE RESULTADO FINAL ----------
+function abrirAta() {
+  tipoSel = 'ata';
+  document.getElementById('prevTitle').textContent = 'Pré-visualização — Ata de Resultado Final';
+  const fr = document.getElementById('prevFrame');
+  fr.removeAttribute('src');
+  fr.srcdoc = ataHTML();
+  document.getElementById('modalPrev').classList.remove('hidden');
+}
+
+function ataHTML() {
+  const t = TURMAS[turmaSel];
+  const alunos = t.alunos;
+  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const COMPS = ['Língua Portuguesa','Educação Física','Arte','Matemática','Ciências','História','Geografia','Ensino Religioso'];
+  const RACAS = ['Parda','Preta','Branca','Indígena'];
+  const genero = i => (i % 2 === 0 ? 'F' : 'M');
+  const raca = i => RACAS[i % RACAS.length];
+  const nota = (ai, ci) => 6 + ((ai * 3 + ci * 2) % 5); // 6..10 (exemplo)
+  const resultadoDe = (ai) => {
+    if (ai === 2) return 'Transferido';
+    if (ai === 4) return 'Aprovado pelo Conselho';
+    if (ai === 6) return 'Reprovado';
+    if (ai === 8) return 'Desistente';
+    if (ai === 10) return 'Reprovado pelo Conselho';
+    return 'Aprovado';
+  };
+  // linhas de alunos (completa até 40 linhas, como o modelo)
+  const TOTAL_LINHAS = Math.max(40, alunos.length);
+  let rows = '';
+  for (let i = 0; i < TOTAL_LINHAS; i++) {
+    const a = alunos[i];
+    if (a) {
+      const notasTd = COMPS.map((_, ci) => `<td>${nota(i, ci).toFixed(1).replace('.', ',')}</td>`).join('');
+      rows += `<tr><td class="num">${i+1}</td><td class="nome">${esc(a.nome)}</td><td>${esc(a.nasc)}</td><td>${genero(i)}</td><td>${esc(raca(i))}</td>${notasTd}<td class="res">${resultadoDe(i)}</td></tr>`;
+    } else {
+      rows += `<tr><td class="num">${i+1}</td><td></td><td></td><td></td><td></td>${'<td></td>'.repeat(COMPS.length)}<td></td></tr>`;
+    }
+  }
+  // fluxo de rendimento (contagem real a partir dos resultados)
+  const res = alunos.map((_, i) => resultadoDe(i));
+  const cont = v => res.filter(x => x === v).length;
+  const aprov = cont('Aprovado') + cont('Aprovado pelo Conselho');
+  const reprov = cont('Reprovado') + cont('Reprovado pelo Conselho');
+  const desist = cont('Desistente'), transf = cont('Transferido');
+  const matIni = alunos.length, matFin = alunos.length - desist - transf;
+  // total raça/cor
+  const contRaca = nome => alunos.filter((_, i) => raca(i) === nome).length;
+
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ata de Resultado Final - ${esc(t.nome)}</title>
+  <style>
+    @page { size: A4 landscape; margin: 8mm; }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 9.5px; margin: 8mm; }
+    .acab { display: flex; align-items: center; gap: 12px; justify-content: center; text-align: center; }
+    .acab img { height: 50px; }
+    .acab .tit { line-height: 1.3; }
+    .acab .tit b { font-size: 12px; }
+    .faixa { display: grid; grid-template-columns: 1fr 1.4fr 1fr; border: 1px solid #000; margin-top: 8px; font-weight: 700; text-align: center; }
+    .faixa div { border-right: 1px solid #000; padding: 4px; }
+    .faixa div:last-child { border-right: none; }
+    table { width: 100%; border-collapse: collapse; }
+    .id td { border: 1px solid #000; padding: 3px 5px; font-size: 9.5px; }
+    .id .lbl { font-weight: 700; background: #f2f2f2; white-space: nowrap; }
+    .sec { font-weight: 700; background: #e8e8e8; border: 1px solid #000; padding: 4px 6px; margin-top: 8px; }
+    table.grade th, table.grade td { border: 1px solid #000; text-align: center; padding: 2px 3px; font-size: 8.5px; }
+    table.grade th { background: #f2f2f2; }
+    table.grade td.nome { text-align: left; white-space: nowrap; }
+    table.grade td.num { width: 20px; }
+    table.grade td.res { font-weight: 700; white-space: nowrap; }
+    table.grade .vert { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 8px; height: 90px; }
+    .leg { display: flex; gap: 18px; flex-wrap: wrap; font-size: 8.5px; margin: 6px 0; }
+    .leg b { font-weight: 700; }
+    .mini th, .mini td { border: 1px solid #000; padding: 3px 5px; text-align: center; font-size: 9px; }
+    .mini th { background: #f2f2f2; }
+    .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+    .assin { display: flex; justify-content: space-around; margin-top: 50px; text-align: center; }
+    .assin .ln { border-top: 1px solid #000; width: 240px; margin: 0 auto 4px; }
+    .enc { margin-top: 14px; font-size: 9.5px; line-height: 1.6; text-align: justify; }
+    h2 { font-size: 11px; text-align: center; margin: 2px 0; }
+  </style></head><body>
+    <div class="acab">
+      <img src="logo-porto-seguro.jpg" alt="Prefeitura de Porto Seguro">
+      <div class="tit"><b>Prefeitura Municipal de Porto Seguro</b><br>Estado da Bahia<br>Secretaria Municipal de Educação, Cultura e Patrimônio Histórico</div>
+    </div>
+    <div class="faixa"><div>ATA DE RESULTADO FINAL</div><div>ENSINO FUNDAMENTAL ANOS INICIAIS</div><div>SEDE / URBANO</div></div>
+
+    <table class="id" style="margin-top:8px">
+      <tr><td class="lbl">UNIDADE ESCOLAR</td><td>${esc(t.escola)}</td><td class="lbl">CÓDIGO INEP</td><td>29123456</td></tr>
+      <tr><td class="lbl">ENDEREÇO</td><td>Rua Pero Vaz de Caminha, Centro</td><td class="lbl">CEP</td><td>45.810-000</td></tr>
+      <tr><td class="lbl">GESTOR/A</td><td>Andreia Souza</td><td class="lbl">LOCALIZAÇÃO</td><td>Urbana</td></tr>
+      <tr><td class="lbl">ANO/SÉRIE</td><td>${esc(t.ano_ensino)} ano</td><td class="lbl">TURMA</td><td>${esc(t.nome)}</td></tr>
+      <tr><td class="lbl">TURNO</td><td>${esc(t.turno)}</td><td class="lbl">ANO</td><td>${esc(t.anoLetivo)}</td></tr>
+    </table>
+
+    <div class="sec">COMPONENTES CURRICULARES — BASE NACIONAL COMUM CURRICULAR</div>
+    <table class="grade">
+      <thead>
+        <tr>
+          <th rowspan="2" class="num">Nº</th><th rowspan="2">NOME DO ESTUDANTE</th>
+          <th rowspan="2">DATA NASC.</th><th rowspan="2">GÊN.**</th><th rowspan="2">RAÇA/COR</th>
+          <th colspan="${COMPS.length}">NOTAS</th><th rowspan="2">RESULTADO*</th>
+        </tr>
+        <tr>${COMPS.map(c => `<th><div class="vert">${esc(c)}</div></th>`).join('')}</tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+
+    <div class="leg">
+      <span><b>*DOS RESULTADOS:</b> Aprovado · Reprovado · Desistente · Transferido · Aprovado pelo Conselho · Reprovado pelo Conselho</span>
+      <span><b>**GÊNERO:</b> F = Feminino · M = Masculino</span>
+    </div>
+
+    <div class="cols2">
+      <div>
+        <div class="sec">FLUXO DE RENDIMENTO</div>
+        <table class="mini" style="width:100%">
+          <tr><th>Mat. Inicial</th><th>Mat. Final</th><th>Aprovados</th><th>Reprovados</th><th>Desistentes</th><th>Transferidos</th></tr>
+          <tr><td>${matIni}</td><td>${matFin}</td><td>${aprov}</td><td>${reprov}</td><td>${desist}</td><td>${transf}</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="sec">TOTAL — QUESITO RAÇA/COR</div>
+        <table class="mini" style="width:100%">
+          <tr><th>Preta</th><th>Parda</th><th>Branca</th><th>Indígena</th><th>Amarela</th><th>Não decl.</th></tr>
+          <tr><td>${contRaca('Preta')}</td><td>${contRaca('Parda')}</td><td>${contRaca('Branca')}</td><td>${contRaca('Indígena')}</td><td>0</td><td>0</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="sec">DOCENTES POR COMPONENTE</div>
+    <table class="mini" style="width:100%">
+      <tr><th style="width:32%">COMPONENTE</th><th>DATA INICIAL</th><th>DATA FINAL</th><th style="width:40%">DOCENTE</th></tr>
+      ${COMPS.map(c => `<tr><td style="text-align:left">${esc(c)}</td><td></td><td></td><td></td></tr>`).join('')}
+    </table>
+
+    <div class="enc">
+      Aos ______ (____) dias do mês de ________________ do ano de ${esc(t.anoLetivo)}, terminou-se o processo de apuração das notas finais dos/as estudantes do ${esc(t.ano_ensino)} ano, Turma ${esc(t.nome)} do Ensino Fundamental Anos Iniciais, turno ${esc(t.turno)}, com os resultados supracitados. E para constar, eu, Secretário(a) Escolar, lavrei a presente ata que vai assinada por mim e pelo(a) Diretor(a) da Unidade de Ensino.
+      <br><br>Porto Seguro - BA, ______ de ________________ de ${esc(t.anoLetivo)}.
+    </div>
+    <div class="assin">
+      <div><div class="ln"></div>Diretor(a)</div>
+      <div><div class="ln"></div>Secretário(a)</div>
+    </div>
+  </body></html>`;
 }
 
 // ---------- HISTÓRICO ESCOLAR ----------
