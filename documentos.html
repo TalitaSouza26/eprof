@@ -353,6 +353,7 @@ function historicoHTML() {
     .hcab { display: flex; align-items: center; gap: 12px; text-align: center; }
     .hcab .bras { width: 46px; height: 46px; border-radius: 50%; border: 1px solid #0a7d2c; display:flex; align-items:center; justify-content:center; color:#0a7d2c; font-weight:700; font-size:9px; text-align:center; line-height:1.05; flex-shrink:0; }
     .hcab .bras.az { border-color:#1a3e8c; color:#1a3e8c; }
+    .hcab .hlogo { height: 52px; width: auto; flex-shrink: 0; }
     .hcab .tit { flex: 1; line-height: 1.35; }
     .hcab .tit b { font-size: 12px; }
     .hcab .tit .ct { font-size: 13px; font-weight: 700; text-decoration: underline; }
@@ -383,7 +384,7 @@ function historicoHTML() {
 
     <!-- FRENTE -->
     <div class="hcab">
-      <div class="bras">PORTO<br>SEGURO</div>
+      <img src="logo-porto-seguro.jpg" class="hlogo" alt="Prefeitura Municipal de Porto Seguro">
       <div class="tit">
         <b>PREFEITURA MUNICIPAL DE PORTO SEGURO</b><br>
         SECRETARIA MUNICIPAL DE EDUCAÇÃO<br>
@@ -501,8 +502,9 @@ function declaracaoHTML() {
     * { box-sizing: border-box; }
     body { font-family: 'Times New Roman', serif; color: #000; margin: 26mm 24mm; font-size: 14px; line-height: 2; }
     .cab { text-align: center; line-height: 1.4; }
+    .cab .logo-ps { height: 74px; width: auto; display: inline-block; }
     .cab b { font-size: 15px; }
-    .cab .s { font-size: 13px; }
+    .cab .s { font-size: 13px; display: block; margin-top: 4px; }
     hr { border: none; border-top: 1px solid #000; margin: 8px 0 20px; }
     .data-top { font-size: 13px; margin-bottom: 20px; }
     h1 { text-align: center; font-size: 16px; font-weight: bold; margin: 14px 0 22px; line-height: 1.3; }
@@ -518,7 +520,7 @@ function declaracaoHTML() {
     @media print { body { margin: 22mm; } }
   </style></head><body>
     <div class="cab">
-      <b>Prefeitura Municipal de Porto Seguro</b><br>
+      <img src="logo-porto-seguro.jpg" class="logo-ps" alt="Prefeitura Municipal de Porto Seguro">
       <span class="s">Secretaria Municipal de Educação</span>
     </div>
     <hr>
