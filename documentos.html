@@ -349,8 +349,14 @@ function boletimHTML() {
   let hh = 0; for (const c of a.nome) hh = (hh*31 + c.charCodeAt(0)) % 90000000; const matricula = 20000000 + hh;
   const STATUS = ['Aprovado','Reprovado','Desistente','Transferido','Aprovado pelo Conselho','Reprovado pelo Conselho'];
   const box = () => `<span class="box"></span>`;
-  // Tabela em branco: todos os bimestres + Recup./Média/Result. final, sem preencher
-  const linhas = COMPS.map(comp => `<tr><td class="comp">${esc(comp)}</td>${'<td></td>'.repeat(11)}</tr>`).join('');
+  const nota = (ci, bi) => 6 + ((ci*2 + bi*3 + alunoSel) % 5);   // 6..10 (exemplo)
+  const freq = (ci, bi) => 86 + ((ci + bi*2 + alunoSel) % 14);   // 86..99
+  const fmt = v => Number(v).toFixed(1).replace('.', ',');
+  // Preenche 1º, 2º e 3º bimestre; 4º bim, Recup./Média/Result. final ficam em branco
+  const linhas = COMPS.map((comp, ci) => {
+    const preench = [0,1,2].map(bi => `<td>${fmt(nota(ci,bi))}</td><td>${freq(ci,bi)}</td>`).join('');
+    return `<tr><td class="comp">${esc(comp)}</td>${preench}<td></td><td></td><td></td><td></td><td></td></tr>`;
+  }).join('');
 
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Boletim Escolar - ${esc(a.nome)}</title>
   <style>
