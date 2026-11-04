@@ -347,8 +347,6 @@ function boletimHTML() {
   const resp = (a.filiacao || '').split(' e ');
   const respLegal = resp[1] || resp[0] || '';
   let hh = 0; for (const c of a.nome) hh = (hh*31 + c.charCodeAt(0)) % 90000000; const matricula = 20000000 + hh;
-  const STATUS = ['Aprovado','Reprovado','Desistente','Transferido','Aprovado pelo Conselho','Reprovado pelo Conselho'];
-  const box = () => `<span class="box"></span>`;
   const nota = (ci, bi) => 6 + ((ci*2 + bi*3 + alunoSel) % 5);   // 6..10 (exemplo)
   const freq = (ci, bi) => 86 + ((ci + bi*2 + alunoSel) % 14);   // 86..99
   const fmt = v => Number(v).toFixed(1).replace('.', ',');
@@ -417,14 +415,11 @@ function boletimHTML() {
     </table>
     <div class="legenda">
       Freq. = frequência percentual no bimestre. Recup. final = nota da recuperação final.<br>
-      Result. final por componente: <b>A</b> = aprovado(a); <b>R</b> = reprovado(a).
+      Result. final por componente: <b>A</b> = aprovado(a); <b>R</b> = reprovado(a); <b>D</b> = desistente; <b>T</b> = transferido; <b>AC</b> = aprovado pelo conselho; <b>RC</b> = reprovado pelo conselho.
     </div>
 
     <div class="resfinal">
       <div class="sec">Resultado final do aluno</div>
-      <div class="status">
-        ${STATUS.map(s => `<span class="op">${box()} ${s}</span>`).join('')}
-      </div>
       <div class="campo"><b>Frequência anual global:</b> <span class="ln" style="min-width:60px"></span> % &nbsp; <b>Total de faltas no ano:</b> <span class="ln" style="min-width:60px"></span></div>
       <div class="campo obs"><b>Observações:</b> <span class="ln" style="min-width:420px"></span></div>
     </div>
