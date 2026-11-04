@@ -354,11 +354,10 @@ function boletimHTML() {
   // média global p/ definir status
   let somaMedias = 0;
   const linhas = COMPS.map((comp, ci) => {
-    const cells = [0,1,2,3].map(bi => `<td>${fmt(nota(ci,bi))}</td><td>${freq(ci,bi)}</td>`).join('');
-    const media = (nota(ci,0)+nota(ci,1)+nota(ci,2)+nota(ci,3))/4;
+    const cells = [0,1,2].map(bi => `<td>${fmt(nota(ci,bi))}</td><td>${freq(ci,bi)}</td>`).join('');
+    const media = (nota(ci,0)+nota(ci,1)+nota(ci,2))/3;
     somaMedias += media;
-    const res = media >= 6 ? 'A' : 'R';
-    return `<tr><td class="comp">${esc(comp)}</td>${cells}<td>—</td><td class="b">${fmt(media)}</td><td class="b">${res}</td></tr>`;
+    return `<tr><td class="comp">${esc(comp)}</td>${cells}</tr>`;
   }).join('');
   const mediaGeral = somaMedias / COMPS.length;
   // status do aluno (exemplo): maioria Aprovado; variações por índice
@@ -415,19 +414,17 @@ function boletimHTML() {
         <tr>
           <th rowspan="2">Componente curricular</th>
           <th colspan="2">1º bimestre</th><th colspan="2">2º bimestre</th>
-          <th colspan="2">3º bimestre</th><th colspan="2">4º bimestre</th>
-          <th rowspan="2">Recup.<br>final</th><th rowspan="2">Média<br>final</th><th rowspan="2">Result.<br>final</th>
+          <th colspan="2">3º bimestre</th>
         </tr>
         <tr>
           <th>Nota</th><th>Freq.(%)</th><th>Nota</th><th>Freq.(%)</th>
-          <th>Nota</th><th>Freq.(%)</th><th>Nota</th><th>Freq.(%)</th>
+          <th>Nota</th><th>Freq.(%)</th>
         </tr>
       </thead>
       <tbody>${linhas}</tbody>
     </table>
     <div class="legenda">
-      Freq. = frequência percentual no bimestre. Recup. final = nota da recuperação final.<br>
-      Result. final por componente: <b>A</b> = aprovado(a); <b>R</b> = reprovado(a); <b>NA</b> = não se aplica.
+      Freq. = frequência percentual no bimestre. (Lançamento parcial — até o 3º bimestre.)
     </div>
 
     <div class="resfinal">
