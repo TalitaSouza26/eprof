@@ -33,8 +33,8 @@
 
     .doc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     @media (max-width: 640px) { .doc-grid { grid-template-columns: 1fr; } }
-    .doc-card { position: relative; display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid #E4E8EE; border-radius: 14px; padding: 16px 18px; cursor: pointer; transition: .15s; overflow: hidden; }
-    .doc-mascote { width: 92px; height: auto; flex-shrink: 0; align-self: flex-end; margin: -16px -10px -16px 0; }
+    .doc-card { position: relative; display: flex; align-items: center; gap: 16px; background: #fff; border: 1px solid #E4E8EE; border-radius: 16px; padding: 26px 26px; min-height: 170px; cursor: pointer; transition: .15s; overflow: hidden; }
+    .doc-mascote { width: 140px; height: auto; flex-shrink: 0; align-self: flex-end; margin: -26px -16px -26px 0; }
     .doc-card:hover { border-color: #ED6939; box-shadow: 0 6px 18px rgba(237,105,57,.10); }
     .doc-card.soon { cursor: default; opacity: .6; }
     .doc-card.soon:hover { border-color: #E4E8EE; box-shadow: none; }
@@ -43,9 +43,9 @@
     .doc-ic { width: 46px; height: 46px; border-radius: 12px; background: #FDEEE8; color: #ED6939; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .doc-ic svg { width: 24px; height: 24px; }
     .doc-card-body { flex: 1; min-width: 0; }
-    .doc-card-name { font-size: 15px; font-weight: 700; color: #12223A; margin-bottom: 3px; }
+    .doc-card-name { font-size: 19px; font-weight: 800; color: #12223A; margin-bottom: 6px; }
     .doc-card.soon .doc-card-name { padding-right: 78px; }
-    .doc-card-desc { font-size: 12.5px; color: #7A828F; line-height: 1.45; }
+    .doc-card-desc { font-size: 13.5px; color: #7A828F; line-height: 1.5; }
     .doc-soon-tag { position: absolute; top: 12px; right: 12px; background: #EEF1F5; color: #8A94A6; font-size: 10px; font-weight: 800; letter-spacing: .04em; padding: 3px 8px; border-radius: 20px; }
 
     /* MODAL */
