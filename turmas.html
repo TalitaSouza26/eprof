@@ -349,6 +349,8 @@
     .nt-cell { text-align:center; font-size:13px; color:#444; }
     .nt-bcell { text-align:center; font-size:13px; font-weight:600; }
     .nt-bcell.ok { color:#1e4db7; } .nt-bcell.low { color:#e05050; } .nt-bcell.empty { color:#c7ccd4; font-weight:400; }
+    .nt-result { width:100%; padding:7px 6px; border:1.5px solid #e2e5ea; border-radius:8px; font-size:12px; color:#333; background:#fff; cursor:pointer; outline:none; transition:border-color .12s; }
+    .nt-result:focus { border-color:#f26522; }
     /* ===== Responsivo (telas pequenas) ===== */
     @media (max-width: 600px) {
       .modal { padding: 18px; border-radius: 14px; max-height: 92vh; }
@@ -962,6 +964,7 @@ let currentTab = 'inicio';
 let modalTab = 'regular';
 let currentAluno = null;
 let fichaRespostas = {};
+let resultadoAluno = {}; // resultado final escolhido pelo secretário (idx -> status)
 
 // ============ INIT ============
 selectTurma(TURMAS_REGULAR[5]); // default: 2° ano A - Ed. Física
@@ -970,6 +973,7 @@ selectTurma(TURMAS_REGULAR[5]); // default: 2° ano A - Ed. Física
 function selectTurma(turma) {
   currentTurma = turma;
   currentAluno = null;
+  resultadoAluno = {};
   document.getElementById('detalheBar').style.display = 'none';
   document.getElementById('infoBar').style.display = '';
   document.getElementById('tabsBar').style.display = '';
@@ -1365,6 +1369,8 @@ let notasState = null;
 let notasLancado = { 1:true, 2:true, 3:true, 4:true };
 let notasView = 'geral';   // 'geral' ou 1..4
 let notasBimSel = 1;
+const RESULTADOS_ALUNO = ['Aprovado','Reprovado','Desistente','Transferido','Aprovado pelo Conselho','Reprovado pelo Conselho'];
+function setResultadoAluno(i, v) { resultadoAluno[i] = v; }
 
 const fmtN = v => Number(v).toFixed(2).replace('.', ',');
 function qualBim(n){ return n.ap+n.pi+n.pt+n.pa; }        // qualitativo (máx 6)
@@ -1401,7 +1407,7 @@ function renderNotas(el){
 }
 
 function notasGeralHTML(){
-  const g = '1.8fr repeat(4,1fr) 1.1fr 1fr';
+  const g = '1.7fr repeat(4,0.85fr) 1fr 0.8fr 1.5fr';
   const rows = ALUNOS_MOCK.map((a, idx) => {
     const cells = [1,2,3,4].map(b => {
       if (!notasLancado[b]) return `<div class="nt-bcell empty">—</div>`;
@@ -1415,9 +1421,14 @@ function notasGeralHTML(){
     const recFinalCell = recFinalAberta(idx)
       ? `<input class="nt-inp rec" id="recfinal-${idx}" type="text" inputmode="decimal" placeholder="0,00" value="${notasState[idx].recFinal>0?fmtN(notasState[idx].recFinal):''}" oninput="onRecFinalInput(${idx},this)" onchange="this.value=notasState[${idx}].recFinal>0?fmtN(notasState[${idx}].recFinal):''">`
       : `<div class="nt-cell">—</div>`;
+    const rsel = resultadoAluno[idx] || '';
+    const resultCell = `<select class="nt-result" onchange="setResultadoAluno(${idx}, this.value)">
+      <option value="">—</option>
+      ${RESULTADOS_ALUNO.map(s => `<option ${rsel===s?'selected':''}>${s}</option>`).join('')}
+    </select>`;
     return `<div class="nt-row" style="grid-template-columns:${g};">
       <div class="nt-aluno"><div class="nt-av">${iniciaisNt(a.nome)}</div>${a.nome}</div>
-      ${cells}${mfCell}${recFinalCell}
+      ${cells}${mfCell}${recFinalCell}${resultCell}
     </div>`;
   }).join('');
   return `<div class="notas-wrap">
@@ -1440,6 +1451,7 @@ function notasGeralHTML(){
         <div class="nt-ch"><span class="nome">IV Bim.</span></div>
         <div class="nt-ch"><span class="nome">Média Final</span></div>
         <div class="nt-ch"><span class="nome">Rec Final</span></div>
+        <div class="nt-ch"><span class="nome">Resultado</span></div>
       </div>
       ${rows}
     </div></div>
