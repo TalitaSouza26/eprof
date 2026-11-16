@@ -290,11 +290,15 @@ function redefinirFiltro() {
   atualizarCards();
 }
 function atualizarCards() {
+  const turmaInfantil = turmaSel >= 0 && TURMAS[turmaSel].ensino === 'Educação Infantil';
   document.querySelectorAll('.doc-card').forEach(c => {
     if (c.classList.contains('soon')) return;
     const id = c.getAttribute('data-id');
     // Ata é documento da turma: libera só com a turma; os demais exigem turma + aluno
-    const travado = id === 'atas' ? (turmaSel < 0) : (turmaSel < 0 || alunoSel < 0);
+    // Histórico Escolar não se aplica à Educação Infantil
+    const travado = id === 'atas' ? (turmaSel < 0)
+                  : id === 'historico' ? (turmaSel < 0 || alunoSel < 0 || turmaInfantil)
+                  : (turmaSel < 0 || alunoSel < 0);
     c.classList.toggle('locked', travado);
   });
 }
@@ -318,6 +322,9 @@ function abrirDoc(id) {
     return;
   }
   if (turmaSel < 0 || alunoSel < 0) { alert('Selecione a turma e o aluno primeiro.'); return; }
+  if (id === 'historico' && TURMAS[turmaSel].ensino === 'Educação Infantil') {
+    alert('Histórico Escolar não se aplica à Educação Infantil.'); return;
+  }
   if (id === 'declaracao') abrirDecl();
   else if (id === 'historico') abrirHistorico();
   else if (id === 'boletim') abrirBoletim();
