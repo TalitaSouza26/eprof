@@ -294,11 +294,14 @@ function atualizarCards() {
   document.querySelectorAll('.doc-card').forEach(c => {
     if (c.classList.contains('soon')) return;
     const id = c.getAttribute('data-id');
-    // Ata é documento da turma: libera só com a turma; os demais exigem turma + aluno
-    // Histórico Escolar não se aplica à Educação Infantil
-    const travado = id === 'atas' ? (turmaSel < 0)
-                  : id === 'historico' ? (turmaSel < 0 || alunoSel < 0 || turmaInfantil)
-                  : (turmaSel < 0 || alunoSel < 0);
+    let travado;
+    if (turmaInfantil) {
+      // Ed. Infantil: só a Declaração Geral (não há notas/disciplinas — avaliação por campos de experiência)
+      travado = id === 'declaracao' ? (alunoSel < 0) : true;
+    } else {
+      // Ata é documento da turma (só turma); os demais exigem turma + aluno
+      travado = id === 'atas' ? (turmaSel < 0) : (turmaSel < 0 || alunoSel < 0);
+    }
     c.classList.toggle('locked', travado);
   });
 }
@@ -316,14 +319,16 @@ function renderDocGrid() {
 }
 
 function abrirDoc(id) {
+  const turmaInfantil = turmaSel >= 0 && TURMAS[turmaSel].ensino === 'Educação Infantil';
   if (id === 'atas') {
     if (turmaSel < 0) { alert('Selecione a turma primeiro.'); return; }
+    if (turmaInfantil) { alert('Para a Educação Infantil, apenas a Declaração Geral está disponível.'); return; }
     abrirAta();
     return;
   }
   if (turmaSel < 0 || alunoSel < 0) { alert('Selecione a turma e o aluno primeiro.'); return; }
-  if (id === 'historico' && TURMAS[turmaSel].ensino === 'Educação Infantil') {
-    alert('Histórico Escolar não se aplica à Educação Infantil.'); return;
+  if (turmaInfantil && id !== 'declaracao') {
+    alert('Para a Educação Infantil, apenas a Declaração Geral está disponível (não há notas/disciplinas).'); return;
   }
   if (id === 'declaracao') abrirDecl();
   else if (id === 'historico') abrirHistorico();
