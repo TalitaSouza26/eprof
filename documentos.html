@@ -177,57 +177,129 @@
 
 <script>
 // ---------- DADOS (mock) ----------
-const ESC_FUND = 'Escola Municipal Ciranda do Saber';
-const ESC_INF  = 'CMEI Estrela do Mar';
+const ESC_FUND  = 'Escola Municipal Ciranda do Saber';
+const ESC_INF   = 'CMEI Estrela do Mar';
+const ESC_CAMPO = 'Escola Municipal do Campo Vale Verde';
+const ESC_IND   = 'Escola Indígena Pataxó Coroa Vermelha';
+const ESC_EJA   = 'Escola Municipal Paulo Freire';
 const TURMAS = [
-  { nome:'CN II', ensino:'Educação Infantil', nivel:'Educação Infantil - CN II', escola:ESC_INF, ano_ensino:'CN II', turno:'Matutino', anoLetivo:'2026', alunos:[
+  { nome:'CN II', ensino:'Educação Infantil', tipoAta:'infantil', nivel:'Educação Infantil - CN II', escola:ESC_INF, ano_ensino:'CN II', turno:'Matutino', anoLetivo:'2026', alunos:[
       { nome:'Helena Prado Teixeira', nasc:'14/09/2023', rg:'--', filiacao:'Victor Prado e Sara Teixeira' },
       { nome:'Gael Moura Santos',     nasc:'27/11/2023', rg:'--', filiacao:'Breno Moura e Carla Santos' },
       { nome:'Lívia Barros Melo',     nasc:'06/02/2023', rg:'--', filiacao:'Alex Barros e Tânia Melo' },
       { nome:'Pietro Lima Rocha',     nasc:'21/04/2023', rg:'--', filiacao:'Davi Lima e Nina Rocha' },
   ]},
-  { nome:'PN I', ensino:'Educação Infantil', nivel:'Educação Infantil - PN I', escola:ESC_INF, ano_ensino:'PN I', turno:'Vespertino', anoLetivo:'2026', alunos:[
+  { nome:'PN I', ensino:'Educação Infantil', tipoAta:'infantil', nivel:'Educação Infantil - PN I', escola:ESC_INF, ano_ensino:'PN I', turno:'Vespertino', anoLetivo:'2026', alunos:[
       { nome:'Isabela Fontes Cruz',  nasc:'03/03/2022', rg:'--', filiacao:'Léo Fontes e Vera Cruz' },
       { nome:'Miguel Araújo Dias',   nasc:'18/08/2022', rg:'--', filiacao:'Caio Araújo e Lara Dias' },
       { nome:'Sophia Vieira Lopes',  nasc:'29/10/2022', rg:'--', filiacao:'Tomás Vieira e Rute Lopes' },
   ]},
-  { nome:'1º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 1º ano', escola:ESC_FUND, ano_ensino:'1º', turno:'Vespertino', anoLetivo:'2026', alunos:[
+  { nome:'1º ano A', ensino:'Fundamental', tipoAta:'ai-sede', nivel:'Ensino Fundamental - 1º ano', escola:ESC_FUND, ano_ensino:'1º', turno:'Vespertino', anoLetivo:'2026', alunos:[
       { nome:'Alice Mendes da Rocha',   nasc:'22/11/2018', rg:'22.556.778-1', filiacao:'Pedro Mendes e Clara Rocha' },
       { nome:'Bento Costa Lima',        nasc:'03/02/2018', rg:'22.610.447-5', filiacao:'André Costa e Júlia Lima' },
       { nome:'Elis Carvalho Dias',      nasc:'17/09/2018', rg:'22.701.889-3', filiacao:'Hugo Carvalho e Nara Dias' },
       { nome:'Enzo Ribeiro Gomes',      nasc:'08/05/2018', rg:'22.744.012-6', filiacao:'Saulo Ribeiro e Paula Gomes' },
       { nome:'Valentina Reis Cunha',    nasc:'30/07/2018', rg:'22.780.556-2', filiacao:'Dino Reis e Mel Cunha' },
   ]},
-  { nome:'1º ano B', ensino:'Fundamental', nivel:'Ensino Fundamental - 1º ano', escola:ESC_FUND, ano_ensino:'1º', turno:'Matutino', anoLetivo:'2026', alunos:[
+  { nome:'1º ano B', ensino:'Fundamental', tipoAta:'ai-sede', nivel:'Ensino Fundamental - 1º ano', escola:ESC_FUND, ano_ensino:'1º', turno:'Matutino', anoLetivo:'2026', alunos:[
       { nome:'Arthur Nogueira Pires', nasc:'12/01/2018', rg:'22.610.998-0', filiacao:'Léo Nogueira e Dani Pires' },
       { nome:'Laura Campos Silva',    nasc:'25/06/2018', rg:'22.655.321-7', filiacao:'Ivo Campos e Sol Silva' },
       { nome:'Heitor Dias Moraes',    nasc:'04/09/2018', rg:'22.712.667-4', filiacao:'Max Dias e Rosa Moraes' },
       { nome:'Cecília Alves Rocha',   nasc:'16/11/2018', rg:'22.790.114-8', filiacao:'Beto Alves e Gal Rocha' },
   ]},
-  { nome:'2º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 2º ano', escola:ESC_FUND, ano_ensino:'2º', turno:'Vespertino', anoLetivo:'2026', alunos:[
+  { nome:'2º ano A', ensino:'Fundamental', tipoAta:'ai-sede', nivel:'Ensino Fundamental - 2º ano', escola:ESC_FUND, ano_ensino:'2º', turno:'Vespertino', anoLetivo:'2026', alunos:[
       { nome:'Letícia Marques de Souza', nasc:'12/03/2017', rg:'20.345.678-9', filiacao:'Marcos Marques e Ana Paula de Souza' },
       { nome:'Joana Soares Pires',       nasc:'28/06/2017', rg:'20.998.112-4', filiacao:'Tiago Soares e Rita Pires' },
       { nome:'João Pedro Alves',         nasc:'09/10/2017', rg:'21.004.556-8', filiacao:'Paulo Alves e Vera Nunes' },
       { nome:'Manuela Freitas Luz',      nasc:'21/02/2017', rg:'21.040.778-3', filiacao:'Erik Freitas e Lia Luz' },
       { nome:'Bernardo Teles Rocha',     nasc:'15/08/2017', rg:'21.077.990-1', filiacao:'Gus Teles e Fê Rocha' },
   ]},
-  { nome:'3º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 3º ano', escola:ESC_FUND, ano_ensino:'3º', turno:'Matutino', anoLetivo:'2026', alunos:[
+  { nome:'3º ano A', ensino:'Fundamental', tipoAta:'ai-sede', nivel:'Ensino Fundamental - 3º ano', escola:ESC_FUND, ano_ensino:'3º', turno:'Matutino', anoLetivo:'2026', alunos:[
       { nome:'Caio Lopes Ferreira',  nasc:'05/08/2016', rg:'21.112.334-0', filiacao:'João Lopes e Marta Ferreira' },
       { nome:'Clóvis Souza Matos',   nasc:'14/04/2016', rg:'21.223.667-2', filiacao:'Luan Souza e Bia Matos' },
       { nome:'Marta Silva Rocha',    nasc:'25/12/2016', rg:'21.330.998-6', filiacao:'Igor Silva e Dora Rocha' },
       { nome:'Antônia Lima Melo',    nasc:'07/03/2016', rg:'21.377.112-9', filiacao:'Rafa Lima e Dê Melo' },
   ]},
-  { nome:'4º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 4º ano', escola:ESC_FUND, ano_ensino:'4º', turno:'Matutino', anoLetivo:'2026', alunos:[
+  { nome:'4º ano A', ensino:'Fundamental', tipoAta:'ai-sede', nivel:'Ensino Fundamental - 4º ano', escola:ESC_FUND, ano_ensino:'4º', turno:'Matutino', anoLetivo:'2026', alunos:[
       { nome:'Davi Brito Nascimento', nasc:'30/01/2015', rg:'19.998.221-7', filiacao:'Rafael Brito e Sandra Nascimento' },
       { nome:'Rodrygo Góes Pinto',    nasc:'11/07/2015', rg:'20.110.443-9', filiacao:'César Góes e Lúcia Pinto' },
       { nome:'Yasmin Correia Dias',   nasc:'22/09/2015', rg:'20.150.667-2', filiacao:'Edu Correia e Liz Dias' },
       { nome:'Gabriel Nunes Rocha',   nasc:'03/12/2015', rg:'20.188.990-5', filiacao:'Tom Nunes e Bel Rocha' },
   ]},
-  { nome:'5º ano A', ensino:'Fundamental', nivel:'Ensino Fundamental - 5º ano', escola:ESC_FUND, ano_ensino:'5º', turno:'Matutino', anoLetivo:'2026', alunos:[
+  { nome:'5º ano A', ensino:'Fundamental', tipoAta:'ai-sede', nivel:'Ensino Fundamental - 5º ano', escola:ESC_FUND, ano_ensino:'5º', turno:'Matutino', anoLetivo:'2026', alunos:[
       { nome:'Lucas Pereira Santos', nasc:'18/02/2014', rg:'19.556.221-4', filiacao:'Nei Pereira e Ká Santos' },
       { nome:'Beatriz Lima Cunha',   nasc:'29/05/2014', rg:'19.600.778-8', filiacao:'Dado Lima e Van Cunha' },
       { nome:'Pedro Henrique Dias',  nasc:'10/10/2014', rg:'19.655.334-1', filiacao:'Zé Dias e Su Oliveira' },
       { nome:'Sarah Teixeira Melo',  nasc:'24/12/2014', rg:'19.700.990-6', filiacao:'Léo Teixeira e Dri Melo' },
+  ]},
+
+  // ---- Anos Finais — Sede ----
+  { nome:'6º ano A', ensino:'Fundamental', tipoAta:'af-sede', nivel:'Ensino Fundamental - 6º ano', escola:ESC_FUND, ano_ensino:'6º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Ana Clara Souza Lima',    nasc:'14/03/2013', rg:'18.556.221-0', filiacao:'Rui Souza e Ia Lima' },
+      { nome:'Felipe Andrade Nunes',    nasc:'22/07/2013', rg:'18.610.447-3', filiacao:'Léo Andrade e Dê Nunes' },
+      { nome:'Giovana Pires Rocha',     nasc:'09/11/2013', rg:'18.701.889-7', filiacao:'Gui Pires e Bel Rocha' },
+      { nome:'Murilo Castro Alves',     nasc:'03/05/2013', rg:'18.744.012-1', filiacao:'Zé Castro e Lu Alves' },
+  ]},
+
+  // ---- Anos Iniciais — Educação do Campo ----
+  { nome:'3º ano — Campo', ensino:'Fundamental', tipoAta:'ai-campo', nivel:'Ensino Fundamental - 3º ano (Campo)', escola:ESC_CAMPO, ano_ensino:'3º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Davi Nascimento Rosa',    nasc:'06/02/2016', rg:'21.330.111-4', filiacao:'Zé Nascimento e Dora Rosa' },
+      { nome:'Maria Eduarda Campos',    nasc:'19/08/2016', rg:'21.377.556-8', filiacao:'Rui Campos e Lia Prado' },
+      { nome:'Thiago Ferreira Mota',    nasc:'28/11/2016', rg:'21.401.889-2', filiacao:'Beto Ferreira e Ná Mota' },
+  ]},
+
+  // ---- Anos Iniciais — Educação Escolar Indígena ----
+  { nome:'4º ano — Indígena', ensino:'Fundamental', tipoAta:'ai-indigena', nivel:'Ensino Fundamental - 4º ano (Indígena Pataxó)', escola:ESC_IND, ano_ensino:'4º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Aruã Pataxó dos Santos',  nasc:'11/04/2015', rg:'20.110.223-6', filiacao:'Itamir Pataxó e Jaciara dos Santos' },
+      { nome:'Potyra Braz Pataxó',      nasc:'23/09/2015', rg:'20.150.667-9', filiacao:'Tacatu Braz e Awa Pataxó' },
+      { nome:'Kaê Ribeiro Pataxó',      nasc:'02/12/2015', rg:'20.188.990-1', filiacao:'Imby Ribeiro e Suã Pataxó' },
+  ]},
+
+  // ---- Anos Finais — Educação do Campo ----
+  { nome:'7º ano — Campo', ensino:'Fundamental', tipoAta:'af-campo', nivel:'Ensino Fundamental - 7º ano (Campo)', escola:ESC_CAMPO, ano_ensino:'7º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Lorena Dias do Vale',     nasc:'15/06/2012', rg:'17.556.221-5', filiacao:'Edu Dias e Val do Vale' },
+      { nome:'Samuel Prado Teixeira',   nasc:'27/10/2012', rg:'17.600.778-2', filiacao:'Léo Prado e Dri Teixeira' },
+      { nome:'Clarice Monteiro Sá',     nasc:'08/03/2012', rg:'17.655.334-9', filiacao:'Gus Monteiro e Bia Sá' },
+  ]},
+
+  // ---- Anos Finais — Educação Escolar Indígena ----
+  { nome:'8º ano — Indígena', ensino:'Fundamental', tipoAta:'af-indigena', nivel:'Ensino Fundamental - 8º ano (Indígena Pataxó)', escola:ESC_IND, ano_ensino:'8º', turno:'Vespertino', anoLetivo:'2026', alunos:[
+      { nome:'Jandira Pataxó Silva',    nasc:'12/05/2011', rg:'16.556.221-7', filiacao:'Awoí Pataxó e Mara Silva' },
+      { nome:'Txai Santana Pataxó',     nasc:'24/09/2011', rg:'16.600.778-4', filiacao:'Pohã Santana e Jaci Pataxó' },
+      { nome:'Suede Rodrigues Pataxó',  nasc:'03/01/2011', rg:'16.655.334-0', filiacao:'Baixinho Rodrigues e Nuhã Pataxó' },
+  ]},
+
+  // ---- EJA — Anos Finais ----
+  { nome:'EJA — Etapa I', ensino:'Fundamental', tipoAta:'eja', nivel:'EJA - Ensino Fundamental (1ª a 3ª etapa)', escola:ESC_EJA, ano_ensino:'1ª etapa', turno:'Noturno', anoLetivo:'2026', alunos:[
+      { nome:'Raimundo Alves Costa',    nasc:'10/07/1988', rg:'09.556.221-3', filiacao:'Manoel Alves e Rita Costa' },
+      { nome:'Jurema Santos Lima',      nasc:'22/02/1979', rg:'08.600.778-1', filiacao:'Pedro Santos e Dina Lima' },
+      { nome:'Edvaldo Pereira Rocha',   nasc:'05/11/1992', rg:'11.655.334-6', filiacao:'Zé Pereira e Lúcia Rocha' },
+  ]},
+
+  // ---- EJA — Indígena ----
+  { nome:'EJA — Indígena', ensino:'Fundamental', tipoAta:'eja-indigena', nivel:'EJA - Educação Escolar Indígena', escola:ESC_IND, ano_ensino:'4ª etapa', turno:'Noturno', anoLetivo:'2026', alunos:[
+      { nome:'Koaí Pataxó Nascimento',  nasc:'18/03/1985', rg:'09.110.223-2', filiacao:'Itajá Pataxó e Maíra Nascimento' },
+      { nome:'Sururu Braz Pataxó',      nasc:'30/08/1990', rg:'10.150.667-5', filiacao:'Ubiratã Braz e Catu Pataxó' },
+  ]},
+
+  // ---- Multisseriada — Campo ----
+  { nome:'Multisseriada — Campo', ensino:'Fundamental', tipoAta:'multi-campo', nivel:'Ensino Fundamental - Multisseriada (Anos Iniciais)', escola:ESC_CAMPO, ano_ensino:'1º ao 5º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Bruna Lopes do Carmo',    nasc:'14/02/2018', rg:'22.556.111-9', filiacao:'Zé Lopes e Du do Carmo' },
+      { nome:'Igor Santana Vale',       nasc:'09/07/2016', rg:'21.556.447-2', filiacao:'Rui Santana e Fê Vale' },
+      { nome:'Nara Prado Mendes',       nasc:'21/10/2014', rg:'19.556.889-3', filiacao:'Léo Prado e Bia Mendes' },
+  ]},
+
+  // ---- Multisseriada — Indígena ----
+  { nome:'Multisseriada — Indígena', ensino:'Fundamental', tipoAta:'multi-indigena', nivel:'Ensino Fundamental - Multisseriada (Indígena Pataxó)', escola:ESC_IND, ano_ensino:'1º ao 5º', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Ywyra Pataxó Dias',       nasc:'06/05/2017', rg:'20.556.223-8', filiacao:'Txator Pataxó e Jaci Dias' },
+      { nome:'Amana Braz Pataxó',       nasc:'17/09/2015', rg:'20.110.667-4', filiacao:'Imbã Braz e Catu Pataxó' },
+  ]},
+
+  // ---- Multi-etapa — Campo (Educação Infantil) ----
+  { nome:'Multi-etapa — Campo', ensino:'Educação Infantil', tipoAta:'multietapa-campo', nivel:'Educação Infantil - Multi-etapa (Campo)', escola:ESC_CAMPO, ano_ensino:'PN I', turno:'Matutino', anoLetivo:'2026', alunos:[
+      { nome:'Benício Rosa do Vale',    nasc:'08/03/2022', rg:'--', filiacao:'Tião Rosa e Lia do Vale' },
+      { nome:'Maitê Campos Prado',      nasc:'19/07/2022', rg:'--', filiacao:'Rui Campos e Dê Prado' },
+      { nome:'Cauã Mota Ferreira',      nasc:'27/11/2022', rg:'--', filiacao:'Zé Mota e Ná Ferreira' },
   ]},
 ];
 
@@ -444,183 +516,136 @@ function boletimHTML() {
   </body></html>`;
 }
 
-// ---------- ATA DE RESULTADO FINAL ----------
+// ---------- ATA DE RESULTADO FINAL (config-driven por etapa/modalidade) ----------
+// Componentes/campos por tipo de ata
+const C_AI_SEDE  = ['Língua Portuguesa','Educação Física','Arte','Matemática','Ciências','História','Geografia','Ensino Religioso'];
+const C_AI_CAMPO = ['Língua Portuguesa','Educação Física','Arte','Matemática','Ciências','História','Geografia','Ensino Religioso','Agroecologia'];
+const C_AI_IND   = ['Língua Portuguesa','Língua Materna — Patxôhã','Educação Física','Arte','Matemática','Ciências','História','Geografia','Ensino Religioso'];
+const C_AF_SEDE  = ['Língua Portuguesa','Língua Inglesa','Arte','Educação Física','Matemática','Ciências','História','Geografia','Ensino Religioso','Leitura e Produção de Texto','História de Porto Seguro','Diversidade Afrodescendente e Indígena'];
+const C_AF_CAMPO = ['Língua Portuguesa','Língua Inglesa','Arte','Educação Física','Matemática','Ciências','História','Geografia','Ensino Religioso','Leitura e Produção de Texto','Agroecologia','História de Porto Seguro','Diversidade Afrodescendente e Indígena'];
+const C_AF_IND   = ['Língua Portuguesa','Língua Materna — Patxôhã','Língua Inglesa','Arte','Educação Física','Matemática','Ciências','História','Geografia','Ensino Religioso','Leitura e Produção de Texto','História de Porto Seguro','Diversidade Afrodescendente e Indígena'];
+const C_EJA      = ['Língua Portuguesa','Língua Inglesa','Arte','Matemática','Ciências','História','Geografia'];
+const C_EJA_IND  = ['Língua Portuguesa','Língua Materna — Patxôhã','Arte','Matemática','Ciências','História','Geografia'];
+const CAMPOS_INF = ['Escuta, Fala, Pensamento e Imaginação','Corpo, Gestos e Movimentos','Traços, Sons, Cores e Formas','O Eu, o Outro e o Nós','Espaços, Tempos, Quantidades, Relações e Transformações'];
+
+const ATA_CFG = {
+  'infantil':         { estilo:'conceito', faixa:['ATA DE RESULTADO FINAL — EDUCAÇÃO INFANTIL'],                                        comps:CAMPOS_INF, seg:'Educação Infantil' },
+  'ai-sede':          { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','ENSINO FUNDAMENTAL — ANOS INICIAIS','SEDE / URBANO'],         comps:C_AI_SEDE,  seg:'Ensino Fundamental Anos Iniciais' },
+  'ai-campo':         { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','ENSINO FUNDAMENTAL — ANOS INICIAIS','EDUCAÇÃO DO CAMPO'],      comps:C_AI_CAMPO, seg:'Ensino Fundamental Anos Iniciais' },
+  'ai-indigena':      { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','ENSINO FUNDAMENTAL — ANOS INICIAIS','EDUC. ESCOLAR INDÍGENA'], comps:C_AI_IND,   seg:'Ensino Fundamental Anos Iniciais' },
+  'af-sede':          { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','ENSINO FUNDAMENTAL — ANOS FINAIS','SEDE / URBANO'],           comps:C_AF_SEDE,  seg:'Ensino Fundamental Anos Finais' },
+  'af-campo':         { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','ENSINO FUNDAMENTAL — ANOS FINAIS','EDUCAÇÃO DO CAMPO'],        comps:C_AF_CAMPO, seg:'Ensino Fundamental Anos Finais' },
+  'af-indigena':      { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','ENSINO FUNDAMENTAL — ANOS FINAIS','EDUC. ESCOLAR INDÍGENA'],   comps:C_AF_IND,   seg:'Ensino Fundamental Anos Finais' },
+  'eja':              { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','ENS. FUND. — ANOS FINAIS — EJA','SEDE / URBANO'],              comps:C_EJA,      seg:'EJA — Ensino Fundamental' },
+  'eja-indigena':     { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','EJA — ANOS FINAIS','EDUC. ESCOLAR INDÍGENA'],                  comps:C_EJA_IND,  seg:'EJA Indígena' },
+  'multi-campo':      { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','ENS. FUND. — MULTISSERIADA','EDUCAÇÃO DO CAMPO'],              comps:C_AI_CAMPO, seg:'Ensino Fundamental Multisseriada' },
+  'multi-indigena':   { estilo:'nota',     faixa:['ATA DE RESULTADO FINAL','MULTISSERIADA','EDUC. ESCOLAR INDÍGENA'],                      comps:C_AI_IND,   seg:'Multisseriada Indígena' },
+  'multietapa-campo': { estilo:'conceito', faixa:['ATA DE RESULTADO FINAL — MULTI-ETAPA (EDUC. INFANTIL) — EDUCAÇÃO DO CAMPO'],           comps:CAMPOS_INF, seg:'Multi-etapa — Educação Infantil' },
+};
+function cfgAta(t) { return ATA_CFG[t.tipoAta] || ATA_CFG['ai-sede']; }
+
 function abrirAta() {
   tipoSel = 'ata';
   document.getElementById('prevTitle').textContent = 'Pré-visualização — Ata de Resultado Final';
   const fr = document.getElementById('prevFrame');
   fr.removeAttribute('src');
-  const infantil = TURMAS[turmaSel].ensino === 'Educação Infantil';
-  fr.srcdoc = infantil ? ataInfantilHTML() : ataHTML();
+  fr.srcdoc = ataHTML();
   document.getElementById('modalPrev').classList.remove('hidden');
 }
 
-function ataInfantilHTML() {
+function ataHTML() {
   const t = TURMAS[turmaSel];
+  const cfg = cfgAta(t);
+  const conceito = cfg.estilo === 'conceito';
+  const COMPS = cfg.comps;
   const alunos = t.alunos;
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const CAMPOS = ['Escuta, Fala, Pensamento e Imaginação','Corpo, Gestos e Movimentos','Traços, Sons, Cores e Formas','O Eu, o Outro e o Nós','Espaços, Tempos, Quantidades, Relações e Transformações'];
   const RACAS = ['Parda','Preta','Branca','Indígena'];
   const genero = i => (i % 2 === 0 ? 'F' : 'M');
   const raca = i => RACAS[i % RACAS.length];
-  // resultado de transição conforme a etapa
-  const et = (t.ano_ensino || '').toUpperCase();
-  let transicao = 'Transição Pré Escola';
-  if (et.includes('CN I') || et === 'CN II' || et.includes('BERÇÁRIO')) transicao = 'Transição Creche';
-  else if (et.includes('PN II')) transicao = 'Transição E. Fundamental';
-  const resultadoDe = (i) => (i === 2 ? 'Transferido/a' : i === 5 ? 'Desistente' : transicao);
+  const nota = (ai, ci) => 6 + ((ai * 3 + ci * 2) % 5); // 6..10 (exemplo)
 
+  // --- resultados ---
+  let resultadoDe;
+  if (conceito) {
+    const et = (t.ano_ensino || '').toUpperCase();
+    let transicao = 'Transição Pré-Escola';
+    if (et.includes('CN')) transicao = 'Transição Creche';
+    else if (et.includes('PN II')) transicao = 'Transição E. Fundamental';
+    resultadoDe = (i) => (i === 2 ? 'Transferido/a' : i === 5 ? 'Desistente' : transicao);
+  } else {
+    resultadoDe = (ai) => {
+      if (ai === 2) return 'Transferido';
+      if (ai === 4) return 'Aprovado pelo Conselho';
+      if (ai === 6) return 'Reprovado';
+      if (ai === 8) return 'Desistente';
+      if (ai === 10) return 'Reprovado pelo Conselho';
+      return 'Aprovado';
+    };
+  }
+
+  // --- linhas dos alunos (completa até 40 linhas, como o modelo) ---
   const TOTAL = Math.max(40, alunos.length);
   let rows = '';
   for (let i = 0; i < TOTAL; i++) {
     const a = alunos[i];
     if (a) {
-      const campos = CAMPOS.map(() => `<td></td>`).join('');
-      rows += `<tr><td class="num">${i+1}</td><td class="nome">${esc(a.nome)}</td><td>${esc(a.nasc)}</td><td>${genero(i)}</td><td>${esc(raca(i))}</td>${campos}<td class="res">${resultadoDe(i)}</td></tr>`;
-    } else {
-      rows += `<tr><td class="num">${i+1}</td><td></td><td></td><td></td><td></td>${'<td></td>'.repeat(CAMPOS.length)}<td></td></tr>`;
-    }
-  }
-  const res = alunos.map((_, i) => resultadoDe(i));
-  const cont = v => res.filter(x => x === v).length;
-  const desist = cont('Desistente'), transf = cont('Transferido/a');
-  const matIni = alunos.length, matFin = alunos.length - desist - transf;
-  const contRaca = nome => alunos.filter((_, i) => raca(i) === nome).length;
-
-  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ata de Resultado Final (Ed. Infantil) - ${esc(t.nome)}</title>
-  <style>
-    @page { size: A4 landscape; margin: 8mm; }
-    * { box-sizing: border-box; }
-    body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 9.5px; margin: 8mm; }
-    .acab { display: flex; align-items: center; gap: 12px; justify-content: center; text-align: center; }
-    .acab img { height: 50px; }
-    .acab .tit { line-height: 1.3; }
-    .acab .tit b { font-size: 12px; }
-    .faixa { border: 1px solid #000; margin-top: 8px; padding: 5px; text-align: center; font-weight: 700; font-size: 12px; }
-    table { width: 100%; border-collapse: collapse; }
-    .id td { border: 1px solid #000; padding: 3px 5px; font-size: 9.5px; }
-    .id .lbl { font-weight: 700; background: #f2f2f2; white-space: nowrap; }
-    .sec { font-weight: 700; background: #e8e8e8; border: 1px solid #000; padding: 4px 6px; margin-top: 8px; }
-    table.grade th, table.grade td { border: 1px solid #000; text-align: center; padding: 2px 3px; font-size: 8.5px; }
-    table.grade th { background: #f2f2f2; }
-    table.grade td.nome { text-align: left; white-space: nowrap; }
-    table.grade td.num { width: 20px; }
-    table.grade td.res { font-weight: 700; white-space: nowrap; }
-    table.grade .vert { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 8px; height: 130px; }
-    .leg { font-size: 8.5px; margin: 6px 0; line-height: 1.5; }
-    .leg b { font-weight: 700; }
-    .mini th, .mini td { border: 1px solid #000; padding: 3px 5px; text-align: center; font-size: 9px; }
-    .mini th { background: #f2f2f2; }
-    .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
-    .assin { display: flex; justify-content: space-around; margin-top: 50px; text-align: center; }
-    .assin .ln { border-top: 1px solid #000; width: 240px; margin: 0 auto 4px; }
-    .enc { margin-top: 14px; font-size: 9.5px; line-height: 1.6; text-align: justify; }
-  </style></head><body>
-    <div class="acab">
-      <img src="logo-porto-seguro.jpg" alt="Prefeitura de Porto Seguro">
-      <div class="tit"><b>Prefeitura Municipal de Porto Seguro</b><br>Estado da Bahia<br>Secretaria Municipal de Educação, Cultura e Patrimônio Histórico</div>
-    </div>
-    <div class="faixa">ATA DE RESULTADO FINAL — EDUCAÇÃO INFANTIL</div>
-
-    <table class="id" style="margin-top:8px">
-      <tr><td class="lbl">UNIDADE ESCOLAR</td><td>${esc(t.escola)}</td><td class="lbl">CÓDIGO INEP</td><td>29123456</td></tr>
-      <tr><td class="lbl">ENDEREÇO</td><td>Rua das Palmeiras, Centro</td><td class="lbl">CEP</td><td>45.810-000</td></tr>
-      <tr><td class="lbl">GESTOR/A</td><td>Andreia Souza</td><td class="lbl">LOCALIZAÇÃO</td><td>Urbana</td></tr>
-      <tr><td class="lbl">ETAPA</td><td>${esc(t.ano_ensino)}</td><td class="lbl">TURMA</td><td>${esc(t.nome)}</td></tr>
-      <tr><td class="lbl">TURNO</td><td>${esc(t.turno)}</td><td class="lbl">ANO</td><td>${esc(t.anoLetivo)}</td></tr>
-    </table>
-
-    <div class="sec">CAMPOS DE EXPERIÊNCIA DA EDUCAÇÃO INFANTIL — CRECHE E PRÉ-ESCOLA (BNCC)</div>
-    <table class="grade">
-      <thead>
-        <tr>
-          <th rowspan="2" class="num">Nº</th><th rowspan="2">NOME DO ESTUDANTE</th>
-          <th rowspan="2">DATA NASC.</th><th rowspan="2">GÊN.**</th><th rowspan="2">RAÇA/COR</th>
-          <th colspan="${CAMPOS.length}">CAMPOS DE EXPERIÊNCIA</th><th rowspan="2">RESULTADO*</th>
-        </tr>
-        <tr>${CAMPOS.map(c => `<th><div class="vert">${esc(c)}</div></th>`).join('')}</tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-
-    <div class="leg">
-      <b>* dos RESULTADOS:</b> Desistente · Transferido/a · Transição Creche · Transição Pré-Escola · Transição Ensino Fundamental.<br>
-      Em resultados: CN I para CN II e CN II para CN III (transição creche); CN III para PN I e PN I para PN II (transição pré-escola); PN II para 1º ano (transição Ensino Fundamental).<br>
-      <b>** GÊNERO:</b> F = Feminino · M = Masculino. &nbsp; Avaliação sem escala numérica, amparada pela Lei nº 9.394/96.
-    </div>
-
-    <div class="cols2">
-      <div>
-        <div class="sec">FLUXO DE RENDIMENTO</div>
-        <table class="mini" style="width:100%">
-          <tr><th>Mat. Inicial</th><th>Mat. Final</th><th>Desistentes</th><th>Transferidos</th><th>Falecido</th></tr>
-          <tr><td>${matIni}</td><td>${matFin}</td><td>${desist}</td><td>${transf}</td><td>0</td></tr>
-        </table>
-      </div>
-      <div>
-        <div class="sec">TOTAL — QUESITO RAÇA/COR</div>
-        <table class="mini" style="width:100%">
-          <tr><th>Preta</th><th>Parda</th><th>Branca</th><th>Indígena</th><th>Amarela</th><th>N. decl.</th></tr>
-          <tr><td>${contRaca('Preta')}</td><td>${contRaca('Parda')}</td><td>${contRaca('Branca')}</td><td>${contRaca('Indígena')}</td><td>0</td><td>0</td></tr>
-        </table>
-      </div>
-    </div>
-
-    <div class="sec">DOCENTES POR TURMA</div>
-    <table class="mini" style="width:100%">
-      <tr><th style="width:38%">CAMPOS DE EXPERIÊNCIA</th><th>DATA INICIAL</th><th>DATA FINAL</th><th style="width:34%">DOCENTE</th></tr>
-      ${CAMPOS.map(c => `<tr><td style="text-align:left">${esc(c)}</td><td></td><td></td><td></td></tr>`).join('')}
-    </table>
-
-    <div class="enc">
-      Aos ______ (____) dias do mês de ________________ do ano de ${esc(t.anoLetivo)}, terminou-se o processo de conclusão do ano letivo das crianças do ${esc(t.ano_ensino)}, Turma ${esc(t.nome)} da Educação Infantil, turno ${esc(t.turno)}, com os resultados supracitados. E para constar, eu, Secretário(a) Escolar, lavrei a presente ata que vai assinada por mim e pelo(a) Diretor(a) da Unidade de Ensino.
-      <br><br>Porto Seguro - BA, ______ de ________________ de ${esc(t.anoLetivo)}.
-    </div>
-    <div class="assin">
-      <div><div class="ln"></div>Diretor(a)</div>
-      <div><div class="ln"></div>Secretário(a)</div>
-    </div>
-  </body></html>`;
-}
-
-function ataHTML() {
-  const t = TURMAS[turmaSel];
-  const alunos = t.alunos;
-  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const COMPS = ['Língua Portuguesa','Educação Física','Arte','Matemática','Ciências','História','Geografia','Ensino Religioso'];
-  const RACAS = ['Parda','Preta','Branca','Indígena'];
-  const genero = i => (i % 2 === 0 ? 'F' : 'M');
-  const raca = i => RACAS[i % RACAS.length];
-  const nota = (ai, ci) => 6 + ((ai * 3 + ci * 2) % 5); // 6..10 (exemplo)
-  const resultadoDe = (ai) => {
-    if (ai === 2) return 'Transferido';
-    if (ai === 4) return 'Aprovado pelo Conselho';
-    if (ai === 6) return 'Reprovado';
-    if (ai === 8) return 'Desistente';
-    if (ai === 10) return 'Reprovado pelo Conselho';
-    return 'Aprovado';
-  };
-  // linhas de alunos (completa até 40 linhas, como o modelo)
-  const TOTAL_LINHAS = Math.max(40, alunos.length);
-  let rows = '';
-  for (let i = 0; i < TOTAL_LINHAS; i++) {
-    const a = alunos[i];
-    if (a) {
-      const notasTd = COMPS.map((_, ci) => `<td>${nota(i, ci).toFixed(1).replace('.', ',')}</td>`).join('');
-      rows += `<tr><td class="num">${i+1}</td><td class="nome">${esc(a.nome)}</td><td>${esc(a.nasc)}</td><td>${genero(i)}</td><td>${esc(raca(i))}</td>${notasTd}<td class="res">${resultadoDe(i)}</td></tr>`;
+      const cells = COMPS.map((_, ci) => conceito ? `<td></td>` : `<td>${nota(i, ci).toFixed(1).replace('.', ',')}</td>`).join('');
+      rows += `<tr><td class="num">${i+1}</td><td class="nome">${esc(a.nome)}</td><td>${esc(a.nasc)}</td><td>${genero(i)}</td><td>${esc(raca(i))}</td>${cells}<td class="res">${resultadoDe(i)}</td></tr>`;
     } else {
       rows += `<tr><td class="num">${i+1}</td><td></td><td></td><td></td><td></td>${'<td></td>'.repeat(COMPS.length)}<td></td></tr>`;
     }
   }
-  // fluxo de rendimento (contagem real a partir dos resultados)
+
+  // --- fluxo de rendimento (contagem real) ---
   const res = alunos.map((_, i) => resultadoDe(i));
   const cont = v => res.filter(x => x === v).length;
   const aprov = cont('Aprovado') + cont('Aprovado pelo Conselho');
   const reprov = cont('Reprovado') + cont('Reprovado pelo Conselho');
-  const desist = cont('Desistente'), transf = cont('Transferido');
+  const desist = cont('Desistente'), transf = conceito ? cont('Transferido/a') : cont('Transferido');
   const matIni = alunos.length, matFin = alunos.length - desist - transf;
-  // total raça/cor
   const contRaca = nome => alunos.filter((_, i) => raca(i) === nome).length;
+
+  // --- faixa do título ---
+  const nF = cfg.faixa.length;
+  const faixaHtml = nF === 1
+    ? `<div class="faixa uno">${esc(cfg.faixa[0])}</div>`
+    : `<div class="faixa" style="grid-template-columns:${nF===3?'1fr 1.5fr 1fr':'repeat('+nF+',1fr)'}">${cfg.faixa.map(c => `<div>${esc(c)}</div>`).join('')}</div>`;
+
+  const secComp = conceito
+    ? 'CAMPOS DE EXPERIÊNCIA DA EDUCAÇÃO INFANTIL — CRECHE E PRÉ-ESCOLA (BNCC)'
+    : 'COMPONENTES CURRICULARES — BASE NACIONAL COMUM CURRICULAR';
+  const colHead = conceito ? 'CAMPOS DE EXPERIÊNCIA' : 'NOTAS';
+  const docHead = conceito ? 'DOCENTES POR TURMA' : 'DOCENTES POR COMPONENTE';
+  const docCol  = conceito ? 'CAMPO DE EXPERIÊNCIA' : 'COMPONENTE';
+  const idLabel = conceito ? 'ETAPA' : 'ANO/SÉRIE';
+  const idValor = conceito ? esc(t.ano_ensino) : esc(t.ano_ensino);
+  const vertH = conceito ? 130 : 96;
+
+  const legenda = conceito
+    ? `<div class="leg leg-col">
+        <span><b>* DOS RESULTADOS:</b> Desistente · Transferido/a · Transição Creche · Transição Pré-Escola · Transição Ensino Fundamental.</span>
+        <span>CN I→CN II e CN II→CN III: transição creche · CN III→PN I e PN I→PN II: transição pré-escola · PN II→1º ano: transição Ensino Fundamental.</span>
+        <span><b>** GÊNERO:</b> F = Feminino · M = Masculino. Avaliação sem escala numérica (Lei nº 9.394/96).</span>
+      </div>`
+    : `<div class="leg">
+        <span><b>* DOS RESULTADOS:</b> Aprovado · Reprovado · Desistente · Transferido · Aprovado pelo Conselho · Reprovado pelo Conselho</span>
+        <span><b>** GÊNERO:</b> F = Feminino · M = Masculino</span>
+      </div>`;
+
+  const fluxo = conceito
+    ? `<table class="mini" style="width:100%">
+        <tr><th>Mat. Inicial</th><th>Mat. Final</th><th>Desistentes</th><th>Transferidos</th><th>Falecido</th></tr>
+        <tr><td>${matIni}</td><td>${matFin}</td><td>${desist}</td><td>${transf}</td><td>0</td></tr>
+      </table>`
+    : `<table class="mini" style="width:100%">
+        <tr><th>Mat. Inicial</th><th>Mat. Final</th><th>Aprovados</th><th>Reprovados</th><th>Desistentes</th><th>Transferidos</th></tr>
+        <tr><td>${matIni}</td><td>${matFin}</td><td>${aprov}</td><td>${reprov}</td><td>${desist}</td><td>${transf}</td></tr>
+      </table>`;
+
+  const encerramento = conceito
+    ? `Aos ______ (____) dias do mês de ________________ do ano de ${esc(t.anoLetivo)}, terminou-se o processo de conclusão do ano letivo das crianças do ${esc(t.ano_ensino)}, Turma ${esc(t.nome)} da ${esc(cfg.seg)}, turno ${esc(t.turno)}, com os resultados supracitados. E para constar, eu, Secretário(a) Escolar, lavrei a presente ata que vai assinada por mim e pelo(a) Diretor(a) da Unidade de Ensino.`
+    : `Aos ______ (____) dias do mês de ________________ do ano de ${esc(t.anoLetivo)}, terminou-se o processo de apuração das notas finais dos/as estudantes da Turma ${esc(t.nome)} — ${esc(cfg.seg)}, turno ${esc(t.turno)}, com os resultados supracitados. E para constar, eu, Secretário(a) Escolar, lavrei a presente ata que vai assinada por mim e pelo(a) Diretor(a) da Unidade de Ensino.`;
 
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ata de Resultado Final - ${esc(t.nome)}</title>
   <style>
@@ -631,9 +656,10 @@ function ataHTML() {
     .acab img { height: 50px; }
     .acab .tit { line-height: 1.3; }
     .acab .tit b { font-size: 12px; }
-    .faixa { display: grid; grid-template-columns: 1fr 1.4fr 1fr; border: 1px solid #000; margin-top: 8px; font-weight: 700; text-align: center; }
-    .faixa div { border-right: 1px solid #000; padding: 4px; }
+    .faixa { display: grid; border: 1px solid #000; margin-top: 8px; font-weight: 700; text-align: center; font-size: 11px; }
+    .faixa div { border-right: 1px solid #000; padding: 5px 4px; }
     .faixa div:last-child { border-right: none; }
+    .faixa.uno { display: block; padding: 6px; font-size: 12px; }
     table { width: 100%; border-collapse: collapse; }
     .id td { border: 1px solid #000; padding: 3px 5px; font-size: 9.5px; }
     .id .lbl { font-weight: 700; background: #f2f2f2; white-space: nowrap; }
@@ -643,8 +669,9 @@ function ataHTML() {
     table.grade td.nome { text-align: left; white-space: nowrap; }
     table.grade td.num { width: 20px; }
     table.grade td.res { font-weight: 700; white-space: nowrap; }
-    table.grade .vert { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 8px; height: 90px; }
+    table.grade .vert { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 8px; height: ${vertH}px; }
     .leg { display: flex; gap: 18px; flex-wrap: wrap; font-size: 8.5px; margin: 6px 0; }
+    .leg.leg-col { flex-direction: column; gap: 2px; line-height: 1.5; }
     .leg b { font-weight: 700; }
     .mini th, .mini td { border: 1px solid #000; padding: 3px 5px; text-align: center; font-size: 9px; }
     .mini th { background: #f2f2f2; }
@@ -652,47 +679,40 @@ function ataHTML() {
     .assin { display: flex; justify-content: space-around; margin-top: 50px; text-align: center; }
     .assin .ln { border-top: 1px solid #000; width: 240px; margin: 0 auto 4px; }
     .enc { margin-top: 14px; font-size: 9.5px; line-height: 1.6; text-align: justify; }
-    h2 { font-size: 11px; text-align: center; margin: 2px 0; }
   </style></head><body>
     <div class="acab">
       <img src="logo-porto-seguro.jpg" alt="Prefeitura de Porto Seguro">
       <div class="tit"><b>Prefeitura Municipal de Porto Seguro</b><br>Estado da Bahia<br>Secretaria Municipal de Educação, Cultura e Patrimônio Histórico</div>
     </div>
-    <div class="faixa"><div>ATA DE RESULTADO FINAL</div><div>ENSINO FUNDAMENTAL ANOS INICIAIS</div><div>SEDE / URBANO</div></div>
+    ${faixaHtml}
 
     <table class="id" style="margin-top:8px">
       <tr><td class="lbl">UNIDADE ESCOLAR</td><td>${esc(t.escola)}</td><td class="lbl">CÓDIGO INEP</td><td>29123456</td></tr>
       <tr><td class="lbl">ENDEREÇO</td><td>Rua Pero Vaz de Caminha, Centro</td><td class="lbl">CEP</td><td>45.810-000</td></tr>
-      <tr><td class="lbl">GESTOR/A</td><td>Andreia Souza</td><td class="lbl">LOCALIZAÇÃO</td><td>Urbana</td></tr>
-      <tr><td class="lbl">ANO/SÉRIE</td><td>${esc(t.ano_ensino)} ano</td><td class="lbl">TURMA</td><td>${esc(t.nome)}</td></tr>
+      <tr><td class="lbl">GESTOR/A</td><td>Andreia Souza</td><td class="lbl">LOCALIZAÇÃO</td><td>${esc((t.escola||'').includes('Campo') || (t.escola||'').includes('Indígena') ? 'Rural' : 'Urbana')}</td></tr>
+      <tr><td class="lbl">${idLabel}</td><td>${idValor}</td><td class="lbl">TURMA</td><td>${esc(t.nome)}</td></tr>
       <tr><td class="lbl">TURNO</td><td>${esc(t.turno)}</td><td class="lbl">ANO</td><td>${esc(t.anoLetivo)}</td></tr>
     </table>
 
-    <div class="sec">COMPONENTES CURRICULARES — BASE NACIONAL COMUM CURRICULAR</div>
+    <div class="sec">${secComp}</div>
     <table class="grade">
       <thead>
         <tr>
           <th rowspan="2" class="num">Nº</th><th rowspan="2">NOME DO ESTUDANTE</th>
           <th rowspan="2">DATA NASC.</th><th rowspan="2">GÊN.**</th><th rowspan="2">RAÇA/COR</th>
-          <th colspan="${COMPS.length}">NOTAS</th><th rowspan="2">RESULTADO*</th>
+          <th colspan="${COMPS.length}">${colHead}</th><th rowspan="2">RESULTADO*</th>
         </tr>
         <tr>${COMPS.map(c => `<th><div class="vert">${esc(c)}</div></th>`).join('')}</tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
 
-    <div class="leg">
-      <span><b>*DOS RESULTADOS:</b> Aprovado · Reprovado · Desistente · Transferido · Aprovado pelo Conselho · Reprovado pelo Conselho</span>
-      <span><b>**GÊNERO:</b> F = Feminino · M = Masculino</span>
-    </div>
+    ${legenda}
 
     <div class="cols2">
       <div>
         <div class="sec">FLUXO DE RENDIMENTO</div>
-        <table class="mini" style="width:100%">
-          <tr><th>Mat. Inicial</th><th>Mat. Final</th><th>Aprovados</th><th>Reprovados</th><th>Desistentes</th><th>Transferidos</th></tr>
-          <tr><td>${matIni}</td><td>${matFin}</td><td>${aprov}</td><td>${reprov}</td><td>${desist}</td><td>${transf}</td></tr>
-        </table>
+        ${fluxo}
       </div>
       <div>
         <div class="sec">TOTAL — QUESITO RAÇA/COR</div>
@@ -703,14 +723,14 @@ function ataHTML() {
       </div>
     </div>
 
-    <div class="sec">DOCENTES POR COMPONENTE</div>
+    <div class="sec">${docHead}</div>
     <table class="mini" style="width:100%">
-      <tr><th style="width:32%">COMPONENTE</th><th>DATA INICIAL</th><th>DATA FINAL</th><th style="width:40%">DOCENTE</th></tr>
+      <tr><th style="width:34%">${docCol}</th><th>DATA INICIAL</th><th>DATA FINAL</th><th style="width:38%">DOCENTE</th></tr>
       ${COMPS.map(c => `<tr><td style="text-align:left">${esc(c)}</td><td></td><td></td><td></td></tr>`).join('')}
     </table>
 
     <div class="enc">
-      Aos ______ (____) dias do mês de ________________ do ano de ${esc(t.anoLetivo)}, terminou-se o processo de apuração das notas finais dos/as estudantes do ${esc(t.ano_ensino)} ano, Turma ${esc(t.nome)} do Ensino Fundamental Anos Iniciais, turno ${esc(t.turno)}, com os resultados supracitados. E para constar, eu, Secretário(a) Escolar, lavrei a presente ata que vai assinada por mim e pelo(a) Diretor(a) da Unidade de Ensino.
+      ${encerramento}
       <br><br>Porto Seguro - BA, ______ de ________________ de ${esc(t.anoLetivo)}.
     </div>
     <div class="assin">
