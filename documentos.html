@@ -31,15 +31,6 @@
     .doc-select { width: 100%; padding: 11px 13px; border: 1.5px solid #E4E8EE; border-radius: 10px; font-size: 14px; color: #1D1D1D; background: #fff; font-family: inherit; outline: none; cursor: pointer; }
     .doc-select:focus { border-color: #ED6939; }
 
-    /* BANNER CENTRAL DE DOCUMENTOS */
-    .doc-hero { position: relative; border-radius: 16px; overflow: hidden; background: linear-gradient(105deg, #16366a 0%, #102a52 58%, #0c1f3d 100%); padding: 24px 30px; margin-bottom: 22px; min-height: 148px; display: flex; align-items: center; }
-    .doc-hero-text { position: relative; z-index: 2; max-width: 70%; }
-    .doc-hero h1 { color: #fff; font-size: 27px; font-weight: 800; margin: 0; letter-spacing: -.01em; line-height: 1.12; }
-    .doc-hero .hero-accent { width: 46px; height: 4px; background: #ED6939; border-radius: 3px; margin: 11px 0; }
-    .doc-hero p { color: #cfdaec; font-size: 14.5px; margin: 0; }
-    .doc-hero .hero-bubo { position: absolute; right: 34px; bottom: 0; height: 168px; z-index: 1; pointer-events: none; filter: drop-shadow(0 8px 14px rgba(0,0,0,.25)); }
-    @media (max-width: 760px) { .doc-hero .hero-bubo { right: -14px; height: 140px; opacity: .35; } .doc-hero-text { max-width: 100%; } }
-
     /* CARDS ESTILO LIVRO */
     .doc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
     @media (max-width: 980px) { .doc-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -125,14 +116,8 @@
 
   <div class="doc-content">
     <div class="doc-panel">
-      <div class="doc-hero">
-        <div class="doc-hero-text">
-          <h1>Central de documentos</h1>
-          <div class="hero-accent"></div>
-          <p>Qual documento você quer emitir?</p>
-        </div>
-        <img class="hero-bubo" src="bubo-banner.png" alt="">
-      </div>
+      <div class="doc-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Central de documentos</div>
+      <div class="doc-panel-sub">Qual documento você quer emitir? Selecione a etapa, o aluno e escolha o documento.</div>
 
       <div class="doc-fields-row">
         <div class="doc-field">
