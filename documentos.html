@@ -322,7 +322,6 @@ const TIPOS_DECL = [
   { id:'transferencia',label:'Transferência' },
   { id:'escolaridade', label:'Escolaridade/Bolsa Família' },
   { id:'conclusao',    label:'Conclusão' },
-  { id:'matricula',    label:'Matrícula' },
 ];
 
 let turmaSel = -1;
@@ -1197,18 +1196,12 @@ const DOC_PDF = {
   matricula:     'ficha-matricula-exemplo.pdf',
 };
 function previewDeclaracao() {
-  const nomesTipo = { vaga:'Declaração de Vaga', transferencia:'Declaração de Transferência', escolaridade:'Declaração de Escolaridade/Bolsa Família', conclusao:'Declaração de Conclusão', matricula:'Ficha de Matrícula' };
+  const nomesTipo = { vaga:'Declaração de Vaga', transferencia:'Declaração de Transferência', escolaridade:'Declaração de Escolaridade/Bolsa Família', conclusao:'Declaração de Conclusão' };
   document.getElementById('prevTitle').textContent = 'Pré-visualização — ' + (nomesTipo[tipoSel] || 'Documento');
   const fr = document.getElementById('prevFrame');
-  if (tipoSel === 'matricula') {
-    prevEditavel = false;              // PDF não é editável
-    fr.removeAttribute('srcdoc');
-    fr.src = DOC_PDF.matricula;
-  } else {
-    prevEditavel = true;
-    fr.removeAttribute('src');
-    fr.srcdoc = declaracaoHTML();
-  }
+  prevEditavel = true;
+  fr.removeAttribute('src');
+  fr.srcdoc = declaracaoHTML();
   fecharDecl();
   document.getElementById('modalPrev').classList.remove('hidden');
 }
