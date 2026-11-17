@@ -335,13 +335,18 @@ const ETAPA_DE_TIPO = {
   'af-sede':'f2', 'af-campo':'f2', 'af-indigena':'f2',
   'eja':'eja', 'eja-indigena':'eja',
 };
-const etapaDe = t => ETAPA_DE_TIPO[t.tipoAta] || 'f1';
+const etapaDe = t => {
+  const base = ETAPA_DE_TIPO[t.tipoAta] || 'f1';
+  if (base === 'eja') return /^[123]/.test(t.ano_ensino || '') ? 'eja1' : 'eja2';
+  return base;
+};
 const ETAPAS = [
-  { id:'',          label:'Todas' },
-  { id:'infantil',  label:'Educação Infantil' },
-  { id:'f1',        label:'Fundamental 1' },
-  { id:'f2',        label:'Fundamental 2' },
-  { id:'eja',       label:'EJA' },
+  { id:'',          label:'Todas as etapas' },
+  { id:'infantil',  label:'Ed. Infantil' },
+  { id:'f1',        label:'Fundamental I' },
+  { id:'f2',        label:'Fundamental II' },
+  { id:'eja1',      label:'EJA I' },
+  { id:'eja2',      label:'EJA II' },
 ];
 
 function alunoAtual() {
@@ -368,11 +373,9 @@ function initDocs() {
 
 function renderEtapaSelect() {
   const sel = document.getElementById('selEtapa');
-  sel.innerHTML = ETAPAS.map(e => {
-    const n = e.id === '' ? TURMAS.length : TURMAS.filter(t => etapaDe(t) === e.id).length;
-    const lbl = e.id === '' ? `Todas as etapas (${n})` : `${e.label} (${n})`;
-    return `<option value="${e.id}" ${etapaSel === e.id ? 'selected' : ''}>${lbl}</option>`;
-  }).join('');
+  sel.innerHTML = ETAPAS.map(e =>
+    `<option value="${e.id}" ${etapaSel === e.id ? 'selected' : ''}>${e.label}</option>`
+  ).join('');
 }
 
 // Preenche o seletor de turma respeitando a etapa escolhida
