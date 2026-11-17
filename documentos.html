@@ -29,13 +29,6 @@
     .btn-reset svg { width: 15px; height: 15px; }
     .doc-label { font-size: 12px; color: #8A94A6; font-weight: 600; display: block; margin-bottom: 6px; }
     .doc-select { width: 100%; padding: 11px 13px; border: 1.5px solid #E4E8EE; border-radius: 10px; font-size: 14px; color: #1D1D1D; background: #fff; font-family: inherit; outline: none; cursor: pointer; }
-    .etapa-filtro { margin-bottom: 18px; }
-    .etapa-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-    .etapa-chip { display: inline-flex; align-items: center; gap: 7px; background: #fff; color: #5B6472; border: 1.5px solid #E4E8EE; border-radius: 999px; padding: 8px 15px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .12s; }
-    .etapa-chip:hover { border-color: #ED6939; color: #ED6939; }
-    .etapa-chip.ativo { background: #ED6939; color: #fff; border-color: #ED6939; }
-    .etapa-chip .cnt { background: rgba(0,0,0,.08); border-radius: 999px; font-size: 11px; font-weight: 700; padding: 1px 7px; }
-    .etapa-chip.ativo .cnt { background: rgba(255,255,255,.28); color: #fff; }
     .doc-select:focus { border-color: #ED6939; }
 
     .doc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
@@ -130,12 +123,11 @@
       <div class="doc-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Emitir documento do aluno</div>
       <div class="doc-panel-sub">Selecione a etapa, o aluno e escolha o documento para emitir e imprimir.</div>
 
-      <div class="etapa-filtro">
-        <label class="doc-label">Etapa de ensino</label>
-        <div class="etapa-chips" id="etapaChips"></div>
-      </div>
-
       <div class="doc-fields-row">
+        <div class="doc-field">
+          <label class="doc-label">Etapa de ensino</label>
+          <select class="doc-select" id="selEtapa" onchange="selecionarEtapa(this.value)"></select>
+        </div>
         <div class="doc-field">
           <label class="doc-label">Turma</label>
           <select class="doc-select" id="selTurma" onchange="selecionarTurma(this.value)"></select>
@@ -365,7 +357,7 @@ function icDoc() {
 }
 
 function initDocs() {
-  renderEtapaChips();
+  renderEtapaSelect();
   preencherTurmas();
   const sa = document.getElementById('selAluno');
   sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>';
@@ -374,11 +366,12 @@ function initDocs() {
   atualizarCards();
 }
 
-function renderEtapaChips() {
-  document.getElementById('etapaChips').innerHTML = ETAPAS.map(e => {
+function renderEtapaSelect() {
+  const sel = document.getElementById('selEtapa');
+  sel.innerHTML = ETAPAS.map(e => {
     const n = e.id === '' ? TURMAS.length : TURMAS.filter(t => etapaDe(t) === e.id).length;
-    return `<button class="etapa-chip ${etapaSel === e.id ? 'ativo' : ''}" onclick="selecionarEtapa('${e.id}')">
-      ${e.label}<span class="cnt">${n}</span></button>`;
+    const lbl = e.id === '' ? `Todas as etapas (${n})` : `${e.label} (${n})`;
+    return `<option value="${e.id}" ${etapaSel === e.id ? 'selected' : ''}>${lbl}</option>`;
   }).join('');
 }
 
@@ -396,7 +389,6 @@ function preencherTurmas() {
 function selecionarEtapa(id) {
   etapaSel = id;
   turmaSel = -1; alunoSel = -1;
-  renderEtapaChips();
   preencherTurmas();
   const sa = document.getElementById('selAluno');
   sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>';
@@ -413,7 +405,7 @@ function selecionarTurma(i) { turmaSel = +i; alunoSel = -1; preencherAlunos(); a
 function selecionarAluno(i) { alunoSel = +i; atualizarCards(); }
 function redefinirFiltro() {
   etapaSel = ''; turmaSel = -1; alunoSel = -1;
-  renderEtapaChips();
+  renderEtapaSelect();
   preencherTurmas();
   const sa = document.getElementById('selAluno');
   sa.innerHTML = '<option value="" disabled selected>Selecionar aluno</option>';
