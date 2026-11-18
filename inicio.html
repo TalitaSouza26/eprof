@@ -186,7 +186,49 @@
     .wz-tipo-lockmsg { font-size: 11px; color: #C0392B; font-weight: 600; margin-top: 8px; }
     .wz-linkback { margin-top: 18px; background: none; border: none; color: #8A94A6; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
     .wz-linkback:hover { color: #ED6939; }
-    @media (max-width: 980px) { .wz-steps { display: none; } }
+
+    /* --- rematrícula --- */
+    .rm-wrap { width: 100%; max-width: 640px; margin: 0 auto; text-align: left; }
+    .rm-maintitle { font-size: 19px; font-weight: 800; color: #12223A; text-align: center; margin: 6px 0 16px; }
+    .rm-card { border: 1px solid #E8EBF1; border-radius: 14px; padding: 18px 20px; background: #FAFBFC; }
+    .rm-head { display: flex; align-items: center; gap: 13px; padding-bottom: 14px; border-bottom: 1px solid #EDEFF3; }
+    .rm-av { width: 46px; height: 46px; border-radius: 50%; background: #FDEEE8; color: #C0531F; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; flex-shrink: 0; }
+    .rm-nome { font-size: 17px; font-weight: 800; color: #12223A; }
+    .rm-sub { font-size: 12.5px; color: #8A94A6; margin-top: 2px; }
+    .rm-sec-title { font-size: 11.5px; font-weight: 800; color: #9AA1AB; text-transform: uppercase; letter-spacing: .04em; margin: 16px 0 9px; }
+    .rm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px 18px; }
+    .rm-f .k { font-size: 11px; color: #9AA1AB; margin-bottom: 2px; }
+    .rm-f .v { font-size: 14px; color: #1D1D1D; font-weight: 600; }
+    .rm-resp { display: flex; flex-direction: column; gap: 8px; }
+    .rm-resp-item { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #33404F; flex-wrap: wrap; }
+    .rm-parent { background: #EEF1F6; color: #5B6472; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+    .rm-dest { margin-top: 18px; }
+    .rm-dest label { display: block; font-size: 13.5px; font-weight: 700; color: #ED6939; margin-bottom: 8px; }
+    .rm-dest label span { font-weight: 500; color: #8A94A6; font-size: 12px; }
+    .rm-select { width: 100%; padding: 12px 14px; border: 1.5px solid #E4E8EE; border-radius: 11px; font-size: 14px; font-family: inherit; color: #1D1D1D; background: #fff; outline: none; cursor: pointer; }
+    .rm-select:focus { border-color: #12509A; box-shadow: 0 0 0 3px rgba(18,80,154,.08); }
+    .rm-err { color: #C0392B; font-size: 13px; font-weight: 600; margin-top: 10px; text-align: center; min-height: 16px; }
+    .rm-confirm-btn { margin-top: 6px; width: 100%; background: #ED6939; color: #fff; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: inherit; }
+    .rm-confirm-btn:hover { background: #D4531F; }
+    .rm-ok-ic { width: 84px; height: 84px; border-radius: 50%; background: #DEF4D2; color: #2E8B00; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .rm-ok-ic svg { width: 44px; height: 44px; }
+
+    /* --- modal de dupla validação --- */
+    .rm-confirm { position: fixed; inset: 0; background: rgba(15,23,32,.5); display: flex; align-items: center; justify-content: center; z-index: 1300; padding: 20px; }
+    .rm-confirm.hidden { display: none; }
+    .rm-confirm-box { background: #fff; border-radius: 18px; width: min(440px, 94vw); padding: 28px; text-align: center; box-shadow: 0 30px 70px rgba(20,40,80,.3); }
+    .rm-confirm-ic { width: 60px; height: 60px; border-radius: 50%; background: #FDEEE8; color: #ED6939; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .rm-confirm-ic svg { width: 30px; height: 30px; }
+    .rm-confirm-box h3 { font-size: 19px; font-weight: 800; color: #12223A; }
+    .rm-confirm-box p { font-size: 14px; color: #5B6472; margin-top: 10px; line-height: 1.55; }
+    .rm-confirm-box p b { color: #12223A; }
+    .rm-confirm-actions { display: flex; gap: 10px; margin-top: 22px; }
+    .rm-confirm-actions button { flex: 1; border-radius: 11px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .btn-cancelar { background: #fff; border: 1.5px solid #E4E8EE; color: #5B6472; }
+    .btn-cancelar:hover { border-color: #c8ccd3; }
+    .btn-confirmar { background: #ED6939; border: none; color: #fff; }
+    .btn-confirmar:hover { background: #D4531F; }
+    @media (max-width: 980px) { .wz-steps { display: none; } .rm-grid { grid-template-columns: 1fr 1fr; } }
   </style>
   <link rel="stylesheet" href="theme.css" />
 </head>
@@ -391,9 +433,11 @@
       <button class="wz-close" onclick="fecharMatricula()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
 
       <div class="wz-main">
-        <div class="wz-mag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>
-        <div class="wz-ola">Olá, <b>Andreia</b></div>
-        <div class="wz-sub">Vamos começar realizando<br>uma busca na rede educacional...</div>
+        <div id="wzHeader">
+          <div class="wz-mag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>
+          <div class="wz-ola">Olá, <b>Andreia</b></div>
+          <div class="wz-sub">Vamos começar realizando<br>uma busca na rede educacional...</div>
+        </div>
         <!-- ETAPA 1: escolher o ano letivo -->
         <div class="wz-stage" id="wzAno">
           <div class="wz-cpf-label">Selecione o ano letivo:</div>
@@ -426,6 +470,40 @@
           <div class="wz-msg" id="wzMsgTipo"></div>
           <button class="wz-linkback" onclick="mostrarEtapa('cpf')">‹ Alterar CPF</button>
         </div>
+
+        <!-- ETAPA: rematrícula (dados do aluno + turma de destino) -->
+        <div class="wz-stage" id="wzRemat" style="display:none">
+          <div class="rm-wrap">
+            <div style="text-align:center"><span class="wz-chip" id="wzAnoChip3" onclick="voltarAno()" title="Trocar ano"></span></div>
+            <div class="rm-maintitle">Confirme os dados do aluno</div>
+            <div class="rm-card">
+              <div class="rm-head">
+                <div class="rm-av" id="rmAv">M</div>
+                <div><div class="rm-nome" id="rmNome"></div><div class="rm-sub" id="rmSub"></div></div>
+                <span class="badge ativo" style="margin-left:auto">Ativo</span>
+              </div>
+              <div class="rm-sec-title">Dados pessoais</div>
+              <div class="rm-grid" id="rmDados"></div>
+              <div class="rm-sec-title">Responsáveis</div>
+              <div class="rm-resp" id="rmResp"></div>
+            </div>
+            <div class="rm-dest">
+              <label>Para qual turma o aluno vai? <span id="rmFrom"></span></label>
+              <select class="rm-select" id="rmTurma" onchange="document.getElementById('rmErr').textContent=''"></select>
+            </div>
+            <div class="rm-err" id="rmErr"></div>
+            <button class="rm-confirm-btn" onclick="confirmarRematricula()">Confirmar rematrícula</button>
+            <div style="text-align:center"><button class="wz-linkback" onclick="mostrarEtapa('tipo')">‹ Voltar</button></div>
+          </div>
+        </div>
+
+        <!-- ETAPA: sucesso -->
+        <div class="wz-stage" id="wzSucesso" style="display:none">
+          <div class="rm-ok-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="wz-ola" style="font-weight:800">Rematrícula confirmada!</div>
+          <div class="wz-sub" id="rmOkTxt" style="margin-top:12px"></div>
+          <button class="rm-confirm-btn" style="max-width:260px;margin-top:24px" onclick="fecharMatricula()">Concluir</button>
+        </div>
       </div>
 
       <div class="wz-steps">
@@ -453,6 +531,19 @@
           <div class="wz-step-thumb"><span class="wz-step-num">6</span><svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="20" r="7"/><path d="M36 54c0-10 6-17 14-17s14 7 14 17"/><path d="M38 32l-9-9M62 32l9-9"/></svg></div>
           <div class="wz-step-label">Concluir matrícula</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dupla validação -->
+  <div class="rm-confirm hidden" id="rmConfirm" onclick="if(event.target===this)cancelarConfirm()">
+    <div class="rm-confirm-box">
+      <div class="rm-confirm-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+      <h3>Confirmar rematrícula</h3>
+      <p id="rmConfirmTxt"></p>
+      <div class="rm-confirm-actions">
+        <button class="btn-cancelar" onclick="cancelarConfirm()">Cancelar</button>
+        <button class="btn-confirmar" onclick="finalizarRematricula()">Confirmar</button>
       </div>
     </div>
   </div>
@@ -518,15 +609,16 @@ function abrirMatricula(){
   document.getElementById('wzMsg').className = 'wz-msg';
   document.getElementById('wzMsgTipo').textContent = '';
   document.getElementById('wzMsgTipo').className = 'wz-msg';
+  document.getElementById('rmConfirm').classList.add('hidden');
   mostrarEtapa('ano');
   document.getElementById('matWizard').classList.remove('hidden');
 }
 function fecharMatricula(){ document.getElementById('matWizard').classList.add('hidden'); }
 
+const STAGES = { ano:'wzAno', cpf:'wzCpfSec', tipo:'wzTipo', remat:'wzRemat', sucesso:'wzSucesso' };
 function mostrarEtapa(e){
-  document.getElementById('wzAno').style.display    = (e === 'ano')  ? '' : 'none';
-  document.getElementById('wzCpfSec').style.display = (e === 'cpf')  ? '' : 'none';
-  document.getElementById('wzTipo').style.display   = (e === 'tipo') ? '' : 'none';
+  for (const k in STAGES) document.getElementById(STAGES[k]).style.display = (k === e) ? '' : 'none';
+  document.getElementById('wzHeader').style.display = (e === 'remat' || e === 'sucesso') ? 'none' : '';
   if (e === 'cpf') setTimeout(() => document.getElementById('wzCpf').focus(), 50);
 }
 
@@ -591,10 +683,58 @@ function renderTipos(){
 function selecionarTipo(id, el){
   document.querySelectorAll('.wz-tipo').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
+  if (id === 'rematricula') { setTimeout(abrirRematricula, 140); return; }
   const nome = TIPOS_MAT.find(t => t.id === id).nome;
   const m = document.getElementById('wzMsgTipo');
-  m.textContent = nome + ' · ' + anoSel + ' — prosseguindo...';
+  m.textContent = nome + ' — fluxo em construção.';
   m.className = 'wz-msg ok';
+}
+
+/* ===== Rematrícula ===== */
+const TURMAS_ESCOLA = ['CN I','CN II','CN III','PN I','PN II','1º ano A','1º ano B','2º ano A','3º ano A','4º ano A','5º ano A'];
+const ALUNO_REMAT = {
+  nome:'Maria Antonella Ferreira', matricula:'23276473', nasc:'28/01/2024',
+  sexo:'Feminino', naturalidade:'Porto Seguro - BA', nivel:'Educação Infantil',
+  serie:'CN II', turmaAtual:'CN II', turno:'Matutino',
+  responsaveis:[ { nome:'Luiza Moreira', parentesco:'Mãe', contato:'(73) 9 9562-6262' } ],
+};
+let rematTurma = null;
+
+function abrirRematricula(){
+  const cpf = document.getElementById('wzCpf').value;
+  const a = ALUNO_REMAT;
+  document.getElementById('rmAv').textContent = a.nome.trim()[0];
+  document.getElementById('rmNome').textContent = a.nome;
+  document.getElementById('rmSub').textContent = 'Matrícula ' + a.matricula + ' · CPF ' + cpf;
+  document.getElementById('rmDados').innerHTML = [
+    ['Data de nascimento', a.nasc], ['Sexo', a.sexo], ['Naturalidade', a.naturalidade],
+    ['Nível de ensino', a.nivel], ['Série/ano atual', a.serie], ['Turno', a.turno],
+  ].map(([k,v]) => '<div class="rm-f"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>').join('');
+  document.getElementById('rmResp').innerHTML = a.responsaveis.map(r =>
+    '<div class="rm-resp-item"><span class="rm-parent">' + r.parentesco + '</span><b>' + r.nome + '</b><span style="color:#8A94A6">· ' + r.contato + '</span></div>'
+  ).join('');
+  document.getElementById('rmFrom').textContent = '(turma atual: ' + a.turmaAtual + ')';
+  document.getElementById('rmTurma').innerHTML = '<option value="" disabled selected>Selecionar turma de destino...</option>' +
+    TURMAS_ESCOLA.map(t => '<option value="' + t + '">' + t + '</option>').join('');
+  document.getElementById('rmErr').textContent = '';
+  document.getElementById('wzAnoChip3').textContent = 'Ano letivo: ' + anoSel;
+  mostrarEtapa('remat');
+}
+
+function confirmarRematricula(){
+  const turma = document.getElementById('rmTurma').value;
+  if (!turma) { document.getElementById('rmErr').textContent = 'Selecione a turma de destino.'; return; }
+  rematTurma = turma;
+  document.getElementById('rmConfirmTxt').innerHTML =
+    'Confirma a rematrícula de <b>' + ALUNO_REMAT.nome + '</b> para a turma <b>' + turma + '</b>, no ano letivo <b>' + anoSel + '</b>?';
+  document.getElementById('rmConfirm').classList.remove('hidden');
+}
+function cancelarConfirm(){ document.getElementById('rmConfirm').classList.add('hidden'); }
+function finalizarRematricula(){
+  document.getElementById('rmConfirm').classList.add('hidden');
+  document.getElementById('rmOkTxt').innerHTML =
+    '<b>' + ALUNO_REMAT.nome + '</b> foi rematriculado(a) na turma <b>' + rematTurma + '</b> para o ano letivo <b>' + anoSel + '</b>.';
+  mostrarEtapa('sucesso');
 }
 </script>
 
