@@ -581,6 +581,7 @@
 
         <!-- ETAPA 3: aluno encontrado + tipo de matrícula -->
         <div class="wz-stage" id="wzTipo" style="display:none">
+          <div class="nv-head"><div class="nv-ano">Ano letivo <b>2026</b></div></div>
           <div class="enc-icon"><svg viewBox="0 0 120 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><rect x="24" y="10" width="72" height="56" rx="6"/><circle cx="55" cy="34" r="13"/><line x1="65" y1="44" x2="79" y2="58"/><line x1="40" y1="82" x2="80" y2="82"/></svg></div>
           <div class="enc-title">Aluno(a) encontrado(a)</div>
           <div class="enc-rows">
@@ -658,7 +659,6 @@
         <!-- ETAPA: matrícula - seleção de nível de ensino (aluno não encontrado) -->
         <div class="wz-stage" id="wzNivel" style="display:none">
           <div class="nv-head">
-            <div class="nv-title">Informações de ensino</div>
             <div class="nv-ano">Ano letivo <b>2026</b></div>
           </div>
           <div class="nv-sub">Selecione o nível de ensino</div>
@@ -913,7 +913,7 @@ render(MATRICULAS);
 let anoSel = null;
 
 function abrirMatricula(){
-  anoSel = '2027';   // ano letivo padrão (escolha de ano saiu da 1ª etapa)
+  anoSel = '2026';   // ano letivo padrão (escolha de ano saiu da 1ª etapa)
   document.getElementById('wzCpf').value = '';
   document.getElementById('wzMsg').textContent = '';
   document.getElementById('wzMsg').className = 'wz-msg';
