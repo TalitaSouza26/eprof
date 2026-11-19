@@ -930,13 +930,16 @@ const TIPOS_MAT = [
 function renderTipos(){
   const box = document.getElementById('wzTiposBox');
   document.getElementById('wzMsgTipo').textContent = '';
-  box.innerHTML = TIPOS_MAT.map(t =>
-    '<div class="wz-tipo" onclick="selecionarTipo(\'' + t.id + '\',this)">'
-    + '<div class="wz-tipo-ic">' + t.ic + '</div>'
-    + '<div class="wz-tipo-nome">' + t.nome + '</div>'
-    + '<div class="wz-tipo-desc">' + t.desc + '</div>'
-    + '</div>'
-  ).join('');
+  // CPF encontrado na rede: só Rematrícula fica disponível; as demais ficam opacas.
+  box.innerHTML = TIPOS_MAT.map(t => {
+    const bloq = t.id !== 'rematricula';
+    return '<div class="wz-tipo ' + (bloq ? 'lock' : '') + '" '
+      + (bloq ? '' : 'onclick="selecionarTipo(\'' + t.id + '\',this)"') + '>'
+      + '<div class="wz-tipo-ic">' + t.ic + '</div>'
+      + '<div class="wz-tipo-nome">' + t.nome + '</div>'
+      + '<div class="wz-tipo-desc">' + t.desc + '</div>'
+      + '</div>';
+  }).join('');
 }
 function limparTipo(){
   document.querySelectorAll('.wz-tipo').forEach(c => c.classList.remove('sel'));
