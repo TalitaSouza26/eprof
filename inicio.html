@@ -193,7 +193,9 @@
     /* seleção de nível de ensino (aluno não encontrado -> matrícula) */
     .wz-card.full .wz-steps { display: none; }
     #wzNivel { align-items: stretch; }
-    .nv-title { text-align: right; color: #ED6939; font-size: 26px; font-weight: 400; margin-bottom: 64px; }
+    .nv-title { text-align: right; color: #ED6939; font-size: 26px; font-weight: 400; margin-bottom: 8px; }
+    .nv-ano { text-align: right; color: #8A94A6; font-size: 15px; font-weight: 600; margin-bottom: 56px; }
+    .nv-ano b { color: #ED6939; font-weight: 800; }
     .nv-sub { color: #ED6939; font-weight: 800; font-size: 15px; margin-bottom: 16px; }
     .nv-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
     .nv-card { position: relative; background: #fff; border: 1px solid #EAEDF1; border-radius: 14px; padding: 24px 16px 20px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(20,40,80,.04); transition: .15s; }
@@ -655,6 +657,7 @@
         <!-- ETAPA: matrícula - seleção de nível de ensino (aluno não encontrado) -->
         <div class="wz-stage" id="wzNivel" style="display:none">
           <div class="nv-title">Informações de ensino</div>
+          <div class="nv-ano">Ano letivo <b>2026</b></div>
           <div class="nv-sub">Selecione o nível de ensino</div>
           <div class="nv-grid">
             <div class="nv-card" onclick="selNivel(this,'infantil')">
