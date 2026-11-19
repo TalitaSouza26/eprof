@@ -510,12 +510,29 @@
           </div>
         </div>
 
-        <!-- ETAPA 3: tipo de matrícula -->
+        <!-- ETAPA 3: aluno encontrado + tipo de matrícula -->
         <div class="wz-stage" id="wzTipo" style="display:none">
-          <div class="wz-chip" id="wzAnoChip2" onclick="voltarAno()" title="Trocar ano"></div>
-          <div class="wz-cpf-label">Selecione o tipo de matrícula:</div>
+          <div style="text-align:center"><span class="wz-chip" id="wzAnoChip2" onclick="voltarAno()" title="Trocar ano"></span></div>
+          <div class="enc-icon"><svg viewBox="0 0 120 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><rect x="24" y="10" width="72" height="56" rx="6"/><circle cx="55" cy="34" r="13"/><line x1="65" y1="44" x2="79" y2="58"/><line x1="40" y1="82" x2="80" y2="82"/></svg></div>
+          <div class="enc-title">Aluno(a) encontrado(a)</div>
+          <div class="enc-rows">
+            <div class="enc-row"><span class="enc-k">Escola</span><span class="enc-escola">ESCOLA EPROF EDUCATION</span></div>
+            <div class="enc-row"><span class="enc-k">Matrícula</span><span class="enc-pill" id="encMat"></span></div>
+            <div class="enc-row"><span class="enc-k">CPF</span><span class="enc-pill" id="encCpf"></span></div>
+          </div>
+          <div class="wz-cpf-label" style="margin-top:4px">Selecione o tipo de matrícula:</div>
           <div class="wz-tipos" id="wzTiposBox"></div>
           <div class="wz-msg" id="wzMsgTipo"></div>
+          <div id="wzTransfAcao" style="display:none">
+            <div class="enc-msg">Para prosseguir, é necessário solicitar a transferência e comunicar a atual instituição de ensino do aluno.</div>
+            <div class="enc-actions">
+              <div class="enc-main-col">
+                <button class="enc-btn-main" disabled>Solicitar transferência</button>
+                <div class="enc-soon">Disponível nos próximos dias</div>
+              </div>
+              <button class="enc-btn-cancel" onclick="limparTipo()">Cancelar</button>
+            </div>
+          </div>
           <button class="wz-linkback" onclick="mostrarEtapa('cpf')">‹ Alterar CPF</button>
         </div>
 
@@ -570,24 +587,6 @@
           <button class="rm-confirm-btn" style="max-width:260px;margin-top:24px" onclick="fecharMatricula()">Concluir</button>
         </div>
 
-        <!-- ETAPA: aluno encontrado (transferência) -->
-        <div class="wz-stage" id="wzEncontrado" style="display:none">
-          <div class="enc-icon"><svg viewBox="0 0 120 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><rect x="24" y="10" width="72" height="56" rx="6"/><circle cx="55" cy="34" r="13"/><line x1="65" y1="44" x2="79" y2="58"/><line x1="40" y1="82" x2="80" y2="82"/></svg></div>
-          <div class="enc-title">Aluno(a) encontrado(a)</div>
-          <div class="enc-rows">
-            <div class="enc-row"><span class="enc-k">Escola</span><span class="enc-escola">ESCOLA EPROF EDUCATION</span></div>
-            <div class="enc-row"><span class="enc-k">Matrícula</span><span class="enc-pill" id="encMat"></span></div>
-            <div class="enc-row"><span class="enc-k">CPF</span><span class="enc-pill" id="encCpf"></span></div>
-          </div>
-          <div class="enc-msg">Para prosseguir, é necessário solicitar a transferência e comunicar a atual instituição de ensino do aluno.</div>
-          <div class="enc-actions">
-            <div class="enc-main-col">
-              <button class="enc-btn-main" disabled>Solicitar transferência</button>
-              <div class="enc-soon">Disponível nos próximos dias</div>
-            </div>
-            <button class="enc-btn-cancel" onclick="mostrarEtapa('tipo')">Cancelar</button>
-          </div>
-        </div>
       </div>
 
       <div class="wz-steps">
@@ -699,10 +698,10 @@ function abrirMatricula(){
 }
 function fecharMatricula(){ document.getElementById('matWizard').classList.add('hidden'); }
 
-const STAGES = { ano:'wzAno', cpf:'wzCpfSec', tipo:'wzTipo', remat:'wzRemat', sucesso:'wzSucesso', encontrado:'wzEncontrado' };
+const STAGES = { ano:'wzAno', cpf:'wzCpfSec', tipo:'wzTipo', remat:'wzRemat', sucesso:'wzSucesso' };
 function mostrarEtapa(e){
   for (const k in STAGES) document.getElementById(STAGES[k]).style.display = (k === e) ? '' : 'none';
-  document.getElementById('wzHeader').style.display = (e === 'remat' || e === 'sucesso' || e === 'encontrado') ? 'none' : '';
+  document.getElementById('wzHeader').style.display = (e === 'tipo' || e === 'remat' || e === 'sucesso') ? 'none' : '';
   if (e === 'cpf') setTimeout(() => document.getElementById('wzCpf').focus(), 50);
 }
 
@@ -737,7 +736,13 @@ function buscarCPF(){
     msg.className = 'wz-msg err';
     return;
   }
+  // preenche os dados do aluno encontrado
+  const digits = cpf.replace(/\D/g, '');
+  let h = 0; for (const c of digits) h = (h * 31 + (+c)) % 90000000;
+  document.getElementById('encMat').textContent = String(10000000 + h);
+  document.getElementById('encCpf').textContent = cpf;
   renderTipos();
+  limparTipo();
   mostrarEtapa('tipo');
 }
 
@@ -760,25 +765,25 @@ function renderTipos(){
     + '</div>'
   ).join('');
 }
+function limparTipo(){
+  document.querySelectorAll('.wz-tipo').forEach(c => c.classList.remove('sel'));
+  document.getElementById('wzTransfAcao').style.display = 'none';
+  const m = document.getElementById('wzMsgTipo'); m.textContent = ''; m.className = 'wz-msg';
+}
 function selecionarTipo(id, el){
   document.querySelectorAll('.wz-tipo').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
+  document.getElementById('wzTransfAcao').style.display = 'none';
+  const m = document.getElementById('wzMsgTipo'); m.textContent = ''; m.className = 'wz-msg';
   if (id === 'rematricula') { setTimeout(abrirRematricula, 140); return; }
-  if (id === 'transferencia') { setTimeout(abrirEncontrado, 140); return; }
-  const nome = TIPOS_MAT.find(t => t.id === id).nome;
-  const m = document.getElementById('wzMsgTipo');
-  m.textContent = nome + ' — fluxo em construção.';
+  if (id === 'transferencia') {
+    document.getElementById('wzTransfAcao').style.display = '';
+    return;
+  }
+  m.textContent = TIPOS_MAT.find(t => t.id === id).nome + ' — fluxo em construção.';
   m.className = 'wz-msg ok';
 }
 
-function abrirEncontrado(){
-  const cpf = document.getElementById('wzCpf').value;
-  const digits = cpf.replace(/\D/g, '');
-  let h = 0; for (const c of digits) h = (h * 31 + (+c)) % 90000000;
-  document.getElementById('encMat').textContent = String(10000000 + h);
-  document.getElementById('encCpf').textContent = cpf;
-  mostrarEtapa('encontrado');
-}
 
 /* ===== Rematrícula ===== */
 const TURMAS_ESCOLA = ['CN I','CN II','CN III','PN I','PN II','1º ano A','1º ano B','2º ano A','3º ano A','4º ano A','5º ano A'];
