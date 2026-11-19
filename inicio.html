@@ -189,6 +189,25 @@
     .wz-linkback { margin-top: 18px; background: none; border: none; color: #8A94A6; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
     .wz-linkback:hover { color: #ED6939; }
 
+    /* seleção de nível de ensino (aluno não encontrado -> matrícula) */
+    .wz-card.full .wz-steps { display: none; }
+    #wzNivel { align-items: stretch; }
+    .nv-title { text-align: right; color: #ED6939; font-size: 26px; font-weight: 400; margin-bottom: 64px; }
+    .nv-sub { color: #ED6939; font-weight: 800; font-size: 15px; margin-bottom: 16px; }
+    .nv-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .nv-card { position: relative; background: #fff; border: 1px solid #EAEDF1; border-radius: 14px; padding: 24px 16px 20px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(20,40,80,.04); transition: .15s; }
+    .nv-card:hover:not(.lock) { border-color: #ED6939; box-shadow: 0 8px 20px rgba(237,105,57,.1); transform: translateY(-2px); }
+    .nv-card.sel { border-color: #ED6939; box-shadow: 0 0 0 2px rgba(237,105,57,.2); }
+    .nv-card.lock { opacity: .45; cursor: default; }
+    .nv-radio { position: absolute; top: 12px; right: 12px; width: 18px; height: 18px; border-radius: 50%; background: #E7EAEF; }
+    .nv-card.sel .nv-radio { background: #ED6939; box-shadow: inset 0 0 0 3px #fff; }
+    .nv-ic { color: #C3CAD5; height: 72px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+    .nv-ic svg { width: 62px; height: 62px; }
+    .nv-nome { font-size: 15px; font-weight: 700; color: #12509A; }
+    .nv-nome i { color: #ED6939; font-style: normal; }
+    .nv-desc { font-size: 12.5px; color: #9AA1AB; margin-top: 4px; }
+    @media (max-width: 900px) { .nv-grid { grid-template-columns: repeat(2, 1fr); } .nv-title { margin-bottom: 28px; } }
+
     /* --- aluno encontrado (transferência) --- */
     .enc-icon { color: #434A54; margin-bottom: 10px; }
     .enc-icon svg { width: 104px; height: 84px; }
@@ -541,17 +560,8 @@
           <div class="wz-sub">Vamos começar realizando<br>uma busca na rede educacional...</div>
         </div>
         <!-- ETAPA 1: escolher o ano letivo -->
-        <div class="wz-stage" id="wzAno">
-          <div class="wz-cpf-label">Selecione o ano letivo:</div>
-          <div class="wz-anos">
-            <button class="wz-ano-btn" onclick="escolherAno('2026')">2026</button>
-            <button class="wz-ano-btn" onclick="escolherAno('2027')">2027</button>
-          </div>
-        </div>
-
-        <!-- ETAPA 2: digitar o CPF -->
+        <!-- ETAPA 1: digitar o CPF -->
         <div class="wz-stage" id="wzCpfSec" style="display:none">
-          <div class="wz-chip" id="wzAnoChip" onclick="voltarAno()" title="Trocar ano"></div>
           <div class="wz-cpf-label">Digite o CPF do aluno abaixo:</div>
           <div class="wz-cpf-row">
             <input class="wz-cpf-input" id="wzCpf" type="text" inputmode="numeric" placeholder="000.000.000-00" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter')buscarCPF()">
@@ -566,7 +576,6 @@
 
         <!-- ETAPA 3: aluno encontrado + tipo de matrícula -->
         <div class="wz-stage" id="wzTipo" style="display:none">
-          <div style="text-align:center"><span class="wz-chip" id="wzAnoChip2" onclick="voltarAno()" title="Trocar ano"></span></div>
           <div class="enc-icon"><svg viewBox="0 0 120 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><rect x="24" y="10" width="72" height="56" rx="6"/><circle cx="55" cy="34" r="13"/><line x1="65" y1="44" x2="79" y2="58"/><line x1="40" y1="82" x2="80" y2="82"/></svg></div>
           <div class="enc-title">Aluno(a) encontrado(a)</div>
           <div class="enc-rows">
@@ -593,7 +602,6 @@
         <!-- ETAPA: rematrícula (dados do aluno + turma de destino) -->
         <div class="wz-stage" id="wzRemat" style="display:none">
           <div class="rm-wrap">
-            <div style="text-align:center"><span class="wz-chip" id="wzAnoChip3" onclick="voltarAno()" title="Trocar ano"></span></div>
             <div class="rm-maintitle">Confirme os dados do aluno</div>
 
             <div class="rm-card" id="rmCard">
@@ -640,6 +648,44 @@
           <div class="wz-ola" style="font-weight:800">Rematrícula confirmada!</div>
           <div class="wz-sub" id="rmOkTxt" style="margin-top:12px"></div>
           <button class="rm-confirm-btn" style="max-width:260px;margin-top:24px" onclick="fecharMatricula()">Concluir</button>
+        </div>
+
+        <!-- ETAPA: matrícula - seleção de nível de ensino (aluno não encontrado) -->
+        <div class="wz-stage" id="wzNivel" style="display:none">
+          <div class="nv-title">Informações de ensino</div>
+          <div class="nv-sub">Selecione o nível de ensino</div>
+          <div class="nv-grid">
+            <div class="nv-card" onclick="selNivel(this,'infantil')">
+              <span class="nv-radio"></span>
+              <div class="nv-ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="10" y="30" width="20" height="20" rx="3"/><rect x="32" y="30" width="20" height="20" rx="3"/><rect x="21" y="9" width="20" height="20" rx="3"/><text x="31" y="24" font-size="12" fill="currentColor" stroke="none" text-anchor="middle" font-family="sans-serif" font-weight="700">A</text><text x="20" y="45" font-size="12" fill="currentColor" stroke="none" text-anchor="middle" font-family="sans-serif" font-weight="700">B</text><text x="42" y="45" font-size="12" fill="currentColor" stroke="none" text-anchor="middle" font-family="sans-serif" font-weight="700">C</text></svg></div>
+              <div class="nv-nome">Ed. Infantil</div>
+              <div class="nv-desc">CN I ao PN II</div>
+            </div>
+            <div class="nv-card" onclick="selNivel(this,'f1')">
+              <span class="nv-radio"></span>
+              <div class="nv-ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M18 27a14 14 0 0128 0v23a4 4 0 01-4 4H22a4 4 0 01-4-4z"/><path d="M26 27v-3a6 6 0 0112 0v3"/><rect x="25" y="38" width="14" height="14" rx="2"/><line x1="39" y1="16" x2="45" y2="9"/><line x1="43" y1="18" x2="49" y2="12"/></svg></div>
+              <div class="nv-nome">Fundamental <i>I</i></div>
+              <div class="nv-desc">1º ao 5º ano</div>
+            </div>
+            <div class="nv-card" onclick="selNivel(this,'f2')">
+              <span class="nv-radio"></span>
+              <div class="nv-ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M18 27a14 14 0 0128 0v23a4 4 0 01-4 4H22a4 4 0 01-4-4z"/><path d="M26 27v-3a6 6 0 0112 0v3"/><rect x="25" y="38" width="14" height="14" rx="2"/><line x1="39" y1="16" x2="45" y2="9"/><line x1="43" y1="18" x2="49" y2="12"/></svg></div>
+              <div class="nv-nome">Fundamental <i>II</i></div>
+              <div class="nv-desc">6º ao 9º ano</div>
+            </div>
+            <div class="nv-card lock">
+              <span class="nv-radio"></span>
+              <div class="nv-ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="14" y="40" width="36" height="6" rx="1"/><rect x="16" y="46" width="32" height="6" rx="1"/><rect x="18" y="52" width="28" height="6" rx="1"/><path d="M32 18l16 7-16 7-16-7z"/><path d="M41 27v6c0 2-4 4-9 4s-9-2-9-4v-6"/></svg></div>
+              <div class="nv-nome">EJA <i>I</i></div>
+              <div class="nv-desc">Etapas 1, 2 e 3</div>
+            </div>
+            <div class="nv-card lock">
+              <span class="nv-radio"></span>
+              <div class="nv-ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="14" y="40" width="36" height="6" rx="1"/><rect x="16" y="46" width="32" height="6" rx="1"/><rect x="18" y="52" width="28" height="6" rx="1"/><path d="M32 18l16 7-16 7-16-7z"/><path d="M41 27v6c0 2-4 4-9 4s-9-2-9-4v-6"/></svg></div>
+              <div class="nv-nome">EJA <i>II</i></div>
+              <div class="nv-desc">Etapas 4 e 5</div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -859,33 +905,31 @@ render(MATRICULAS);
 let anoSel = null;
 
 function abrirMatricula(){
-  anoSel = null;
+  anoSel = '2027';   // ano letivo padrão (escolha de ano saiu da 1ª etapa)
   document.getElementById('wzCpf').value = '';
   document.getElementById('wzMsg').textContent = '';
   document.getElementById('wzMsg').className = 'wz-msg';
   document.getElementById('wzMsgTipo').textContent = '';
   document.getElementById('wzMsgTipo').className = 'wz-msg';
   document.getElementById('rmConfirm').classList.add('hidden');
-  mostrarEtapa('ano');
+  mostrarEtapa('cpf');
   document.getElementById('matWizard').classList.remove('hidden');
 }
 function fecharMatricula(){ document.getElementById('matWizard').classList.add('hidden'); }
 
-const STAGES = { ano:'wzAno', cpf:'wzCpfSec', tipo:'wzTipo', remat:'wzRemat', sucesso:'wzSucesso' };
+const STAGES = { cpf:'wzCpfSec', tipo:'wzTipo', remat:'wzRemat', sucesso:'wzSucesso', nivel:'wzNivel' };
 function mostrarEtapa(e){
   for (const k in STAGES) document.getElementById(STAGES[k]).style.display = (k === e) ? '' : 'none';
-  document.getElementById('wzHeader').style.display = (e === 'tipo' || e === 'remat' || e === 'sucesso') ? 'none' : '';
+  document.getElementById('wzHeader').style.display = (e === 'tipo' || e === 'remat' || e === 'sucesso' || e === 'nivel') ? 'none' : '';
+  document.querySelector('#matWizard .wz-card').classList.toggle('full', e === 'nivel');
   if (e === 'cpf') setTimeout(() => document.getElementById('wzCpf').focus(), 50);
 }
+function voltarAno(){ mostrarEtapa('cpf'); }
 
-function escolherAno(ano){
-  anoSel = ano;
-  const txt = 'Ano letivo: ' + ano;
-  document.getElementById('wzAnoChip').textContent = txt;
-  document.getElementById('wzAnoChip2').textContent = txt;
-  mostrarEtapa('cpf');
+function selNivel(el, nivel){
+  document.querySelectorAll('#wzNivel .nv-card').forEach(c => c.classList.remove('sel'));
+  if (el) el.classList.add('sel');
 }
-function voltarAno(){ mostrarEtapa('ano'); }
 
 function mascaraCPF(inp){
   let v = inp.value.replace(/\D/g, '').slice(0, 11);
@@ -909,15 +953,23 @@ function buscarCPF(){
     msg.className = 'wz-msg err';
     return;
   }
-  // preenche os dados do aluno encontrado
   const digits = cpf.replace(/\D/g, '');
-  let h = 0; for (const c of digits) h = (h * 31 + (+c)) % 90000000;
-  document.getElementById('encMat').textContent = String(10000000 + h);
-  document.getElementById('encCpf').textContent = cpf;
-  renderTipos();
-  limparTipo();
-  mostrarEtapa('tipo');
+  if (CPFS_NA_REDE.includes(digits)) {
+    // aluno encontrado na rede -> opções (só rematrícula disponível)
+    let h = 0; for (const c of digits) h = (h * 31 + (+c)) % 90000000;
+    document.getElementById('encMat').textContent = String(10000000 + h);
+    document.getElementById('encCpf').textContent = cpf;
+    renderTipos();
+    limparTipo();
+    mostrarEtapa('tipo');
+  } else {
+    // aluno não encontrado -> matrícula normal (seleção de nível de ensino)
+    selNivel(null, null);
+    mostrarEtapa('nivel');
+  }
 }
+// CPFs já matriculados na rede (demo): encontrados -> rematrícula.
+const CPFS_NA_REDE = ['40092413064', '11144477735'];
 
 const IC_MAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>';
 const IC_REM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>';
@@ -1003,7 +1055,6 @@ function abrirRematricula(){
   document.getElementById('rmTurma').innerHTML = '<option value="" disabled selected>Selecionar turma de destino...</option>' +
     TURMAS_ESCOLA.map(t => '<option value="' + t + '">' + t + '</option>').join('');
   document.getElementById('rmErr').textContent = '';
-  document.getElementById('wzAnoChip3').textContent = 'Ano letivo: ' + anoSel;
   setEditar(false);
   mostrarEtapa('remat');
 }
