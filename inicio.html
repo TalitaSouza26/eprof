@@ -955,14 +955,16 @@ function validaCPF(cpf){
 function buscarCPF(){
   const msg = document.getElementById('wzMsg');
   const cpf = document.getElementById('wzCpf').value;
-  if (!validaCPF(cpf)) {
+  const digits = cpf.replace(/\D/g, '');
+  const naRede = CPFS_NA_REDE.includes(digits);
+  // CPFs-demo da rede são aceitos mesmo sem passar no validador
+  if (!naRede && !validaCPF(cpf)) {
     msg.textContent = 'Digite um CPF válido.';
     msg.className = 'wz-msg err';
     return;
   }
-  const digits = cpf.replace(/\D/g, '');
-  if (CPFS_NA_REDE.includes(digits)) {
-    // aluno encontrado na rede -> opções (só rematrícula disponível)
+  if (naRede) {
+    // aluno já matriculado na rede -> opções (só rematrícula disponível)
     let h = 0; for (const c of digits) h = (h * 31 + (+c)) % 90000000;
     document.getElementById('encMat').textContent = String(10000000 + h);
     document.getElementById('encCpf').textContent = cpf;
@@ -976,7 +978,7 @@ function buscarCPF(){
   }
 }
 // CPFs já matriculados na rede (demo): encontrados -> rematrícula.
-const CPFS_NA_REDE = ['40092413064', '11144477735'];
+const CPFS_NA_REDE = ['40092413064', '11144477735', '15936706559'];
 
 const IC_MAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>';
 const IC_REM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>';
@@ -989,8 +991,8 @@ const TIPOS_MAT = [
 function renderTipos(){
   const box = document.getElementById('wzTiposBox');
   document.getElementById('wzMsgTipo').textContent = '';
-  // CPF encontrado na rede: só Rematrícula fica disponível; as demais ficam opacas.
-  box.innerHTML = TIPOS_MAT.map(t => {
+  // aluno já matriculado: sem o card Matrícula; só Rematrícula ativa, Transferência opaca.
+  box.innerHTML = TIPOS_MAT.filter(t => t.id !== 'matricula').map(t => {
     const bloq = t.id !== 'rematricula';
     return '<div class="wz-tipo ' + (bloq ? 'lock' : '') + '" '
       + (bloq ? '' : 'onclick="selecionarTipo(\'' + t.id + '\',this)"') + '>'
