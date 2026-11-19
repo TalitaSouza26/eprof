@@ -217,6 +217,16 @@
     .rm-sub { font-size: 13px; color: #90837C; margin-top: 3px; }
     .rm-status { display: inline-flex; align-items: center; gap: 7px; background: #DEF4D2; color: #2E8B00; font-size: 12.5px; font-weight: 700; padding: 6px 13px; border-radius: 20px; flex-shrink: 0; }
     .rm-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #3DC200; }
+    .rm-head-actions { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .rm-edit-btn { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1.5px solid #E4E8EE; color: #5B6472; border-radius: 9px; padding: 7px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .rm-edit-btn:hover { border-color: #ED6939; color: #ED6939; }
+    .rm-edit-btn svg { width: 14px; height: 14px; }
+    .rm-edit-btn.ativo { background: #ED6939; color: #fff; border-color: #ED6939; }
+    .rm-card.editando .rm-tile { border-color: #F4CDB8; background: #FFF8F4; }
+    .rm-card.editando .rm-tile .v,
+    .rm-card.editando .rm-resp-nome,
+    .rm-card.editando .rm-fone-num { border-bottom: 1px dashed #ED6939; cursor: text; outline: none; min-width: 20px; display: inline-block; }
+    .rm-card.editando [contenteditable]:focus { background: #FFF; box-shadow: 0 1px 0 #ED6939; }
     .rm-body { padding: 18px 22px 22px; }
     .rm-sec-title { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #9AA1AB; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px; }
     .rm-sec-title svg { width: 15px; height: 15px; color: #ED6939; }
@@ -515,14 +525,17 @@
             <div style="text-align:center"><span class="wz-chip" id="wzAnoChip3" onclick="voltarAno()" title="Trocar ano"></span></div>
             <div class="rm-maintitle">Confirme os dados do aluno</div>
 
-            <div class="rm-card">
+            <div class="rm-card" id="rmCard">
               <div class="rm-card-head">
                 <div class="rm-av" id="rmAv">M</div>
                 <div class="rm-head-info">
                   <div class="rm-nome" id="rmNome"></div>
                   <div class="rm-sub" id="rmSub"></div>
                 </div>
-                <span class="rm-status">Ativo</span>
+                <div class="rm-head-actions">
+                  <span class="rm-status">Ativo</span>
+                  <button class="rm-edit-btn" id="rmEditBtn" onclick="toggleEditar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg><span>Editar dados</span></button>
+                </div>
               </div>
               <div class="rm-body">
                 <div class="rm-sec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Dados pessoais</div>
@@ -801,7 +814,7 @@ function abrirRematricula(){
     '<div class="rm-resp-card"><div class="rm-resp-av">' + r.nome.trim()[0] + '</div>'
     + '<div class="rm-resp-info"><div class="rm-resp-nome">' + r.nome + '</div>'
     + '<div class="rm-resp-meta"><span class="rm-parent">' + r.parentesco + '</span>'
-    + '<span class="rm-fone">' + IC_FONE + r.contato + '</span></div></div></div>'
+    + '<span class="rm-fone">' + IC_FONE + '<span class="rm-fone-num">' + r.contato + '</span></span></div></div></div>'
   ).join('');
   document.getElementById('rmAtual').textContent = a.turmaAtual;
   document.getElementById('rmAno2').textContent = anoSel;
@@ -809,10 +822,24 @@ function abrirRematricula(){
     TURMAS_ESCOLA.map(t => '<option value="' + t + '">' + t + '</option>').join('');
   document.getElementById('rmErr').textContent = '';
   document.getElementById('wzAnoChip3').textContent = 'Ano letivo: ' + anoSel;
+  setEditar(false);
   mostrarEtapa('remat');
 }
 
+let editando = false;
+function setEditar(on){
+  editando = on;
+  const card = document.getElementById('rmCard');
+  const btn = document.getElementById('rmEditBtn');
+  card.classList.toggle('editando', on);
+  btn.classList.toggle('ativo', on);
+  btn.querySelector('span').textContent = on ? 'Concluir edição' : 'Editar dados';
+  card.querySelectorAll('.rm-tile .v, .rm-resp-nome, .rm-fone-num').forEach(e => { e.contentEditable = on; });
+}
+function toggleEditar(){ setEditar(!editando); }
+
 function confirmarRematricula(){
+  if (editando) setEditar(false);
   const turma = document.getElementById('rmTurma').value;
   if (!turma) { document.getElementById('rmErr').textContent = 'Selecione a turma de destino.'; return; }
   rematTurma = turma;
