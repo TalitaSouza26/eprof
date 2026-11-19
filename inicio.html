@@ -51,20 +51,22 @@
     .stat-ext:hover { background: #FDEEE8; }
     .stat-ext svg { width: 13px; height: 13px; }
 
-    /* ---- atalhos (4 cards) ---- */
-    .quick-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 20px; }
-    .quick-card { position: relative; display: flex; align-items: center; gap: 10px; background: #F3F5F9; border: 1px solid #E8EBF1; border-radius: 16px; padding: 20px; min-height: 150px; cursor: pointer; text-decoration: none; color: inherit; transition: .15s; overflow: hidden; }
-    .quick-card:hover { border-color: #ED6939; box-shadow: 0 8px 20px rgba(20,40,80,.08); transform: translateY(-2px); }
-    .quick-card.soon { cursor: default; }
-    .quick-card.soon:hover { border-color: #E8EBF1; box-shadow: none; transform: none; }
-    .qc-left { flex: 1; min-width: 0; position: relative; z-index: 1; }
-    .qc-ic { width: 34px; height: 34px; border-radius: 10px; background: #FDEEE8; color: #ED6939; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
-    .qc-ic svg { width: 19px; height: 19px; }
-    .qc-title { font-size: 16.5px; font-weight: 800; color: #12223A; margin-bottom: 5px; }
-    .qc-desc { font-size: 12.5px; color: #7A828F; line-height: 1.45; }
-    .qc-illus { flex-shrink: 0; opacity: .95; }
-    .qc-illus svg { width: 74px; height: 74px; }
-    .qc-badge { position: absolute; top: 14px; right: 14px; background: #FBE7D6; color: #C0531F; font-size: 10px; font-weight: 800; letter-spacing: .05em; padding: 3px 9px; border-radius: 20px; z-index: 2; }
+    /* ---- atalhos (cards com ilustração) ---- */
+    .quick-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; align-items: start; }
+    .qcard-img { display: block; border-radius: 18px; overflow: hidden; cursor: pointer; transition: .18s; box-shadow: 0 2px 10px rgba(20,40,80,.05); }
+    .qcard-img img { width: 100%; height: auto; display: block; }
+    .qcard-img:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(20,40,80,.12); }
+    .qcard-img.soon { cursor: default; }
+    .qcard-img.soon:hover { transform: none; box-shadow: 0 2px 10px rgba(20,40,80,.05); }
+    .qcard-html { background: #E7E7E7; border-radius: 18px; aspect-ratio: 2000 / 760; display: flex; align-items: center; gap: 16px; padding: 0 42px; cursor: pointer; transition: .18s; overflow: hidden; box-shadow: 0 2px 10px rgba(20,40,80,.05); }
+    .qcard-html:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(20,40,80,.12); }
+    .qch-left { flex: 1; min-width: 0; }
+    .qch-ic { width: 46px; height: 46px; border-radius: 13px; background: #FBE0D3; color: #ED6939; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .qch-ic svg { width: 24px; height: 24px; }
+    .qch-title { font-size: 26px; font-weight: 800; color: #1A1A1A; letter-spacing: -.01em; line-height: 1.1; }
+    .qch-desc { font-size: 15px; color: #565F6B; line-height: 1.35; margin-top: 10px; max-width: 320px; }
+    .qch-illus { flex-shrink: 0; }
+    .qch-illus svg { width: 118px; height: 118px; }
 
     /* ---- últimas matrículas ---- */
     .mat-panel { background: #fff; border: 1px solid #E8EBF1; border-radius: 18px; padding: 20px 22px 16px; }
@@ -353,41 +355,17 @@
 
     <!-- ATALHOS -->
     <div class="quick-row">
-      <a class="quick-card" href="#">
-        <div class="qc-left">
-          <div class="qc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14v-2a8 8 0 0116 0v2"/><path d="M4 14a2 2 0 002 2h1v-4H6a2 2 0 00-2 2zM20 14a2 2 0 01-2 2h-1v-4h1a2 2 0 012 2z"/><path d="M18 16v1a3 3 0 01-3 3h-3"/></svg></div>
-          <div class="qc-title">Suporte técnico</div>
-          <div class="qc-desc">Precisa de ajuda? Nossa equipe está à disposição</div>
+      <div class="qcard-img"><img src="qc-suporte.webp" alt="Suporte técnico — Precisa de ajuda? Nossa equipe está à disposição"></div>
+      <a class="qcard-img" href="secretario.html"><img src="qc-turmas.webp" alt="Gestão de turmas — Adicione, remova e mova alunos entre turmas"></a>
+      <div class="qcard-img soon"><img src="qc-documentacao.webp" alt="Documentação — Acesse a documentação e as orientações do sistema (em breve)"></div>
+      <div class="qcard-html" onclick="abrirMatricula()">
+        <div class="qch-left">
+          <div class="qch-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg></div>
+          <div class="qch-title">Nova matrícula</div>
+          <div class="qch-desc">Matricule um novo aluno ou realize uma transferência</div>
         </div>
-        <div class="qc-illus"><svg viewBox="0 0 80 80" fill="none"><rect x="12" y="46" width="44" height="26" rx="3" fill="#DCE6F5"/><rect x="18" y="52" width="32" height="4" rx="2" fill="#B9CBE8"/><rect x="18" y="60" width="22" height="4" rx="2" fill="#B9CBE8"/><circle cx="52" cy="28" r="12" fill="#F7C9A8"/><path d="M40 28v-2a12 12 0 0124 0v2" stroke="#ED6939" stroke-width="3" fill="none"/><rect x="38" y="27" width="6" height="10" rx="3" fill="#ED6939"/><rect x="60" y="27" width="6" height="10" rx="3" fill="#ED6939"/><path d="M62 37v2a5 5 0 01-5 5h-3" stroke="#ED6939" stroke-width="3" fill="none"/><path d="M44 46c2 5 14 5 16 0" stroke="#12509A" stroke-width="3" fill="none"/></svg></div>
-      </a>
-
-      <a class="quick-card" href="secretario.html">
-        <div class="qc-left">
-          <div class="qc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-          <div class="qc-title">Gestão de turmas</div>
-          <div class="qc-desc">Adicione, remova e mova alunos entre turmas</div>
-        </div>
-        <div class="qc-illus"><svg viewBox="0 0 80 80" fill="none"><circle cx="26" cy="24" r="8" fill="#F7C9A8"/><rect x="16" y="34" width="20" height="16" rx="4" fill="#ED6939"/><circle cx="52" cy="24" r="8" fill="#C9DBF2"/><rect x="42" y="34" width="20" height="16" rx="4" fill="#12509A"/><rect x="14" y="56" width="22" height="12" rx="2" fill="#DCE6F5"/><rect x="44" y="56" width="22" height="12" rx="2" fill="#DCE6F5"/></svg></div>
-      </a>
-
-      <a class="quick-card" href="documentos.html">
-        <div class="qc-left">
-          <div class="qc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-          <div class="qc-title">Documentos</div>
-          <div class="qc-desc">Emita declarações, boletins, histórico e atas do aluno</div>
-        </div>
-        <div class="qc-illus"><svg viewBox="0 0 80 80" fill="none"><path d="M24 12h22l12 12v44H24V12z" fill="#E7EAF0"/><path d="M46 12v12h12z" fill="#C6D2E6"/><rect x="30" y="34" width="26" height="4" rx="2" fill="#B9CBE8"/><rect x="30" y="44" width="26" height="4" rx="2" fill="#B9CBE8"/><rect x="30" y="54" width="16" height="4" rx="2" fill="#ED6939"/></svg></div>
-      </a>
-
-      <a class="quick-card" href="#" onclick="abrirMatricula();return false;">
-        <div class="qc-left">
-          <div class="qc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg></div>
-          <div class="qc-title">Nova matrícula</div>
-          <div class="qc-desc">Matricule um novo aluno ou realize uma transferência</div>
-        </div>
-        <div class="qc-illus"><svg viewBox="0 0 80 80" fill="none"><rect x="16" y="14" width="34" height="46" rx="4" fill="#E7EAF0"/><line x1="23" y1="26" x2="43" y2="26" stroke="#B9CBE8" stroke-width="3"/><line x1="23" y1="34" x2="43" y2="34" stroke="#B9CBE8" stroke-width="3"/><line x1="23" y1="42" x2="36" y2="42" stroke="#B9CBE8" stroke-width="3"/><circle cx="54" cy="52" r="15" fill="#ED6939"/><path d="M48 52l4 4 8-8" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </a>
+        <div class="qch-illus"><svg viewBox="0 0 80 80" fill="none"><rect x="16" y="14" width="34" height="46" rx="4" fill="#DADFE7"/><line x1="23" y1="26" x2="43" y2="26" stroke="#AFBCCE" stroke-width="3"/><line x1="23" y1="34" x2="43" y2="34" stroke="#AFBCCE" stroke-width="3"/><line x1="23" y1="42" x2="36" y2="42" stroke="#AFBCCE" stroke-width="3"/><circle cx="54" cy="52" r="15" fill="#ED6939"/><path d="M48 52l4 4 8-8" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
     </div>
 
     <!-- ÚLTIMAS MATRÍCULAS -->
