@@ -635,10 +635,14 @@
                 <div class="rm-dest-from"><span class="k">Turma atual</span><span class="v" id="rmAtual"></span></div>
                 <svg class="rm-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 <div class="rm-dest-to">
-                  <div class="rm-dest-fields">
-                    <div><span class="k">Nova turma · <span id="rmAno2"></span></span><select class="rm-select" id="rmTurma" onchange="document.getElementById('rmErr').textContent=''"></select></div>
-                    <div><span class="k">Turno</span><select class="rm-select" id="rmTurno"><option value="Matutino">Matutino</option><option value="Vespertino">Vespertino</option><option value="Integral">Integral</option><option value="Noturno">Noturno</option></select></div>
-                  </div>
+                  <span class="k">Nova turma · <span id="rmAno2"></span></span><select class="rm-select" id="rmTurma" onchange="document.getElementById('rmErr').textContent=''"></select>
+                </div>
+              </div>
+              <div class="rm-dest-flow" style="margin-top:14px">
+                <div class="rm-dest-from"><span class="k">Turno atual</span><span class="v" id="rmTurnoAtual"></span></div>
+                <svg class="rm-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                <div class="rm-dest-to">
+                  <span class="k">Novo turno</span><select class="rm-select" id="rmTurno"><option value="Matutino">Matutino</option><option value="Vespertino">Vespertino</option></select>
                 </div>
               </div>
             </div>
@@ -1067,6 +1071,7 @@ function abrirRematricula(){
     + '<span class="rm-fone">' + IC_FONE + '<span class="rm-fone-num">' + r.contato + '</span></span></div></div></div>'
   ).join('');
   document.getElementById('rmAtual').textContent = a.turmaAtual;
+  document.getElementById('rmTurnoAtual').textContent = a.turno;
   document.getElementById('rmAno2').textContent = anoSel;
   document.getElementById('rmTurno').value = a.turno;
   document.getElementById('rmTurma').innerHTML = '<option value="" disabled selected>Selecionar turma de destino...</option>' +
