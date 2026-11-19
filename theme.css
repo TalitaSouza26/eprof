@@ -36,6 +36,12 @@ body{
   font-size: 14px;
 }
 
+/* Garante a fonte do app (Plus Jakarta Sans) tambem nos controles de formulario,
+   que por padrao nao herdam a font-family. */
+button, input, select, textarea{
+  font-family: var(--font-display);
+}
+
 /* ================= SIDEBAR ================= */
 .sidebar{
   width: 230px;
