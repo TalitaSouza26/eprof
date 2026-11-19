@@ -189,6 +189,23 @@
     .wz-linkback { margin-top: 18px; background: none; border: none; color: #8A94A6; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
     .wz-linkback:hover { color: #ED6939; }
 
+    /* --- aluno encontrado (transferência) --- */
+    .enc-icon { color: #434A54; margin-bottom: 10px; }
+    .enc-icon svg { width: 104px; height: 84px; }
+    .enc-title { font-size: 30px; color: #ED6939; font-weight: 500; margin-bottom: 28px; }
+    .enc-rows { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+    .enc-row { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 14px; }
+    .enc-k { color: #8A94A6; font-size: 15px; }
+    .enc-escola { color: #ED6939; font-weight: 800; font-size: 16px; letter-spacing: .01em; }
+    .enc-pill { background: #fff; border: 1.5px solid #EFE2DA; border-radius: 12px; padding: 12px; text-align: center; color: #ED6939; font-weight: 800; font-size: 16px; box-shadow: 0 2px 8px rgba(20,40,80,.05); }
+    .enc-msg { color: #5B7CA0; font-size: 14.5px; text-align: center; max-width: 470px; line-height: 1.5; margin-bottom: 26px; }
+    .enc-actions { display: flex; gap: 14px; align-items: flex-start; }
+    .enc-main-col { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .enc-btn-main { background: #ECECEC; color: #A9A9A9; border: none; border-radius: 12px; padding: 14px 26px; font-size: 14.5px; font-weight: 600; cursor: not-allowed; font-family: inherit; }
+    .enc-soon { color: #3DC200; font-size: 12.5px; font-weight: 600; margin-left: 4px; }
+    .enc-btn-cancel { background: #FBE0D3; color: #ED6939; border: none; border-radius: 12px; padding: 14px 30px; font-size: 14.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .enc-btn-cancel:hover { background: #f7d2c0; }
+
     /* --- rematrícula --- */
     .rm-wrap { width: 100%; max-width: 660px; margin: 0 auto; text-align: left; }
     .rm-maintitle { font-size: 20px; font-weight: 800; color: #12223A; text-align: center; margin: 8px 0 18px; }
@@ -539,6 +556,25 @@
           <div class="wz-sub" id="rmOkTxt" style="margin-top:12px"></div>
           <button class="rm-confirm-btn" style="max-width:260px;margin-top:24px" onclick="fecharMatricula()">Concluir</button>
         </div>
+
+        <!-- ETAPA: aluno encontrado (transferência) -->
+        <div class="wz-stage" id="wzEncontrado" style="display:none">
+          <div class="enc-icon"><svg viewBox="0 0 120 96" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><rect x="24" y="10" width="72" height="56" rx="6"/><circle cx="55" cy="34" r="13"/><line x1="65" y1="44" x2="79" y2="58"/><line x1="40" y1="82" x2="80" y2="82"/></svg></div>
+          <div class="enc-title">Aluno(a) encontrado(a)</div>
+          <div class="enc-rows">
+            <div class="enc-row"><span class="enc-k">Escola</span><span class="enc-escola">ESCOLA EPROF EDUCATION</span></div>
+            <div class="enc-row"><span class="enc-k">Matrícula</span><span class="enc-pill" id="encMat"></span></div>
+            <div class="enc-row"><span class="enc-k">CPF</span><span class="enc-pill" id="encCpf"></span></div>
+          </div>
+          <div class="enc-msg">Para prosseguir, é necessário solicitar a transferência e comunicar a atual instituição de ensino do aluno.</div>
+          <div class="enc-actions">
+            <div class="enc-main-col">
+              <button class="enc-btn-main" disabled>Solicitar transferência</button>
+              <div class="enc-soon">Disponível nos próximos dias</div>
+            </div>
+            <button class="enc-btn-cancel" onclick="mostrarEtapa('tipo')">Cancelar</button>
+          </div>
+        </div>
       </div>
 
       <div class="wz-steps">
@@ -650,10 +686,10 @@ function abrirMatricula(){
 }
 function fecharMatricula(){ document.getElementById('matWizard').classList.add('hidden'); }
 
-const STAGES = { ano:'wzAno', cpf:'wzCpfSec', tipo:'wzTipo', remat:'wzRemat', sucesso:'wzSucesso' };
+const STAGES = { ano:'wzAno', cpf:'wzCpfSec', tipo:'wzTipo', remat:'wzRemat', sucesso:'wzSucesso', encontrado:'wzEncontrado' };
 function mostrarEtapa(e){
   for (const k in STAGES) document.getElementById(STAGES[k]).style.display = (k === e) ? '' : 'none';
-  document.getElementById('wzHeader').style.display = (e === 'remat' || e === 'sucesso') ? 'none' : '';
+  document.getElementById('wzHeader').style.display = (e === 'remat' || e === 'sucesso' || e === 'encontrado') ? 'none' : '';
   if (e === 'cpf') setTimeout(() => document.getElementById('wzCpf').focus(), 50);
 }
 
@@ -719,10 +755,20 @@ function selecionarTipo(id, el){
   document.querySelectorAll('.wz-tipo').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   if (id === 'rematricula') { setTimeout(abrirRematricula, 140); return; }
+  if (id === 'transferencia') { setTimeout(abrirEncontrado, 140); return; }
   const nome = TIPOS_MAT.find(t => t.id === id).nome;
   const m = document.getElementById('wzMsgTipo');
   m.textContent = nome + ' — fluxo em construção.';
   m.className = 'wz-msg ok';
+}
+
+function abrirEncontrado(){
+  const cpf = document.getElementById('wzCpf').value;
+  const digits = cpf.replace(/\D/g, '');
+  let h = 0; for (const c of digits) h = (h * 31 + (+c)) % 90000000;
+  document.getElementById('encMat').textContent = String(10000000 + h);
+  document.getElementById('encCpf').textContent = cpf;
+  mostrarEtapa('encontrado');
 }
 
 /* ===== Rematrícula ===== */

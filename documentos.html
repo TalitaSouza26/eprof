@@ -172,7 +172,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
       <span>Documento editável — clique no texto para corrigir ou acrescentar antes de imprimir.</span>
     </div>
-    <div class="prev-body"><iframe id="prevFrame" title="Pré-visualização" onload="aoCarregarPreview()"></iframe></div>
+    <div class="prev-body"><iframe id="prevFrame" title="Pré-visualização" onload="if(typeof aoCarregarPreview==='function')aoCarregarPreview()"></iframe></div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="voltarPrev()">Voltar</button>
       <button class="btn-print" onclick="imprimirDeclaracao()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir</button>
