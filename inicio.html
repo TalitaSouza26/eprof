@@ -139,7 +139,7 @@
     .wz-close:hover { background: #D4531F; }
     .wz-close svg { width: 18px; height: 18px; }
 
-    .wz-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 40px; text-align: center; }
+    .wz-main { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 40px; text-align: center; }
     .wz-mag { color: #3A4150; margin-bottom: 16px; }
     .wz-mag svg { width: 108px; height: 108px; }
     .wz-ola { font-size: 30px; color: #ED6939; font-weight: 500; }
@@ -193,8 +193,9 @@
     /* seleção de nível de ensino (aluno não encontrado -> matrícula) */
     .wz-card.full .wz-steps { display: none; }
     #wzNivel { align-items: stretch; }
-    .nv-title { text-align: right; color: #ED6939; font-size: 26px; font-weight: 400; margin-bottom: 8px; }
-    .nv-ano { text-align: right; color: #8A94A6; font-size: 15px; font-weight: 600; margin-bottom: 56px; }
+    .nv-head { position: absolute; top: 20px; right: 40px; text-align: right; }
+    .nv-title { color: #ED6939; font-size: 26px; font-weight: 400; }
+    .nv-ano { color: #8A94A6; font-size: 15px; font-weight: 600; margin-top: 2px; }
     .nv-ano b { color: #ED6939; font-weight: 800; }
     .nv-sub { color: #ED6939; font-weight: 800; font-size: 15px; margin-bottom: 16px; }
     .nv-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
@@ -656,8 +657,10 @@
 
         <!-- ETAPA: matrícula - seleção de nível de ensino (aluno não encontrado) -->
         <div class="wz-stage" id="wzNivel" style="display:none">
-          <div class="nv-title">Informações de ensino</div>
-          <div class="nv-ano">Ano letivo <b>2026</b></div>
+          <div class="nv-head">
+            <div class="nv-title">Informações de ensino</div>
+            <div class="nv-ano">Ano letivo <b>2026</b></div>
+          </div>
           <div class="nv-sub">Selecione o nível de ensino</div>
           <div class="nv-grid">
             <div class="nv-card" onclick="selNivel(this,'infantil')">
