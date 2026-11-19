@@ -165,6 +165,7 @@
     .wz-step.active .wz-step-thumb { border-color: #ED6939; box-shadow: 0 0 0 3px rgba(237,105,57,.12); color: #ED6939; }
     .wz-step-thumb svg { width: 72%; height: 72%; }
     .wz-step-img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .wz-step:not(.active) .wz-step-img { filter: grayscale(1) opacity(.55); }
     .wz-step-num { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 26px; height: 26px; border-radius: 50%; background: #EEF1F6; color: #9AA1AB; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; border: 3px solid #FAFBFC; }
     .wz-step.active .wz-step-num { background: #ED6939; color: #fff; }
     .wz-step-label { margin-top: 12px; font-size: 13px; color: #9AA1AB; font-weight: 600; }
@@ -607,6 +608,7 @@
 
         <!-- ETAPA: rematrícula (dados do aluno + turma de destino) -->
         <div class="wz-stage" id="wzRemat" style="display:none">
+          <div class="nv-head"><div class="nv-ano">Ano letivo <b>2026</b></div></div>
           <div class="rm-wrap">
             <div class="rm-maintitle">Confirme os dados do aluno</div>
 
@@ -930,6 +932,9 @@ const STAGES = { cpf:'wzCpfSec', tipo:'wzTipo', remat:'wzRemat', sucesso:'wzSuce
 function mostrarEtapa(e){
   for (const k in STAGES) document.getElementById(STAGES[k]).style.display = (k === e) ? '' : 'none';
   document.getElementById('wzHeader').style.display = (e === 'tipo' || e === 'remat' || e === 'sucesso' || e === 'nivel') ? 'none' : '';
+  // passo 2 "Selecionar série e turno" fica ativo só na matrícula (nível); nos demais fica opaco
+  const steps = document.querySelectorAll('#matWizard .wz-step');
+  if (steps[1]) steps[1].classList.toggle('active', e === 'nivel');
   if (e === 'cpf') setTimeout(() => document.getElementById('wzCpf').focus(), 50);
 }
 function voltarAno(){ mostrarEtapa('cpf'); }
