@@ -1032,7 +1032,11 @@ const ALUNO_REMAT = {
   nome:'Maria Antonella Ferreira', matricula:'23276473', nasc:'28/01/2024',
   sexo:'Feminino', naturalidade:'Porto Seguro - BA', nivel:'Educação Infantil',
   serie:'CN II', turmaAtual:'CN II', turno:'Matutino',
-  responsaveis:[ { nome:'Luiza Moreira', parentesco:'Mãe', contato:'(73) 9 9562-6262' } ],
+  responsaveis:[
+    { nome:'Luiza Moreira', parentesco:'Mãe', contato:'(73) 9 9562-6262' },
+    { nome:'Carlos Ferreira', parentesco:'Pai', contato:'(73) 9 9148-3077' },
+    { nome:'Antônia Moreira', parentesco:'Avó', contato:'(73) 9 8821-5409' },
+  ],
 };
 let rematTurma = null;
 let rematTurno = null;
@@ -1044,6 +1048,7 @@ const RM_IC = {
   cap:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>',
   book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',
   clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  id:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-1.3 1.7-2 3-2s2.5.7 3 2"/><line x1="15" y1="10" x2="18" y2="10"/><line x1="15" y1="14" x2="18" y2="14"/></svg>',
 };
 const IC_FONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>';
 
@@ -1053,8 +1058,7 @@ function abrirRematricula(){
   document.getElementById('rmNome').textContent = a.nome;
   document.getElementById('rmSub').textContent = 'Matrícula ' + a.matricula + ' · CPF ' + cpf;
   document.getElementById('rmDados').innerHTML = [
-    ['cal','Data de nascimento', a.nasc], ['user','Sexo', a.sexo], ['pin','Naturalidade', a.naturalidade],
-    ['cap','Nível de ensino', a.nivel], ['book','Série/ano atual', a.serie], ['clock','Turno', a.turno],
+    ['cal','Data de nascimento', a.nasc], ['user','Sexo', a.sexo], ['id','CPF', cpf],
   ].map(([ic,k,v]) => '<div class="rm-tile"><div class="rm-tile-ic">' + RM_IC[ic] + '</div><div><div class="k">' + k + '</div><div class="v">' + v + '</div></div></div>').join('');
   document.getElementById('rmResp').innerHTML = a.responsaveis.map(r =>
     '<div class="rm-resp-card"><div class="rm-resp-av">' + r.nome.trim()[0] + '</div>'
