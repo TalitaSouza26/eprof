@@ -630,12 +630,12 @@
             </div>
 
             <div class="rm-dest-panel">
-              <div class="rm-dest-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg> Para qual turma o aluno vai?</div>
+              <div class="rm-dest-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg> Para qual série o aluno vai?</div>
               <div class="rm-dest-flow">
-                <div class="rm-dest-from"><span class="k">Turma atual</span><span class="v" id="rmAtual"></span></div>
+                <div class="rm-dest-from"><span class="k">Série atual</span><span class="v" id="rmAtual"></span></div>
                 <svg class="rm-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 <div class="rm-dest-to">
-                  <span class="k">Nova turma · <span id="rmAno2"></span></span><select class="rm-select" id="rmTurma" onchange="document.getElementById('rmErr').textContent=''"></select>
+                  <span class="k">Nova série · <span id="rmAno2"></span></span><select class="rm-select" id="rmTurma" onchange="document.getElementById('rmErr').textContent=''"></select>
                 </div>
               </div>
               <div class="rm-dest-flow" style="margin-top:14px">
@@ -1085,7 +1085,7 @@ function abrirRematricula(){
   document.getElementById('rmTurnoAtual').textContent = a.turno;
   document.getElementById('rmAno2').textContent = anoSel;
   document.getElementById('rmTurno').value = a.turno;
-  document.getElementById('rmTurma').innerHTML = '<option value="" disabled selected>Selecionar turma de destino...</option>' +
+  document.getElementById('rmTurma').innerHTML = '<option value="" disabled selected>Selecionar série de destino...</option>' +
     TURMAS_ESCOLA.map(t => '<option value="' + t + '">' + t + '</option>').join('');
   document.getElementById('rmErr').textContent = '';
   setEditar(false);
@@ -1126,18 +1126,18 @@ function salvarEdicao(){ fecharEdicao(); }
 function confirmarRematricula(){
   if (editando) setEditar(false);
   const turma = document.getElementById('rmTurma').value;
-  if (!turma) { document.getElementById('rmErr').textContent = 'Selecione a turma de destino.'; return; }
+  if (!turma) { document.getElementById('rmErr').textContent = 'Selecione a série de destino.'; return; }
   rematTurma = turma;
   rematTurno = document.getElementById('rmTurno').value;
   document.getElementById('rmConfirmTxt').innerHTML =
-    'Confirma a rematrícula de <b>' + ALUNO_REMAT.nome + '</b> para a turma <b>' + turma + '</b> (turno <b>' + rematTurno + '</b>), no ano letivo <b>' + anoSel + '</b>?';
+    'Confirma a rematrícula de <b>' + ALUNO_REMAT.nome + '</b> para a série <b>' + turma + '</b> (turno <b>' + rematTurno + '</b>), no ano letivo <b>' + anoSel + '</b>?';
   document.getElementById('rmConfirm').classList.remove('hidden');
 }
 function cancelarConfirm(){ document.getElementById('rmConfirm').classList.add('hidden'); }
 function finalizarRematricula(){
   document.getElementById('rmConfirm').classList.add('hidden');
   document.getElementById('rmOkTxt').innerHTML =
-    '<b>' + ALUNO_REMAT.nome + '</b> foi rematriculado(a) na turma <b>' + rematTurma + '</b> (turno <b>' + rematTurno + '</b>) para o ano letivo <b>' + anoSel + '</b>.';
+    '<b>' + ALUNO_REMAT.nome + '</b> foi rematriculado(a) na série <b>' + rematTurma + '</b> (turno <b>' + rematTurno + '</b>) para o ano letivo <b>' + anoSel + '</b>.';
   mostrarEtapa('sucesso');
 }
 </script>
