@@ -361,6 +361,26 @@
     .btn-cancelar:hover { border-color: #c8ccd3; }
     .btn-confirmar { background: #ED6939; border: none; color: #fff; }
     .btn-confirmar:hover { background: #D4531F; }
+    .btn-imprimir { background: #fff; border: 1.5px solid #F6D3C2; color: #ED6939; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+    .btn-imprimir:hover { border-color: #ED6939; background: #FFF4EF; }
+    .btn-imprimir svg { width: 16px; height: 16px; }
+    /* ficha de matrícula (só na impressão) */
+    .ficha-print { display: none; }
+    .fp-head { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #12509A; padding-bottom: 14px; margin-bottom: 20px; }
+    .fp-head img { height: 54px; }
+    .fp-head h1 { font-size: 20px; color: #12509A; margin: 0; }
+    .fp-head .fp-sub { font-size: 12px; color: #555; margin-top: 2px; }
+    .fp-title { font-size: 16px; font-weight: 800; margin: 18px 0 10px; color: #12223A; border-left: 4px solid #ED6939; padding-left: 10px; }
+    .fp-row { display: flex; flex-wrap: wrap; gap: 6px 36px; margin-bottom: 8px; }
+    .fp-field { font-size: 13px; color: #222; }
+    .fp-field b { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: #888; font-weight: 700; margin-bottom: 1px; }
+    .fp-status { margin-top: 18px; padding: 12px 16px; border: 1px solid #F6DECE; background: #FFF6F1; border-radius: 8px; font-size: 13px; color: #333; }
+    .fp-sign { margin-top: 56px; display: flex; justify-content: space-around; gap: 40px; }
+    .fp-sign div { flex: 1; border-top: 1px solid #333; padding-top: 6px; text-align: center; font-size: 12px; color: #555; }
+    @media print {
+      body > *:not(.ficha-print) { display: none !important; }
+      .ficha-print { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 32px 40px; color: #222; }
+    }
     @media (max-width: 980px) { .wz-steps { display: none; } .rm-grid { grid-template-columns: 1fr 1fr; } }
   </style>
   <link rel="stylesheet" href="theme.css" />
@@ -749,6 +769,22 @@
     </div>
   </div>
 
+  <!-- Modal de sucesso / pré-matrícula -->
+  <div class="rm-confirm hidden" id="rmSucesso">
+    <div class="rm-confirm-box">
+      <div class="rm-ok-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <h3>Matrícula feita com sucesso!</h3>
+      <p>O aluno está <b>pré-matriculado</b>. A matrícula será concluída a partir do dia <b>04/01/2026</b>.</p>
+      <div class="rm-confirm-actions">
+        <button class="btn-imprimir" onclick="imprimirFicha()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir ficha</button>
+        <button class="btn-confirmar" onclick="fecharSucesso()">Concluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ficha de matrícula (impressão) -->
+  <div id="fichaPrint" class="ficha-print"></div>
+
   <!-- MODAL INFERIOR: EDITAR DADOS -->
   <div class="ed-overlay hidden" id="edSheet" onclick="if(event.target===this)fecharEdicao()">
     <div class="ed-sheet">
@@ -1059,6 +1095,7 @@ const ALUNO_REMAT = {
 };
 let rematTurma = null;
 let rematTurno = null;
+let rematCpf = null;
 
 const RM_IC = {
   cal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
@@ -1075,6 +1112,7 @@ const IC_ADD_PESSOA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor
 
 function abrirRematricula(){
   const cpf = document.getElementById('wzCpf').value;
+  rematCpf = cpf;
   const a = ALUNO_REMAT;
   document.getElementById('rmNome').textContent = a.nome;
   document.getElementById('rmSub').textContent = 'Matrícula ' + a.matricula + ' · CPF ' + cpf;
@@ -1142,9 +1180,34 @@ function confirmarRematricula(){
 function cancelarConfirm(){ document.getElementById('rmConfirm').classList.add('hidden'); }
 function finalizarRematricula(){
   document.getElementById('rmConfirm').classList.add('hidden');
-  document.getElementById('rmOkTxt').innerHTML =
-    '<b>' + ALUNO_REMAT.nome + '</b> foi rematriculado(a) na série <b>' + rematTurma + '</b> (turno <b>' + rematTurno + '</b>) para o ano letivo <b>' + anoSel + '</b>.';
-  mostrarEtapa('sucesso');
+  document.getElementById('rmSucesso').classList.remove('hidden');
+}
+function fecharSucesso(){
+  document.getElementById('rmSucesso').classList.add('hidden');
+  fecharMatricula();
+}
+function imprimirFicha(){
+  const a = ALUNO_REMAT;
+  const resp = a.responsaveis.map((r, i) =>
+    '<div class="fp-field"><b>Responsável ' + (i + 1) + ' — ' + r.parentesco + '</b>' + r.nome + ' · ' + r.contato + '</div>'
+  ).join('');
+  document.getElementById('fichaPrint').innerHTML =
+    '<div class="fp-head"><img src="logo-porto-seguro.png" alt=""><div><h1>Ficha de Matrícula</h1>'
+    + '<div class="fp-sub">ESCOLA EPROF EDUCATION · Ano letivo ' + anoSel + '</div></div></div>'
+    + '<div class="fp-title">Dados do aluno</div>'
+    + '<div class="fp-row"><div class="fp-field"><b>Nome</b>' + a.nome + '</div>'
+    + '<div class="fp-field"><b>CPF</b>' + (rematCpf || '') + '</div>'
+    + '<div class="fp-field"><b>Matrícula</b>' + a.matricula + '</div></div>'
+    + '<div class="fp-row"><div class="fp-field"><b>Data de nascimento</b>' + a.nasc + '</div>'
+    + '<div class="fp-field"><b>Sexo</b>' + a.sexo + '</div></div>'
+    + '<div class="fp-title">Matrícula ' + anoSel + '</div>'
+    + '<div class="fp-row"><div class="fp-field"><b>Série</b>' + rematTurma + '</div>'
+    + '<div class="fp-field"><b>Turno</b>' + rematTurno + '</div>'
+    + '<div class="fp-field"><b>Situação</b>Pré-matriculado</div></div>'
+    + '<div class="fp-title">Responsáveis</div><div class="fp-row" style="flex-direction:column;gap:6px">' + resp + '</div>'
+    + '<div class="fp-status">O aluno está <b>pré-matriculado</b>. A matrícula será concluída a partir do dia <b>04/01/2026</b>.</div>'
+    + '<div class="fp-sign"><div>Assinatura do responsável</div><div>Secretaria — ESCOLA EPROF EDUCATION</div></div>';
+  window.print();
 }
 </script>
 
