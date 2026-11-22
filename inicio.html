@@ -258,8 +258,8 @@
     .rm-sec-title svg { width: 15px; height: 15px; color: #ED6939; }
     .rm-sec-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,#EDEFF3,transparent); }
     .rm-cols { display: grid; grid-template-columns: 170px 1fr 1.25fr; gap: 14px; align-items: stretch; }
-    .rm-photo { border-radius: 16px; overflow: hidden; background: linear-gradient(160deg,#F6DAC8 0%,#EEC4AC 100%); display: flex; align-items: flex-end; justify-content: center; min-height: 234px; }
-    .rm-photo svg { width: 92%; height: 100%; display: block; }
+    .rm-photo { border-radius: 16px; overflow: hidden; background: #EFEAE6; display: flex; min-height: 234px; }
+    .rm-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
     .rm-col { display: flex; flex-direction: column; gap: 11px; }
     .rm-col > * { flex: 1; }
     .rm-tile { display: flex; align-items: center; gap: 11px; padding: 12px 14px; background: #FBFCFD; border: 1px solid #EDF0F4; border-radius: 13px; }
@@ -626,16 +626,7 @@
               </div>
               <div class="rm-body">
                 <div class="rm-cols">
-                  <div class="rm-photo">
-                    <svg viewBox="0 0 200 240" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M34 240c0-40 30-64 66-64s66 24 66 64z" fill="#D98E6E"/>
-                      <path d="M100 150c12 0 20 6 20 6l-4 30c-5 6-11 9-16 9s-11-3-16-9l-4-30s8-6 20-6z" fill="#F0D0B8"/>
-                      <ellipse cx="100" cy="112" rx="34" ry="40" fill="#F4D8BF"/>
-                      <path d="M64 108c0-30 16-50 36-50s36 20 36 50c0-6-6-10-6-10-2-18-14-26-30-26s-28 8-30 26c0 0-6 4-6 10z" fill="#6E4A37"/>
-                      <path d="M64 104c-4 26-2 60 2 74 2 6 6 6 7 0 2-18 3-50 3-66 0-6-10-14-12-8z" fill="#6E4A37"/>
-                      <path d="M136 104c4 26 2 60-2 74-2 6-6 6-7 0-2-18-3-50-3-66 0-6 10-14 12-8z" fill="#6E4A37"/>
-                    </svg>
-                  </div>
+                  <div class="rm-photo"><img src="aluno-remat.webp" alt="Foto do aluno"></div>
                   <div class="rm-col" id="rmDados"></div>
                   <div class="rm-col" id="rmResp"></div>
                 </div>
