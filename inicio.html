@@ -463,6 +463,15 @@
   .rp-print{background:#2F6BE5;color:#fff;border:none;border-radius:9px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
   .rp-print svg{width:15px;height:15px;}
   .rp-cancel{background:#F1F3F7;color:#6B7585;border:none;border-radius:9px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;margin-left:auto;}
+  .rp-prof-nav{display:flex;align-items:center;justify-content:space-between;background:#F7F9FC;border:1px solid #EEF0F4;border-radius:12px;padding:10px 14px;margin-bottom:16px;}
+  .rp-prof-info{display:flex;align-items:center;gap:11px;}
+  .rp-prof-av{width:36px;height:36px;border-radius:50%;background:#DCE7FB;color:#2F6BE5;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .rp-prof-av svg{width:19px;height:19px;}
+  .rp-prof-name{font-size:14px;font-weight:700;color:#2A3A56;}
+  .rp-prof-count{font-size:12px;color:#8A94A6;margin-top:1px;}
+  .rp-prof-next{width:36px;height:36px;border-radius:10px;border:1px solid #E3E7EE;background:#fff;color:#2F6BE5;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+  .rp-prof-next svg{width:18px;height:18px;}
+  .rp-prof-next:hover{background:#EAF1FD;border-color:#CBDAF6;}
   </style>
   <link rel="stylesheet" href="theme.css" />
 </head>
@@ -1111,12 +1120,24 @@ function fecharDetalheAluno(){
 
 /* ===== Painel Relatório do aluno ===== */
 const RP_UNIDADES = ['Inicial','I Bimestre','II Bimestre','III Bimestre','IV Bimestre'];
+// Relatórios já escritos por professores (cenário: 3 profs escreveram sobre a Maria)
+const RELATORIOS_ALUNO = {
+  '23276473': [ // Maria Antonella Ferreira
+    { prof: 'Profª. Ana Beatriz Lima', textos: { 1: 'A Maria Antonella chegou bem adaptada à rotina da turma. Demonstra autonomia nas atividades do dia a dia, interage com os colegas e participa com entusiasmo das rodas de conversa. Vem desenvolvendo muito bem a coordenação motora fina.' } },
+    { prof: 'Prof. Carlos Henrique Dias', textos: { 1: 'Nas aulas de movimento, a Maria apresenta boa coordenação motora ampla: corre, salta e sobe com segurança. Participa das brincadeiras em grupo respeitando as regras e os combinados da turma.' } },
+    { prof: 'Profª. Juliana Rocha', textos: { 1: 'A Maria participa ativamente das atividades de arte e música. Explora diferentes materiais com criatividade, canta as músicas da rotina e demonstra grande interesse pelas histórias contadas.' } },
+  ]
+};
 let rpUnidade = 1;
-let rpTextos = {};
+let rpProfIdx = 0;
+function getRelatorios(a){
+  return RELATORIOS_ALUNO[a.mat] || [{ prof: 'Você', textos: {} }];
+}
 function abrirRelatorio(){
   const a = daAlunoAtual;
   if (!a) return;
   rpUnidade = 1;
+  rpProfIdx = 0;
   document.getElementById('rpAv').textContent = inicial(a.nome);
   document.getElementById('rpName').textContent = a.nome;
   document.getElementById('rpTurma').textContent = 'Turma: ' + (a.sem ? 'Sem turma' : a.turma);
@@ -1126,26 +1147,48 @@ function abrirRelatorio(){
 }
 function renderRelatorio(){
   const a = daAlunoAtual;
+  const rels = getRelatorios(a);
+  if (rpProfIdx >= rels.length) rpProfIdx = 0;
+  const rel = rels[rpProfIdx];
+  const multi = rels.length > 1;
   const u = RP_UNIDADES[rpUnidade-1];
   const ph = u === 'Inicial' ? 'Escreva o relatório inicial do aluno...' : 'Escreva o relatório do ' + u + '...';
   document.getElementById('rpTabs').innerHTML = RP_UNIDADES.map((x,i) =>
     '<span class="rp-tab' + (rpUnidade === i+1 ? ' active' : '') + '" onclick="trocarRpUnidade(' + (i+1) + ')">' + x + '</span>').join('');
-  const key = a.mat + '-' + rpUnidade;
-  const txt = rpTextos[key] || '';
+  const txt = rel.textos[rpUnidade] || '';
+  const navHtml =
+    '<div class="rp-prof-nav">'
+      + '<div class="rp-prof-info">'
+        + '<div class="rp-prof-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>'
+        + '<div><div class="rp-prof-name">' + esc(rel.prof) + '</div>'
+        + (multi ? '<div class="rp-prof-count">Relatório ' + (rpProfIdx+1) + ' de ' + rels.length + '</div>' : '<div class="rp-prof-count">Professor(a) responsável</div>')
+      + '</div></div>'
+      + (multi ? '<button class="rp-prof-next" onclick="proximoRelatorio()" title="Próximo relatório"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="18 15 12 9 6 15"/></svg></button>' : '')
+    + '</div>';
   document.getElementById('rpBody').innerHTML =
-    '<div class="rp-body-top"><div class="rp-body-ttl">Relatório do aluno</div><div class="rp-body-badge">' + u + '</div></div>'
+    navHtml
+    + '<div class="rp-body-top"><div class="rp-body-ttl">Relatório do aluno</div><div class="rp-body-badge">' + u + '</div></div>'
     + '<textarea id="rpTextarea" class="rp-textarea" placeholder="' + ph + '" oninput="rpOnInput(this)"></textarea>'
     + '<div class="rp-count" id="rpCount">' + txt.length + ' caracteres</div>';
   document.getElementById('rpTextarea').value = txt;
 }
+function proximoRelatorio(){
+  salvarRpTexto();
+  const rels = getRelatorios(daAlunoAtual);
+  rpProfIdx = (rpProfIdx + 1) % rels.length;
+  renderRelatorio();
+}
 function trocarRpUnidade(n){ salvarRpTexto(); rpUnidade = n; renderRelatorio(); }
 function rpOnInput(el){
   document.getElementById('rpCount').textContent = el.value.length + ' caracteres';
-  if (daAlunoAtual) rpTextos[daAlunoAtual.mat + '-' + rpUnidade] = el.value;
+  salvarRpTexto(el);
 }
-function salvarRpTexto(){
-  const ta = document.getElementById('rpTextarea');
-  if (ta && daAlunoAtual) rpTextos[daAlunoAtual.mat + '-' + rpUnidade] = ta.value;
+function salvarRpTexto(el){
+  const ta = el || document.getElementById('rpTextarea');
+  if (ta && daAlunoAtual) {
+    const rels = getRelatorios(daAlunoAtual);
+    rels[rpProfIdx].textos[rpUnidade] = ta.value;
+  }
 }
 function salvarRelatorio(){ salvarRpTexto(); closeRelatorio(); }
 function closeRelatorio(){
@@ -1156,9 +1199,11 @@ function closeRelatorio(){
 function imprimirRelatorio(){
   salvarRpTexto();
   const a = daAlunoAtual; if (!a) return;
+  const rels = getRelatorios(a);
+  const rel = rels[rpProfIdx];
   const u = RP_UNIDADES[rpUnidade-1];
   const titulo = u === 'Inicial' ? 'Relatório Inicial' : 'Relatório do ' + u;
-  const texto = (rpTextos[a.mat + '-' + rpUnidade] || '').trim();
+  const texto = (rel.textos[rpUnidade] || '').trim();
   const serieFull = a.serie + ' – ' + (NIVEL_FULL[a.nivel] || a.nivel);
   const w = window.open('', '_blank');
   w.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + esc(titulo) + ' - ' + esc(a.nome) + '</title>'
@@ -1166,7 +1211,7 @@ function imprimirRelatorio(){
     + '<h1>Relatório do aluno</h1><div class="sub">ESCOLA EPROF EDUCATION</div>'
     + '<div class="meta"><b>Aluno:</b> ' + esc(a.nome) + '<br><b>Matrícula:</b> ' + esc(a.mat) + '<br><b>Série:</b> ' + esc(serieFull) + '<br><b>Turma:</b> ' + esc(a.sem ? 'Sem turma' : a.turma) + '<br><b>Turno:</b> ' + esc(a.turno) + '</div>'
     + '<div class="titulo">' + esc(titulo) + '</div><div class="texto">' + esc(texto) + '</div>'
-    + '<div class="assin"><div class="col"><div class="linha"></div><div class="lbl">Professor(a)</div></div><div class="col"><div class="linha"></div><div class="lbl">Professor(a)</div></div></div>'
+    + '<div class="assin"><div class="col"><div class="linha"></div><div class="lbl">' + esc(rel.prof) + '</div></div><div class="col"><div class="linha"></div><div class="lbl">Coordenação</div></div></div>'
     + '</body></html>');
   w.document.close();
   setTimeout(() => w.print(), 300);
