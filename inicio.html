@@ -382,6 +382,59 @@
       .ficha-print { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 32px 40px; color: #222; }
     }
     @media (max-width: 980px) { .wz-steps { display: none; } .rm-grid { grid-template-columns: 1fr 1fr; } }
+  /* ===== Detalhe do aluno ===== */
+  .da-overlay{position:fixed;inset:0;background:#F4F6FA;z-index:4000;overflow-y:auto;display:none;}
+  .da-overlay.open{display:block;}
+  .da-wrap{max-width:1180px;margin:0 auto;padding:22px 26px 60px;}
+  .da-topbar{display:flex;justify-content:center;margin-bottom:16px;}
+  .da-back{display:inline-flex;align-items:center;gap:8px;background:#F26522;color:#fff;border:none;border-radius:10px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(242,101,34,.25);}
+  .da-back svg{width:16px;height:16px;}
+
+  .da-hd{background:#fff;border:1px solid #EEF0F4;border-radius:16px;padding:22px 24px;display:flex;align-items:flex-start;position:relative;margin-bottom:16px;}
+  .da-av{width:46px;height:46px;border-radius:50%;background:#5A6A8A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0;margin-right:14px;margin-top:2px;}
+  .da-body{flex:1;}
+  .da-name{font-size:19px;font-weight:700;color:#1C2A42;margin-bottom:14px;}
+  .da-grid{display:grid;grid-template-columns:auto 1fr;gap:10px 22px;max-width:540px;align-items:center;}
+  .da-label{font-size:12px;color:#9AA3B2;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+  .da-label svg{width:14px;height:14px;flex-shrink:0;}
+  .da-value{font-size:13px;color:#2A3A56;font-weight:500;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .da-bdg{font-size:11px;font-weight:600;padding:3px 13px;border-radius:20px;white-space:nowrap;}
+  .da-bdg.ativo{background:#E6F6EA;color:#2E9E4F;}
+  .da-bdg.premat{background:#FDE9DD;color:#E0662F;}
+  .da-actions{position:absolute;top:22px;right:24px;display:flex;gap:10px;}
+  .da-act{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;}
+  .da-act svg{width:14px;height:14px;}
+  .da-act.mat{background:#F26522;}
+  .da-act.rel{background:#2F6BE5;}
+  .da-freq-circ-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;margin-left:24px;align-self:center;}
+  .da-freq-circ{width:84px;height:84px;border-radius:50%;background:#EAF7EE;border:4px solid #46C06A;display:flex;align-items:center;justify-content:center;color:#2E9E4F;font-weight:800;font-size:26px;}
+  .da-freq-circ-label{font-size:11px;color:#8A94A6;text-align:center;max-width:84px;line-height:1.35;}
+
+  .da-cols{display:grid;grid-template-columns:1.12fr 1fr 0.64fr;gap:16px;}
+  @media (max-width:1000px){.da-cols{grid-template-columns:1fr;}}
+  .da-card{background:#fff;border:1px solid #EEF0F4;border-radius:16px;padding:20px;}
+  .da-card-ttl{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:#2A3A56;margin-bottom:16px;}
+  .da-card-ttl svg{width:18px;height:18px;}
+  .da-fqtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .da-month-sel{font-size:12px;color:#2A3A56;border:1px solid #DDE1E8;border-radius:8px;padding:6px 12px;background:#fff;}
+  .da-days{display:grid;grid-template-columns:repeat(8,1fr);gap:10px 6px;margin-bottom:16px;}
+  .da-day{display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .da-day-n{font-size:11px;color:#AEB6C2;}
+  .da-day-d{width:18px;height:18px;border-radius:50%;background:#E3E7EE;display:flex;align-items:center;justify-content:center;}
+  .da-day-d.pres{background:#46C06A;}
+  .da-day-d.pres svg{width:11px;height:11px;stroke:#fff;}
+  .da-leg{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-top:4px;border-top:1px solid #F0F2F6;padding-top:14px;}
+  .da-leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7585;}
+  .da-leg-dot{width:10px;height:10px;border-radius:50%;}
+  .da-media{display:flex;align-items:center;justify-content:space-between;margin-top:14px;background:#F7F9FC;border-radius:10px;padding:10px 14px;font-size:13px;color:#6B7585;}
+  .da-media b{color:#2E9E4F;font-size:15px;}
+  .da-ocorr-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:54px 0;gap:12px;}
+  .da-ocorr-empty svg{width:52px;height:52px;stroke:#D4D9E2;}
+  .da-ocorr-empty span{font-size:13px;color:#AEB6C2;}
+  .da-pts{background:#FBECC6;border:1px solid #F3DFA8;border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;overflow:hidden;position:relative;}
+  .da-pts-pill{background:#F6DD9E;border-radius:22px;padding:7px 20px;display:flex;align-items:center;gap:9px;font-size:15px;font-weight:700;color:#2A2A4A;align-self:center;}
+  .da-pts-num{width:26px;height:26px;border-radius:50%;background:#2A2A4A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .da-pts-ill{width:100%;max-width:230px;margin-top:8px;object-fit:contain;}
   </style>
   <link rel="stylesheet" href="theme.css" />
 </head>
@@ -930,7 +983,7 @@ function rowHTML(a){
     + '<div><span class="badge ' + a.docCls + '">' + a.doc + '</span></div>'
     + '<div><span class="badge ativo">' + a.status + '</span></div>'
     + '<div class="col-turma"><span class="cell-turma ' + (a.sem ? 'sem' : '') + '">' + a.turma + '</span></div>'
-    + '<div class="col-ver"><button class="ver-btn">Ver detalhes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7M9 7h8v8"/></svg></button></div>'
+    + '<div class="col-ver"><button class="ver-btn" onclick="abrirDetalheAluno(\'' + a.mat + '\')">Ver detalhes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7M9 7h8v8"/></svg></button></div>'
     + '</div></div>';
 }
 
@@ -953,6 +1006,84 @@ function redefinirBusca(){
 }
 
 render(MATRICULAS);
+
+/* ===== Detalhe do aluno ===== */
+const NIVEL_FULL = {
+  'Ed. Infantil': 'Educação Infantil',
+  'Fundamental I': 'Ensino Fundamental I',
+  'Fundamental II': 'Ensino Fundamental II'
+};
+function abrirDetalheAluno(mat){
+  const a = MATRICULAS.find(x => x.mat === mat);
+  if (!a) return;
+  const freq = 100;
+  const serieFull = a.serie + ' – ' + (NIVEL_FULL[a.nivel] || a.nivel);
+  const turma = a.sem ? 'Sem turma' : a.turma;
+  const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+  const dias = Array.from({length:30}, (_,i) => {
+    const n = String(i+1).padStart(2,'0');
+    const pres = (i+1) === 25;
+    return '<div class="da-day"><span class="da-day-n">' + n + '</span>'
+      + '<div class="da-day-d' + (pres ? ' pres' : '') + '">' + (pres ? check : '') + '</div></div>';
+  }).join('');
+
+  document.getElementById('daContent').innerHTML =
+  '<div class="da-hd">'
+    + '<div class="da-av">' + inicial(a.nome) + '</div>'
+    + '<div class="da-body">'
+      + '<div class="da-name">' + esc(a.nome) + '</div>'
+      + '<div class="da-grid">'
+        + '<span class="da-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Status</span>'
+        + '<span class="da-value"><span class="da-bdg ativo">' + a.status + '</span><span class="da-bdg premat">Pré-matriculado 2027</span></span>'
+        + '<span class="da-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Turma</span>'
+        + '<span class="da-value">' + esc(turma) + '</span>'
+        + '<span class="da-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg> Escola</span>'
+        + '<span class="da-value">ESCOLA EPROF EDUCATION</span>'
+        + '<span class="da-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Turno</span>'
+        + '<span class="da-value">' + esc(a.turno) + '</span>'
+        + '<span class="da-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Série</span>'
+        + '<span class="da-value">' + esc(serieFull) + '</span>'
+      + '</div>'
+    + '</div>'
+    + '<div class="da-actions">'
+      + '<button class="da-act mat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Matrícula</button>'
+      + '<button class="da-act rel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Relatórios</button>'
+    + '</div>'
+    + '<div class="da-freq-circ-wrap"><div class="da-freq-circ">' + freq + '</div><div class="da-freq-circ-label">Frequência média geral (%)</div></div>'
+  + '</div>'
+  + '<div class="da-cols">'
+    + '<div class="da-card">'
+      + '<div class="da-fqtop">'
+        + '<div class="da-card-ttl"><svg viewBox="0 0 24 24" fill="none" stroke="#F26522" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Frequência do mês</div>'
+        + '<select class="da-month-sel"><option>Novembro</option><option>Outubro</option><option>Setembro</option></select>'
+      + '</div>'
+      + '<div class="da-days">' + dias + '</div>'
+      + '<div class="da-leg">'
+        + '<div class="da-leg-item"><div class="da-leg-dot" style="background:#46C06A"></div>Presença</div>'
+        + '<div class="da-leg-item"><div class="da-leg-dot" style="background:#FFC107"></div>Presença parcial</div>'
+        + '<div class="da-leg-item"><div class="da-leg-dot" style="background:#F44336"></div>Falta</div>'
+        + '<div class="da-leg-item"><div class="da-leg-dot" style="background:#E3E7EE"></div>Sem aula</div>'
+      + '</div>'
+      + '<div class="da-media">Frequência média do mês <b>' + freq.toFixed(1) + '%</b></div>'
+    + '</div>'
+    + '<div class="da-card">'
+      + '<div class="da-card-ttl"><svg viewBox="0 0 24 24" fill="none" stroke="#F26522" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Registro de ocorrências</div>'
+      + '<div class="da-ocorr-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg><span>Nenhum registro encontrado</span></div>'
+    + '</div>'
+    + '<div class="da-pts">'
+      + '<div class="da-pts-pill"><span class="da-pts-num">0</span> pontos</div>'
+      + '<img class="da-pts-ill" src="bubovertical.png" alt="">'
+    + '</div>'
+  + '</div>';
+
+  document.getElementById('daOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  window.scrollTo(0,0);
+}
+function fecharDetalheAluno(){
+  document.getElementById('daOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
 /* ===== Assistente de nova matrícula ===== */
 let anoSel = null;
@@ -1210,6 +1341,19 @@ function imprimirFicha(){
   window.print();
 }
 </script>
+
+<!-- DETALHE DO ALUNO -->
+<div class="da-overlay" id="daOverlay">
+  <div class="da-wrap">
+    <div class="da-topbar">
+      <button class="da-back" onclick="fecharDetalheAluno()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Voltar para lista
+      </button>
+    </div>
+    <div id="daContent"></div>
+  </div>
+</div>
 
 </body>
 </html>
