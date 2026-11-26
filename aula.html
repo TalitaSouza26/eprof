@@ -87,10 +87,11 @@
     .card-icon { width: 64px; height: 64px; opacity: 0.25; }
     .card-icon svg { width: 64px; height: 64px; }
     .card-empty-label { font-size: 13px; color: #bbb; }
-    .card-action { font-size: 13px; color: #f26522; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .card-action { font-size: 13px; color: #2F6BE5; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .card-action .ca-ic { color: #f26522; font-weight: 700; }
     .card-action:hover { opacity: 0.8; }
-    .card-action-gray { font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 5px; }
-    .card-action-gray svg { width: 14px; height: 14px; }
+    .card-action-gray { font-size: 13px; color: #2F6BE5; display: flex; align-items: center; gap: 5px; }
+    .card-action-gray svg { width: 14px; height: 14px; stroke: #f26522; }
 
     /* ORANGE CARD */
     .aula-card.orange-card { background: linear-gradient(145deg, #f26522, #e05010); border: none; color: #fff; }
@@ -434,7 +435,7 @@ function renderContent() {
               <span class="card-empty-label">Sem plano de aula<br>vinculado</span>
             `}
           </div>
-          <div class="card-action" onclick="abrirVincularPlano()">${planoVinculado ? 'Trocar plano ↺' : 'Adicionar +'}</div>
+          <div class="card-action" onclick="abrirVincularPlano()">${planoVinculado ? 'Trocar plano <span class="ca-ic">↺</span>' : 'Adicionar <span class="ca-ic">+</span>'}</div>
         </div>
         <!-- Avaliação (apenas regular) -->
         ${tipo !== 'infantil' ? `
@@ -443,7 +444,7 @@ function renderContent() {
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
             <span class="card-empty-label">Sem avaliação<br>vinculada</span>
           </div>
-          <div class="card-action" onclick="switchTab('avaliacao')">Adicionar +</div>
+          <div class="card-action" onclick="switchTab('avaliacao')">Adicionar <span class="ca-ic">+</span></div>
         </div>` : ''}
         <!-- Apresentação -->
         <div class="aula-card">
