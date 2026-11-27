@@ -993,8 +993,6 @@ function camposDecl(tipo) {
   const HOR = { Matutino:['07:00','11:00'], Vespertino:['13:00','17:00'], Integral:['07:30','17:30'], Noturno:['19:00','22:00'] };
   const hr = HOR[a.turno] || ['', ''];
   const comuns = [
-    { key:'data',   label:'Data de emissão',     value:`${p2(hoje.getDate())}/${p2(hoje.getMonth()+1)}/${hoje.getFullYear()}`, ph:'dd/mm/aaaa' },
-    { key:'escola', label:'Escola',              value:a.escola.replace(/^Escola Municipal\s*/, ''), ph:'Nome da escola', full:true },
     { key:'nome',   label:'Nome do aluno',       value:a.nome, ph:'Nome completo', full:true },
     { key:'rg',     label:'RG (ou CPF se não tiver RG)', value:rgVal, ph:'RG ou CPF do aluno' },
     { key:'nasc',   label:'Data de nascimento',  value:a.nasc, ph:'dd/mm/aaaa' },
@@ -1040,7 +1038,10 @@ function declaracaoHTML() {
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const t = tipoSel;
   const d = declDados || {};
-  const escolaNome = (d.escola || '').replace(/^Escola Municipal\s*/, '');
+  const escolaNome = (alunoAtual().escola || '').replace(/^Escola Municipal\s*/, '');
+  const hoje = new Date();
+  const p2 = n => String(n).padStart(2, '0');
+  const dataEmissao = `${p2(hoje.getDate())}/${p2(hoje.getMonth()+1)}/${hoje.getFullYear()}`;
   const serie = d.serie || '';
   const ensino = d.ensino || '';
   const V = s => `<span class="fill">${esc(s)}</span>`;          // campo preenchido
@@ -1080,7 +1081,7 @@ function declaracaoHTML() {
       <span class="s">Secretaria Municipal de Educação</span>
     </div>
     <hr>
-    <div class="data-top">DATA: ${(d.data && d.data.trim()) ? V(d.data) : B(40) + ' / ' + B(40) + ' / ' + B(60)}</div>
+    <div class="data-top">DATA: ${V(dataEmissao)}</div>
     <h1>${TITULOS[t]}</h1>
     <div class="escola">Escola Municipal ${VB(escolaNome)}</div>
     <p>Declaramos, para os devidos fins, que ${VB(d.nome)}, RG nº ${VB(d.rg,150)}, nascido(a) em ${VB(d.nasc,90)}, filho(a) de ${VB(d.pai,120)} e de ${VB(d.mae,120)}, ${CORPO[t]}</p>
