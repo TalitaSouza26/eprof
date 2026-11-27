@@ -70,6 +70,15 @@
     .tipo-opt.sel .tipo-radio { border-color: #ED6939; }
     .tipo-opt.sel .tipo-radio::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: #ED6939; }
     .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px; border-top: 1px solid #EDEFF3; }
+    .decl-campos-tit { font-size: 13px; font-weight: 700; color: #2A3A56; margin: 18px 0 4px; }
+    .decl-campos-hint { font-size: 12px; color: #8A94A6; margin-bottom: 12px; }
+    .decl-campos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px 14px; }
+    .decl-campo { display: flex; flex-direction: column; gap: 5px; }
+    .decl-campo.full { grid-column: 1 / -1; }
+    .decl-campo label { font-size: 11px; color: #8A94A6; font-weight: 600; }
+    .decl-campo input { padding: 9px 11px; border: 1.5px solid #E4E8EE; border-radius: 9px; font-size: 13px; font-family: inherit; color: #1D1D1D; outline: none; transition: border-color .12s; }
+    .decl-campo input:focus { border-color: #ED6939; }
+    .decl-campo input::placeholder { color: #B6BDC8; }
     .btn-cancel { background: #fff; color: #555; border: 1px solid #ddd; border-radius: 10px; padding: 10px 18px; font-size: 13px; cursor: pointer; font-family: inherit; }
     .btn-cancel:hover { background: #f5f5f5; }
     .btn-print { display: inline-flex; align-items: center; gap: 7px; background: #ED6939; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
@@ -155,6 +164,7 @@
     <div class="modal-body">
       <div class="modal-sub">Aluno: <b id="declAlunoNome"></b><br>Selecione o tipo da declaração:</div>
       <div class="tipo-list" id="tipoList"></div>
+      <div id="declCampos"></div>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="fecharDecl()">Cancelar</button>
@@ -960,38 +970,90 @@ function abrirDecl() {
   const a = alunoAtual();
   document.getElementById('declAlunoNome').textContent = `${a.nome} — ${a.turma}`;
   renderTipos();
+  renderCamposDecl();
   document.getElementById('modalDecl').classList.remove('hidden');
 }
 function fecharDecl() { document.getElementById('modalDecl').classList.add('hidden'); }
 function renderTipos() {
   document.getElementById('tipoList').innerHTML = TIPOS_DECL.map(t => `
-    <div class="tipo-opt ${tipoSel === t.id ? 'sel' : ''}" onclick="tipoSel='${t.id}';renderTipos()">
+    <div class="tipo-opt ${tipoSel === t.id ? 'sel' : ''}" onclick="tipoSel='${t.id}';renderTipos();renderCamposDecl()">
       <span class="tipo-radio"></span>${t.label}
     </div>`).join('');
 }
 
-function declaracaoHTML() {
+// Campos editáveis por tipo de declaração (pré-preenchidos com o que o sistema tem)
+let declDados = {};
+function camposDecl(tipo) {
   const a = alunoAtual();
+  const resp = (a.filiacao || '').split(' e ');
+  const hoje = new Date();
+  const p2 = n => String(n).padStart(2, '0');
+  const rgVal = (a.rg && a.rg !== '--') ? a.rg : '';
+  const ensino = a.ensino === 'Fundamental' ? 'Fundamental' : 'Educação Infantil';
+  const HOR = { Matutino:['07:00','11:00'], Vespertino:['13:00','17:00'], Integral:['07:30','17:30'], Noturno:['19:00','22:00'] };
+  const hr = HOR[a.turno] || ['', ''];
+  const comuns = [
+    { key:'data',   label:'Data de emissão',     value:`${p2(hoje.getDate())}/${p2(hoje.getMonth()+1)}/${hoje.getFullYear()}`, ph:'dd/mm/aaaa' },
+    { key:'escola', label:'Escola',              value:a.escola.replace(/^Escola Municipal\s*/, ''), ph:'Nome da escola', full:true },
+    { key:'nome',   label:'Nome do aluno',       value:a.nome, ph:'Nome completo', full:true },
+    { key:'rg',     label:'RG (ou CPF se não tiver RG)', value:rgVal, ph:'RG ou CPF do aluno' },
+    { key:'nasc',   label:'Data de nascimento',  value:a.nasc, ph:'dd/mm/aaaa' },
+    { key:'pai',    label:'Filiação (1)',        value:resp[0] || '', ph:'Nome do pai/responsável' },
+    { key:'mae',    label:'Filiação (2)',        value:resp[1] || '', ph:'Nome da mãe/responsável' },
+    { key:'serie',  label:'Ano/Série',           value:a.ano_ensino, ph:'ex: PN I' },
+    { key:'ensino', label:'Ensino',              value:ensino, ph:'ex: Educação Infantil' },
+  ];
+  const extra = {
+    vaga: [
+      { key:'prazo', label:'Prazo p/ apresentar documentação (dias)', value:'', ph:'nº de dias', full:true },
+    ],
+    transferencia: [
+      { key:'prazo', label:'Prazo p/ retirar histórico (dias)', value:'30', ph:'nº de dias', full:true },
+    ],
+    escolaridade: [
+      { key:'hini', label:'Horário de início',  value:hr[0], ph:'00:00' },
+      { key:'hfim', label:'Horário de término', value:hr[1], ph:'00:00' },
+    ],
+    conclusao: [
+      { key:'anoLetivo',  label:'Ano letivo concluído',          value:a.anoLetivo, ph:'aaaa' },
+      { key:'proxSerie',  label:'Deve matricular-se no ano/série', value:'', ph:'ex: 1º' },
+      { key:'proxEnsino', label:'Ensino (próxima etapa)',        value:'', ph:'ex: Fundamental' },
+      { key:'prazo',      label:'Prazo p/ retirar histórico (dias)', value:'', ph:'nº de dias' },
+    ],
+  };
+  return comuns.concat(extra[tipo] || []);
+}
+function renderCamposDecl() {
+  const box = document.getElementById('declCampos');
+  if (!tipoSel) { box.innerHTML = ''; return; }
+  const campos = camposDecl(tipoSel);
+  box.innerHTML =
+    '<div class="decl-campos-tit">Confira e complete os dados da declaração</div>'
+    + '<div class="decl-campos-hint">O que o sistema já tem vem preenchido. Campos em branco você completa à mão.</div>'
+    + '<div class="decl-campos-grid">'
+    + campos.map(c => `<div class="decl-campo${c.full ? ' full' : ''}"><label>${c.label}</label>`
+        + `<input id="dc_${c.key}" value="${String(c.value).replace(/"/g, '&quot;')}" placeholder="${c.ph}"></div>`).join('')
+    + '</div>';
+}
+
+function declaracaoHTML() {
   const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const t = tipoSel;
-  const resp = (a.filiacao || '').split(' e ');
-  const pai = resp[0] || '', mae = resp[1] || '';
-  const escolaNome = a.escola.replace(/^Escola Municipal\s*/, '');
-  const rgReg = a.rg && a.rg !== '--';
-  const serie = a.ano_ensino;        // puxa automaticamente ano/série
-  const ensino = a.ensino === 'Fundamental' ? 'Fundamental' : 'Educação Infantil';
-  const HOR = { Matutino:['07','00','11','00'], Vespertino:['13','00','17','00'], Integral:['07','30','17','30'], Noturno:['19','00','22','00'] };
-  const hr = HOR[a.turno] || ['','','',''];
+  const d = declDados || {};
+  const escolaNome = (d.escola || '').replace(/^Escola Municipal\s*/, '');
+  const serie = d.serie || '';
+  const ensino = d.ensino || '';
   const V = s => `<span class="fill">${esc(s)}</span>`;          // campo preenchido
   const B = (w=130) => `<span class="blank" style="min-width:${w}px"></span>`; // campo em branco
+  const VB = (s, w=130) => (s != null && String(s).trim() !== '') ? V(s) : B(w); // usa valor; se vazio, deixa linha em branco
   const TITULOS = { vaga:'DECLARAÇÃO DE VAGA', transferencia:'DECLARAÇÃO DE TRANSFERÊNCIA', escolaridade:'DECLARAÇÃO DE ESCOLARIDADE / BOLSA FAMÍLIA', conclusao:'DECLARAÇÃO DE CONCLUSÃO' };
   const CORPO = {
-    vaga: `tem vaga reservada no ${V(serie)} ano do Ensino ${V(ensino)}, desde que apresente a documentação no prazo de ${B(40)} dias a contar desta data.`,
-    transferencia: `solicitou transferência nesta data, devendo retirar seu Histórico Escolar no prazo de 30 dias a contar desta data. Tem direito a matricular-se no ${V(serie)} ano do Ensino ${V(ensino)}.`,
-    escolaridade: `está regularmente matriculado(a) no ${V(serie)} ano do Ensino ${V(ensino)}, nesta unidade escolar, no horário das ${V(hr[0])}h${V(hr[1])} às ${V(hr[2])}h${V(hr[3])}.`,
-    conclusao: `concluiu o ${V(serie)} ano do Ensino ${V(ensino)}, no ano letivo de ${V(a.anoLetivo)}, devendo matricular-se no ${B(40)} ano do Ensino ${B(150)}. Deverá retirar seu Histórico Escolar no prazo de ${B(40)} dias a contar desta data.`,
+    vaga: `tem vaga reservada no ${VB(serie,60)} ano do Ensino ${VB(ensino,120)}, desde que apresente a documentação no prazo de ${VB(d.prazo,40)} dias a contar desta data.`,
+    transferencia: `solicitou transferência nesta data, devendo retirar seu Histórico Escolar no prazo de ${VB(d.prazo,40)} dias a contar desta data. Tem direito a matricular-se no ${VB(serie,60)} ano do Ensino ${VB(ensino,120)}.`,
+    escolaridade: `está regularmente matriculado(a) no ${VB(serie,60)} ano do Ensino ${VB(ensino,120)}, nesta unidade escolar, no horário das ${VB(d.hini,60)} às ${VB(d.hfim,60)}.`,
+    conclusao: `concluiu o ${VB(serie,60)} ano do Ensino ${VB(ensino,120)}, no ano letivo de ${VB(d.anoLetivo,60)}, devendo matricular-se no ${VB(d.proxSerie,40)} ano do Ensino ${VB(d.proxEnsino,150)}. Deverá retirar seu Histórico Escolar no prazo de ${VB(d.prazo,40)} dias a contar desta data.`,
   };
-  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Declaração - ${esc(a.nome)}</title>
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Declaração - ${esc(d.nome)}</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Times New Roman', serif; color: #000; margin: 26mm 24mm; font-size: 14px; line-height: 2; }
@@ -1018,10 +1080,10 @@ function declaracaoHTML() {
       <span class="s">Secretaria Municipal de Educação</span>
     </div>
     <hr>
-    <div class="data-top">DATA: ${B(40)} / ${B(40)} / ${B(60)}</div>
+    <div class="data-top">DATA: ${(d.data && d.data.trim()) ? V(d.data) : B(40) + ' / ' + B(40) + ' / ' + B(60)}</div>
     <h1>${TITULOS[t]}</h1>
-    <div class="escola">Escola Municipal ${V(escolaNome)}</div>
-    <p>Declaramos, para os devidos fins, que ${V(a.nome)}, RG nº ${rgReg ? V(a.rg) : B(150)}, nascido(a) em ${V(a.nasc)}, filho(a) de ${V(pai || '—')} e de ${V(mae || '—')}, ${CORPO[t]}</p>
+    <div class="escola">Escola Municipal ${VB(escolaNome)}</div>
+    <p>Declaramos, para os devidos fins, que ${VB(d.nome)}, RG nº ${VB(d.rg,150)}, nascido(a) em ${VB(d.nasc,90)}, filho(a) de ${VB(d.pai,120)} e de ${VB(d.mae,120)}, ${CORPO[t]}</p>
     <div class="assin-wrap">
       <div class="assin-ln"></div>
       <div class="assin-cap">Assinatura e carimbo do(a) responsável pela emissão</div>
@@ -1199,6 +1261,13 @@ const DOC_PDF = {
   matricula:     'ficha-matricula-exemplo.pdf',
 };
 function previewDeclaracao() {
+  if (!tipoSel) { alert('Selecione o tipo da declaração.'); return; }
+  // coleta os valores que o professor conferiu/preencheu
+  declDados = {};
+  camposDecl(tipoSel).forEach(c => {
+    const el = document.getElementById('dc_' + c.key);
+    declDados[c.key] = el ? el.value : c.value;
+  });
   const nomesTipo = { vaga:'Declaração de Vaga', transferencia:'Declaração de Transferência', escolaridade:'Declaração de Escolaridade/Bolsa Família', conclusao:'Declaração de Conclusão' };
   document.getElementById('prevTitle').textContent = 'Pré-visualização — ' + (nomesTipo[tipoSel] || 'Documento');
   const fr = document.getElementById('prevFrame');
